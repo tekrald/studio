@@ -43,7 +43,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="logo wedding" className="rounded-full"/>
+             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="domedome logo" className="rounded-full"/>
           </Link>
           <CardTitle className="text-3xl font-pacifico">Welcome Back!</CardTitle>
           <CardDescription>Login to your domedome account to continue planning your special day.</CardDescription>

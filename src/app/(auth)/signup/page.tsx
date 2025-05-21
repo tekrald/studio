@@ -50,7 +50,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="logo wedding" className="rounded-full"/>
+             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="domedome logo" className="rounded-full"/>
           </Link>
           <CardTitle className="text-3xl font-pacifico">Create Your Account</CardTitle>
           <CardDescription>Join domedome and start planning your dream wedding today!</CardDescription>
