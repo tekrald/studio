@@ -23,12 +23,12 @@ export function Header() {
     <header className="bg-card shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
-          <Image 
-            src="/domedome-logo.svg" // Alterado para usar o logo SVG
-            alt="domedome Logo" 
-            width={120} 
-            height={40} 
-            className="h-10 w-auto" 
+          <Image
+            src="/domedome-logo.svg" // Caminho para o SVG na pasta public
+            alt="domedome Logo"
+            width={120} // Ajuste se necessário para o aspect ratio do seu SVG
+            height={40} // Ajuste se necessário para o aspect ratio do seu SVG
+            className="h-10 w-auto"
             priority 
           />
         </Link>
