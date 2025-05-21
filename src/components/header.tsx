@@ -2,17 +2,15 @@
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, Users, Gift, FileText, LogIn, LogOut, UserCircle, Sparkles } from 'lucide-react';
+import { Briefcase, UserCircle, LogIn, LogOut, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth-provider';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Painel', icon: Sparkles },
-  { href: '/profile', label: 'Perfil', icon: UserCircle },
-  { href: '/guest-wishes', label: 'Votos Conv.', icon: Gift },
-  { href: '/speech-writer', label: 'Escritor IA', icon: FileText },
+  { href: '/dashboard', label: 'Patrimônio', icon: Briefcase },
+  { href: '/profile', label: 'Perfil Casal', icon: UserCircle },
 ];
 
 export function Header() {
@@ -44,7 +42,7 @@ export function Header() {
               >
                 <Link href={link.href}>
                   <link.icon className="mr-2 h-4 w-4" />
-                  {link.label === 'Votos Conv.' ? 'Votos dos Convidados' : link.label === 'Escritor IA' ? 'Escritor de Discursos IA' : link.label}
+                  {link.label}
                 </Link>
               </Button>
             ))}

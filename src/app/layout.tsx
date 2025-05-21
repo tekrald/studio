@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Pacifico, Lato } from 'next/font/google';
 import './globals.css';
@@ -17,8 +18,8 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: 'domedome - Sua Jornada de Casamento',
-  description: 'Planeje seu dia especial com domedome.',
+  title: 'domedome - Gestão de Patrimônio Familiar',
+  description: 'Organize, visualize e planeje o futuro dos seus ativos com domedome.',
 };
 
 export default function RootLayout({

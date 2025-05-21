@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowRight, Lock, Users, Briefcase, BarChart3 } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -22,11 +22,11 @@ export default function HomePage() {
               Bem-vindo ao domedome
             </h1>
             <p className="text-lg md:text-xl text-foreground/80 mb-10 max-w-2xl mx-auto">
-              Sua jornada mágica para o 'Sim, eu aceito' começa aqui. Planeje, compartilhe e celebre sua história de amor com ferramentas criadas para o seu dia especial.
+              Sua plataforma segura e intuitiva para gestão de patrimônio familiar. Organize, visualize e planeje o futuro dos seus ativos com clareza e colaboração.
             </p>
             <Button size="lg" asChild className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <Link href="/signup">
-                Comece Sua Jornada <ArrowRight className="ml-2 h-5 w-5" />
+                Comece a Organizar <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
@@ -35,27 +35,27 @@ export default function HomePage() {
         {/* Features Section */}
         <section className="py-16 bg-background">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-pacifico text-center mb-12 text-primary">Recursos para Valorizar</h2>
+            <h2 className="text-4xl font-pacifico text-center mb-12 text-primary">Recursos para o Seu Legado</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               <FeatureCard
-                icon={<Image src="https://placehold.co/80x80.png" alt="Conta Unificada" width={80} height={80} className="rounded-full" data-ai-hint="couple login" />}
-                title="Conta Unificada"
-                description="Uma conta compartilhada para o casal feliz. Fácil de gerenciar, segura e sempre sincronizada."
+                icon={<Image src="https://placehold.co/80x80.png" alt="Conta Segura" width={80} height={80} className="rounded-full" data-ai-hint="secure account" />}
+                title="Conta Segura de Casal"
+                description="Um login único e seguro para o casal gerenciar suas finanças e patrimônio em conjunto."
               />
               <FeatureCard
-                icon={<Image src="https://placehold.co/80x80.png" alt="Perfis Dinâmicos" width={80} height={80} className="rounded-full" data-ai-hint="profile avatar" />}
-                title="Perfis Dinâmicos"
-                description="Personalize seu hub de casamento. Avatares e detalhes que refletem sua história de amor única."
+                icon={<Image src="https://placehold.co/80x80.png" alt="Perfis Colaborativos" width={80} height={80} className="rounded-full" data-ai-hint="couple profile" />}
+                title="Perfis Colaborativos"
+                description="Configurem seus perfis e trabalhem juntos na organização dos ativos da família."
               />
               <FeatureCard
-                icon={<Image src="https://placehold.co/80x80.png" alt="Votos dos Convidados" width={80} height={80} className="rounded-full" data-ai-hint="guest book" />}
-                title="Votos dos Convidados"
-                description="Um espaço lindo para os convidados compartilharem seu amor, parabéns e presentes virtuais."
+                icon={<Image src="https://placehold.co/80x80.png" alt="Gestão de Ativos" width={80} height={80} className="rounded-full" data-ai-hint="asset management" />}
+                title="Gestão Detalhada de Ativos"
+                description="Cadastre e acompanhe ativos digitais (criptomoedas, NFTs) e físicos (imóveis, veículos)."
               />
               <FeatureCard
-                icon={<Image src="https://placehold.co/80x80.png" alt="Escritor de Discursos IA" width={80} height={80} className="rounded-full" data-ai-hint="writing speech" />}
-                title="Escritor de Discursos IA"
-                description="Crie o discurso de casamento perfeito com assistência de IA. Emocionante, divertido e unicamente seu."
+                icon={<Image src="https://placehold.co/80x80.png" alt="Planejamento Futuro" width={80} height={80} className="rounded-full" data-ai-hint="financial planning chart" />}
+                title="Visão Clara para o Futuro"
+                description="Tenha uma visão consolidada do seu patrimônio para tomar decisões informadas e planejar seu legado."
               />
             </div>
           </div>
@@ -64,9 +64,9 @@ export default function HomePage() {
         {/* Call to Action Section */}
         <section className="py-20 bg-primary/10">
           <div className="container mx-auto px-6 text-center">
-            <h2 className="text-4xl font-pacifico mb-6 text-primary">Pronto para Começar?</h2>
+            <h2 className="text-4xl font-pacifico mb-6 text-primary">Prontos para Construir o Futuro?</h2>
             <p className="text-lg text-foreground/80 mb-8 max-w-xl mx-auto">
-              Crie sua conta domedome hoje e desbloqueie todas as ferramentas que você precisa para uma experiência de casamento inesquecível.
+              Crie sua conta domedome hoje e transforme a maneira como vocês gerenciam o patrimônio familiar. Simples, seguro e colaborativo.
             </p>
             <Button size="lg" asChild className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <Link href="/signup">
