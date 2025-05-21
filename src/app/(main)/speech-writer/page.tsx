@@ -1,3 +1,4 @@
+
 "use client";
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Sparkles, Wand2, Copy } from 'lucide-react';
+import { Loader2, Sparkles, Wand2, Copy, FileText } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const formSchema = z.object({
@@ -189,3 +190,4 @@ export default function SpeechWriterPage() {
     </div>
   );
 }
+
