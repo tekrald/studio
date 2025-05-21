@@ -17,8 +17,8 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: 'domedome - Your Wedding Journey',
-  description: 'Plan your special day with domedome.',
+  title: 'domedome - Sua Jornada de Casamento',
+  description: 'Planeje seu dia especial com domedome.',
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${pacifico.variable} ${lato.variable} antialiased`}>
         <AuthProvider>
           {children}

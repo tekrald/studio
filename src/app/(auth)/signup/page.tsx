@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -24,23 +25,21 @@ export default function SignupPage() {
     setError(null);
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError('As senhas não coincidem.');
       setIsLoading(false);
       return;
     }
     if (!name || !email || !password) {
-      setError("Please fill in all fields.");
+      setError("Por favor, preencha todos os campos.");
       setIsLoading(false);
       return;
     }
 
     try {
-      // Simulate API call for signup
       await new Promise(resolve => setTimeout(resolve, 1000));
       signup(email, name);
-      // router.push('/dashboard') is handled by AuthProvider
     } catch (err) {
-      setError('Failed to create account. Please try again.');
+      setError('Falha ao criar conta. Por favor, tente novamente.');
       setIsLoading(false);
     }
   };
@@ -50,15 +49,15 @@ export default function SignupPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="domedome logo" className="rounded-full"/>
+             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="logo domedome" className="rounded-full"/>
           </Link>
-          <CardTitle className="text-3xl font-pacifico">Create Your Account</CardTitle>
-          <CardDescription>Join domedome and start planning your dream wedding today!</CardDescription>
+          <CardTitle className="text-3xl font-pacifico">Crie Sua Conta</CardTitle>
+          <CardDescription>Junte-se ao domedome e comece a planejar o casamento dos seus sonhos hoje!</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Couple&apos;s Name (e.g., Alex & Jamie)</Label>
+              <Label htmlFor="name">Nome do Casal (ex: Alex & Jamie)</Label>
               <Input
                 id="name"
                 type="text"
@@ -70,11 +69,11 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Shared Email Address</Label>
+              <Label htmlFor="email">Endereço de Email Compartilhado</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="voce@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -82,7 +81,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
                 type="password"
@@ -94,7 +93,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">Confirmar Senha</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -112,15 +111,15 @@ export default function SignupPage() {
               ) : (
                 <UserPlus className="mr-2 h-4 w-4" />
               )}
-              Sign Up
+              Cadastrar
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{' '}
+            Já tem uma conta?{' '}
             <Button variant="link" asChild className="p-0 h-auto text-primary">
-              <Link href="/login">Log in here</Link>
+              <Link href="/login">Faça login aqui</Link>
             </Button>
           </p>
         </CardFooter>

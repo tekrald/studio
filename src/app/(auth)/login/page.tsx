@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -21,19 +22,15 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      // In a real app, you'd validate credentials against a backend
-      // For this mock, we just log in with the email
       if (!email || !password) {
-        setError("Please enter both email and password.");
+        setError("Por favor, insira email e senha.");
         setIsLoading(false);
         return;
       }
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       login(email);
-      // router.push('/dashboard') is handled by AuthProvider
     } catch (err) {
-      setError('Failed to login. Please check your credentials.');
+      setError('Falha ao fazer login. Verifique suas credenciais.');
       setIsLoading(false);
     }
   };
@@ -43,19 +40,19 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="domedome logo" className="rounded-full"/>
+             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="logo domedome" className="rounded-full"/>
           </Link>
-          <CardTitle className="text-3xl font-pacifico">Welcome Back!</CardTitle>
-          <CardDescription>Login to your domedome account to continue planning your special day.</CardDescription>
+          <CardTitle className="text-3xl font-pacifico">Bem-vindo(a) de Volta!</CardTitle>
+          <CardDescription>Faça login na sua conta domedome para continuar planejando seu dia especial.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">Endereço de Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="voce@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -63,7 +60,7 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
                 type="password"
@@ -81,15 +78,15 @@ export default function LoginPage() {
               ) : (
                 <LogInIcon className="mr-2 h-4 w-4" />
               )}
-              Login
+              Entrar
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
+            Não tem uma conta?{' '}
             <Button variant="link" asChild className="p-0 h-auto text-primary">
-              <Link href="/signup">Sign up here</Link>
+              <Link href="/signup">Cadastre-se aqui</Link>
             </Button>
           </p>
         </CardFooter>

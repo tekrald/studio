@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useEffect, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { Gift, MessageSquare, Send, Loader2, Heart } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface Wish {
   id: string;
@@ -36,24 +38,23 @@ export default function GuestWishesPage() {
       if (storedWishes) {
         const parsedWishes = JSON.parse(storedWishes).map((wish: any) => ({
           ...wish,
-          timestamp: new Date(wish.timestamp) // Ensure timestamp is a Date object
+          timestamp: new Date(wish.timestamp) 
         }));
         setWishes(parsedWishes);
       }
     } catch (error) {
-      console.error("Failed to load wishes from localStorage", error);
+      console.error("Falha ao carregar votos do localStorage", error);
     }
   }, []);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!name.trim() || !message.trim()) {
-      toast({ title: "Hold on!", description: "Please enter your name and a message.", variant: "destructive" });
+      toast({ title: "Espere um pouco!", description: "Por favor, insira seu nome e uma mensagem.", variant: "destructive" });
       return;
     }
     setIsLoading(true);
 
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const newWish: Wish = {
@@ -70,11 +71,10 @@ export default function GuestWishesPage() {
     localStorage.setItem(GUEST_WISHES_STORAGE_KEY, JSON.stringify(updatedWishes));
 
     toast({
-      title: 'Wish Sent!',
-      description: 'Thank you for your lovely message.',
+      title: 'Voto Enviado!',
+      description: 'Obrigado pela sua linda mensagem.',
     });
 
-    // Reset form
     setName('');
     setMessage('');
     setVirtualGift('');
@@ -88,27 +88,27 @@ export default function GuestWishesPage() {
           <CardHeader>
             <CardTitle className="text-3xl font-pacifico flex items-center">
               <MessageSquare className="mr-3 h-8 w-8 text-primary" />
-              Share Your Wishes
+              Compartilhe Seus Votos
             </CardTitle>
-            <CardDescription>Leave a message and a virtual gift for the happy couple!</CardDescription>
+            <CardDescription>Deixe uma mensagem e um presente virtual para o casal feliz!</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="name">Your Name</Label>
-                <Input id="name" placeholder="e.g., Aunt Mary" value={name} onChange={(e) => setName(e.target.value)} disabled={isLoading} />
+                <Label htmlFor="name">Seu Nome</Label>
+                <Input id="name" placeholder="ex: Tia Maria" value={name} onChange={(e) => setName(e.target.value)} disabled={isLoading} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="message">Your Message</Label>
-                <Textarea id="message" placeholder="Wishing you a lifetime of happiness..." value={message} onChange={(e) => setMessage(e.target.value)} rows={4} disabled={isLoading} />
+                <Label htmlFor="message">Sua Mensagem</Label>
+                <Textarea id="message" placeholder="Desejando a vocês uma vida inteira de felicidade..." value={message} onChange={(e) => setMessage(e.target.value)} rows={4} disabled={isLoading} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="virtualGift">Virtual Gift (Optional)</Label>
-                <Input id="virtualGift" placeholder="e.g., A weekend getaway fund" value={virtualGift} onChange={(e) => setVirtualGift(e.target.value)} disabled={isLoading} />
+                <Label htmlFor="virtualGift">Presente Virtual (Opcional)</Label>
+                <Input id="virtualGift" placeholder="ex: Fundo para uma escapada de fim de semana" value={virtualGift} onChange={(e) => setVirtualGift(e.target.value)} disabled={isLoading} />
               </div>
               <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-                Send Your Wish
+                Enviar Seu Voto
               </Button>
             </form>
           </CardContent>
@@ -120,15 +120,15 @@ export default function GuestWishesPage() {
           <CardHeader>
              <CardTitle className="text-3xl font-pacifico flex items-center">
               <Heart className="mr-3 h-8 w-8 text-primary" />
-              Messages of Love
+              Mensagens de Amor
             </CardTitle>
-            <CardDescription>Read the wonderful wishes from friends and family.</CardDescription>
+            <CardDescription>Leia os maravilhosos votos de amigos e familiares.</CardDescription>
           </CardHeader>
           <CardContent>
             {wishes.length === 0 && !isLoading ? (
               <div className="text-center py-10 text-muted-foreground">
                 <Gift className="mx-auto h-12 w-12 mb-4" />
-                <p>No wishes yet. Be the first to congratulate the couple!</p>
+                <p>Nenhum voto ainda. Seja o primeiro a parabenizar o casal!</p>
               </div>
             ) : (
               <ScrollArea className="h-[600px] pr-4">
@@ -143,7 +143,7 @@ export default function GuestWishesPage() {
                         <div>
                           <p className="font-semibold text-primary">{wish.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(wish.timestamp, { addSuffix: true })}
+                            {formatDistanceToNow(wish.timestamp, { addSuffix: true, locale: ptBR })}
                           </p>
                         </div>
                       </CardHeader>
@@ -152,7 +152,7 @@ export default function GuestWishesPage() {
                         {wish.virtualGift && (
                           <div className="mt-3 pt-3 border-t border-border flex items-center text-sm text-accent-foreground">
                             <Gift className="h-4 w-4 mr-2 text-accent" />
-                            <span>Virtual Gift: {wish.virtualGift}</span>
+                            <span>Presente Virtual: {wish.virtualGift}</span>
                           </div>
                         )}
                       </CardContent>

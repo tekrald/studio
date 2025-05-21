@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useEffect, type FormEvent } from 'react';
 import { useAuth } from '@/components/auth-provider';
@@ -44,17 +45,16 @@ export default function ProfilePage() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       updateProfile(displayName);
       toast({
-        title: 'Profile Updated',
-        description: 'Your profile information has been saved.',
+        title: 'Perfil Atualizado',
+        description: 'Suas informações de perfil foram salvas.',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update profile. Please try again.',
+        title: 'Erro',
+        description: 'Falha ao atualizar perfil. Por favor, tente novamente.',
         variant: 'destructive',
       });
     } finally {
@@ -75,45 +75,44 @@ export default function ProfilePage() {
       <Card className="shadow-xl">
         <CardHeader className="text-center">
           <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-          <CardTitle className="text-3xl font-pacifico">Our Profile</CardTitle>
+          <CardTitle className="text-3xl font-pacifico">Nosso Perfil</CardTitle>
           <CardDescription>
-            Manage your shared couple&apos;s information here. This name will be used across the app.
+            Gerencie suas informações compartilhadas do casal aqui. Este nome será usado em todo o aplicativo.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24 text-3xl ring-4 ring-primary ring-offset-background ring-offset-2">
-              {/* Placeholder for actual image upload in future */}
               <AvatarImage src={`https://placehold.co/150x150.png?text=${avatarText}`} alt={displayName} data-ai-hint="couple avatar" />
               <AvatarFallback className="bg-gradient-to-br from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white">
                 {avatarText || '??'}
               </AvatarFallback>
             </Avatar>
-            <p className="text-sm text-muted-foreground">Avatar initials are based on your display name.</p>
+            <p className="text-sm text-muted-foreground">As iniciais do avatar são baseadas no seu nome de exibição.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="displayName">Couple&apos;s Display Name (e.g., Alex & Jamie)</Label>
+              <Label htmlFor="displayName">Nome de Exibição do Casal (ex: Alex & Jamie)</Label>
               <Input
                 id="displayName"
                 type="text"
-                placeholder="e.g., Alex & Jamie"
+                placeholder="ex: Alex & Jamie"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Shared Email Address</Label>
+              <Label htmlFor="email">Endereço de Email Compartilhado</Label>
               <Input
                 id="email"
                 type="email"
                 value={user?.email || ''}
-                disabled // Email typically not changeable after signup or managed by auth provider
+                disabled 
                 className="cursor-not-allowed bg-muted/50"
               />
-              <p className="text-xs text-muted-foreground">Email address cannot be changed here.</p>
+              <p className="text-xs text-muted-foreground">O endereço de email não pode ser alterado aqui.</p>
             </div>
             
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
@@ -122,7 +121,7 @@ export default function ProfilePage() {
               ) : (
                 <Save className="mr-2 h-4 w-4" />
               )}
-              Save Changes
+              Salvar Alterações
             </Button>
           </form>
         </CardContent>

@@ -9,10 +9,10 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Dashboard', icon: Sparkles },
-  { href: '/profile', label: 'Profile', icon: UserCircle },
-  { href: '/guest-wishes', label: 'Guest Wishes', icon: Gift },
-  { href: '/speech-writer', label: 'AI Speechwriter', icon: FileText },
+  { href: '/dashboard', label: 'Painel', icon: Sparkles },
+  { href: '/profile', label: 'Perfil', icon: UserCircle },
+  { href: '/guest-wishes', label: 'Votos Conv.', icon: Gift },
+  { href: '/speech-writer', label: 'Escritor IA', icon: FileText },
 ];
 
 export function Header() {
@@ -24,11 +24,11 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/domedome-logo.svg" // Caminho para o SVG na pasta public
+            src="/domedome-logo.svg" 
             alt="domedome Logo"
-            width={250} // Nova largura do logo
-            height={83}  // Nova altura do logo (aproximadamente 250 / (120/40))
-            className="h-auto" // Permite que a altura se ajuste automaticamente com base na proporção
+            width={250} 
+            height={83}  
+            className="h-auto" 
             priority 
           />
         </Link>
@@ -44,7 +44,7 @@ export function Header() {
               >
                 <Link href={link.href}>
                   <link.icon className="mr-2 h-4 w-4" />
-                  {link.label}
+                  {link.label === 'Votos Conv.' ? 'Votos dos Convidados' : link.label === 'Escritor IA' ? 'Escritor de Discursos IA' : link.label}
                 </Link>
               </Button>
             ))}
@@ -57,10 +57,10 @@ export function Header() {
           ) : user ? (
             <>
               <span className="text-sm hidden sm:inline text-muted-foreground">
-                Hi, {user.displayName || user.email?.split('@')[0]}
+                Olá, {user.displayName || user.email?.split('@')[0]}
               </span>
               <Button variant="outline" size="sm" onClick={logout}>
-                <LogOut className="mr-2 h-4 w-4" /> Logout
+                <LogOut className="mr-2 h-4 w-4" /> Sair
               </Button>
             </>
           ) : (
@@ -68,14 +68,14 @@ export function Header() {
               {!pathname.includes('/login') && !pathname.includes('/signup') && (
                 <Button variant="ghost" size="sm" asChild>
                   <Link href="/login">
-                    <LogIn className="mr-2 h-4 w-4" /> Login
+                    <LogIn className="mr-2 h-4 w-4" /> Entrar
                   </Link>
                 </Button>
               )}
               {!pathname.includes('/signup') && !pathname.includes('/login') &&(
                  <Button size="sm" asChild className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white">
                   <Link href="/signup">
-                    Sign Up
+                    Cadastrar
                   </Link>
                 </Button>
               )}
@@ -83,7 +83,7 @@ export function Header() {
           )}
         </div>
       </div>
-      {/* Mobile Nav (simplified for brevity) */}
+      {/* Mobile Nav */}
       {user && (
         <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
            {navLinks.map((link) => (

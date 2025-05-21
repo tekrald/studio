@@ -1,3 +1,4 @@
+
 "use client";
 import { useEffect, type ReactNode } from 'react';
 import { useAuth } from '@/components/auth-provider';
@@ -20,7 +21,7 @@ export default function MainAppLayout({ children }: { children: ReactNode }) {
     return (
       <div className="flex flex-col min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Loading your wedding space...</p>
+        <p className="mt-4 text-muted-foreground">Carregando seu espaço de casamento...</p>
       </div>
     );
   }

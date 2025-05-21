@@ -1,3 +1,4 @@
+
 "use client";
 import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
@@ -9,22 +10,22 @@ import Image from 'next/image';
 const featureLinks = [
   {
     href: '/profile',
-    title: 'Our Profile',
-    description: "Share your story and manage couple's details.",
+    title: 'Nosso Perfil',
+    description: "Compartilhe sua história e gerencie os detalhes do casal.",
     icon: UserCircle,
     imageHint: 'couple profile',
   },
   {
     href: '/guest-wishes',
-    title: 'Guest Well-Wishes',
-    description: 'See messages and gifts from your loved ones.',
+    title: 'Votos dos Convidados',
+    description: 'Veja mensagens e presentes de seus entes queridos.',
     icon: Gift,
     imageHint: 'wedding gifts',
   },
   {
     href: '/speech-writer',
-    title: 'AI Speechwriter',
-    description: 'Craft the perfect, heartfelt wedding speech.',
+    title: 'Escritor de Discursos IA',
+    description: 'Crie o discurso de casamento perfeito e emocionante.',
     icon: FileText,
     imageHint: 'writing speech',
   },
@@ -34,7 +35,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
 
   if (!user) {
-    return null; // Or a loading state, though MainAppLayout handles redirection
+    return null; 
   }
 
   return (
@@ -46,9 +47,9 @@ export default function DashboardPage() {
               <Heart className="h-10 w-10 text-white" />
             </div>
             <div>
-              <CardTitle className="text-4xl text-white font-pacifico">Hello, {user.displayName || 'Couple'}!</CardTitle>
+              <CardTitle className="text-4xl text-white font-pacifico">Olá, {user.displayName || 'Casal'}!</CardTitle>
               <CardDescription className="text-white/90 text-lg mt-1">
-                Welcome to your domedome wedding hub. Let&apos;s make your special day unforgettable!
+                Bem-vindo(a) ao seu hub de casamento domedome. Vamos tornar seu dia especial inesquecível!
               </CardDescription>
             </div>
           </div>
@@ -70,7 +71,7 @@ export default function DashboardPage() {
             <div className="p-4 pt-0">
               <Button asChild className="w-full bg-primary hover:bg-primary/90">
                 <Link href={link.href}>
-                  Go to {link.title} <ArrowRight className="ml-2 h-4 w-4" />
+                  Ir para {link.title} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -80,12 +81,12 @@ export default function DashboardPage() {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl font-pacifico">Quick Tip</CardTitle>
+          <CardTitle className="text-2xl font-pacifico">Dica Rápida</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Remember to update your profile with your unique story! This helps the AI Speechwriter craft an even more personalized speech for you.
-            You can also share details with your guests through your profile.
+            Lembre-se de atualizar seu perfil com sua história única! Isso ajuda o Escritor de Discursos IA a criar um discurso ainda mais personalizado para vocês.
+            Você também pode compartilhar detalhes com seus convidados através do seu perfil.
           </p>
         </CardContent>
       </Card>

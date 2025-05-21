@@ -15,10 +15,10 @@ import { Loader2, Sparkles, Wand2, Copy, FileText } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const formSchema = z.object({
-  coupleHistory: z.string().min(50, 'Please provide more details about your history (at least 50 characters).'),
-  memorableMoments: z.string().min(50, 'Share some memorable moments (at least 50 characters).'),
-  personalAnecdotes: z.string().min(50, 'Include a few personal anecdotes (at least 50 characters).'),
-  messageForTheAudience: z.string().min(20, 'What message do you want to convey to your guests? (at least 20 characters).'),
+  coupleHistory: z.string().min(50, 'Por favor, forneça mais detalhes sobre sua história (pelo menos 50 caracteres).'),
+  memorableMoments: z.string().min(50, 'Compartilhe alguns momentos memoráveis (pelo menos 50 caracteres).'),
+  personalAnecdotes: z.string().min(50, 'Inclua algumas anedotas pessoais (pelo menos 50 caracteres).'),
+  messageForTheAudience: z.string().min(20, 'Qual mensagem você quer transmitir aos seus convidados? (pelo menos 20 caracteres).'),
 });
 
 type SpeechFormValues = z.infer<typeof formSchema>;
@@ -45,14 +45,14 @@ export default function SpeechWriterPage() {
       const result = await generateWeddingSpeech(values);
       setGeneratedSpeech(result.speech);
       toast({
-        title: 'Speech Generated!',
-        description: 'Your personalized wedding speech is ready.',
+        title: 'Discurso Gerado!',
+        description: 'Seu discurso de casamento personalizado está pronto.',
       });
     } catch (error) {
-      console.error('Error generating speech:', error);
+      console.error('Erro ao gerar discurso:', error);
       toast({
-        title: 'Error Generating Speech',
-        description: 'Something went wrong. Please try again.',
+        title: 'Erro ao Gerar Discurso',
+        description: 'Algo deu errado. Por favor, tente novamente.',
         variant: 'destructive',
       });
     } finally {
@@ -63,7 +63,7 @@ export default function SpeechWriterPage() {
   const copyToClipboard = () => {
     if (generatedSpeech) {
       navigator.clipboard.writeText(generatedSpeech);
-      toast({ title: 'Copied to Clipboard!', description: 'Speech copied successfully.' });
+      toast({ title: 'Copiado para a Área de Transferência!', description: 'Discurso copiado com sucesso.' });
     }
   };
 
@@ -74,11 +74,11 @@ export default function SpeechWriterPage() {
           <CardHeader>
             <CardTitle className="text-3xl font-pacifico flex items-center">
               <Wand2 className="mr-3 h-8 w-8 text-primary" />
-              AI Speechwriter
+              Escritor de Discursos IA
             </CardTitle>
             <CardDescription>
-              Tell us about your love story, and our AI will help you craft a beautiful wedding speech.
-              The more details you provide, the more personal and heartfelt the speech will be.
+              Conte-nos sobre sua história de amor, e nossa IA ajudará você a criar um lindo discurso de casamento.
+              Quanto mais detalhes você fornecer, mais pessoal e emocionante será o discurso.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -89,9 +89,9 @@ export default function SpeechWriterPage() {
                   name="coupleHistory"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Couple&apos;s History</FormLabel>
+                      <FormLabel>História do Casal</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="How you met, key milestones, your journey together..." {...field} rows={4} disabled={isLoading} />
+                        <Textarea placeholder="Como vocês se conheceram, marcos importantes, sua jornada juntos..." {...field} rows={4} disabled={isLoading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -102,9 +102,9 @@ export default function SpeechWriterPage() {
                   name="memorableMoments"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Memorable Moments</FormLabel>
+                      <FormLabel>Momentos Memoráveis</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Unforgettable trips, funny incidents, special occasions..." {...field} rows={4} disabled={isLoading} />
+                        <Textarea placeholder="Viagens inesquecíveis, incidentes engraçados, ocasiões especiais..." {...field} rows={4} disabled={isLoading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -115,9 +115,9 @@ export default function SpeechWriterPage() {
                   name="personalAnecdotes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Personal Anecdotes</FormLabel>
+                      <FormLabel>Anedotas Pessoais</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Stories that highlight your relationship, inside jokes..." {...field} rows={4} disabled={isLoading} />
+                        <Textarea placeholder="Histórias que destacam seu relacionamento, piadas internas..." {...field} rows={4} disabled={isLoading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -128,9 +128,9 @@ export default function SpeechWriterPage() {
                   name="messageForTheAudience"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Message for the Audience</FormLabel>
+                      <FormLabel>Mensagem para os Convidados</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Express gratitude, set the tone for celebration..." {...field} rows={3} disabled={isLoading} />
+                        <Textarea placeholder="Expresse gratidão, defina o tom para a celebração..." {...field} rows={3} disabled={isLoading} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -142,7 +142,7 @@ export default function SpeechWriterPage() {
                   ) : (
                     <Sparkles className="mr-2 h-4 w-4" />
                   )}
-                  Generate Speech
+                  Gerar Discurso
                 </Button>
               </form>
             </Form>
@@ -154,12 +154,12 @@ export default function SpeechWriterPage() {
         <Card className="shadow-xl min-h-[calc(100vh-10rem)]">
           <CardHeader className="flex flex-row justify-between items-center">
             <div>
-              <CardTitle className="text-3xl font-pacifico text-primary">Your Generated Speech</CardTitle>
-              <CardDescription>Review and use your AI-crafted wedding speech.</CardDescription>
+              <CardTitle className="text-3xl font-pacifico text-primary">Seu Discurso Gerado</CardTitle>
+              <CardDescription>Revise e use seu discurso de casamento criado por IA.</CardDescription>
             </div>
             {generatedSpeech && (
                <Button variant="outline" size="sm" onClick={copyToClipboard} disabled={!generatedSpeech}>
-                 <Copy className="mr-2 h-4 w-4" /> Copy Speech
+                 <Copy className="mr-2 h-4 w-4" /> Copiar Discurso
                </Button>
             )}
           </CardHeader>
@@ -167,14 +167,14 @@ export default function SpeechWriterPage() {
             {isLoading && !generatedSpeech && (
               <div className="flex flex-col items-center justify-center h-96 text-muted-foreground">
                 <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-                <p>Crafting your perfect words...</p>
+                <p>Criando suas palavras perfeitas...</p>
               </div>
             )}
             {!isLoading && !generatedSpeech && (
               <div className="flex flex-col items-center justify-center h-96 text-muted-foreground">
                  <FileText className="h-12 w-12 mb-4" />
-                <p>Your speech will appear here once generated.</p>
-                <p className="text-sm">Fill out the form and click &quot;Generate Speech&quot;.</p>
+                <p>Seu discurso aparecerá aqui assim que for gerado.</p>
+                <p className="text-sm">Preencha o formulário e clique em &quot;Gerar Discurso&quot;.</p>
               </div>
             )}
             {generatedSpeech && (
@@ -190,4 +190,3 @@ export default function SpeechWriterPage() {
     </div>
   );
 }
-
