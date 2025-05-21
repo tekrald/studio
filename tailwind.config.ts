@@ -9,6 +9,10 @@ export default {
   ],
   theme: {
   	extend: {
+      fontFamily: {
+        pacifico: ['var(--font-pacifico)'],
+        lato: ['var(--font-lato)'],
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -59,7 +63,9 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+        'gradient-pink': 'hsl(var(--gradient-pink))',
+        'gradient-orange': 'hsl(var(--gradient-orange))',
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
