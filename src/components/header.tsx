@@ -1,5 +1,7 @@
+
 "use client";
 import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, Users, Gift, FileText, LogIn, LogOut, UserCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth-provider';
@@ -20,8 +22,15 @@ export function Header() {
   return (
     <header className="bg-card shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="text-3xl font-pacifico bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
-          domedome
+        <Link href="/" className="flex items-center">
+          <Image 
+            src="https://placehold.co/150x50.png" // Adjusted placeholder size for a typical logo aspect ratio
+            alt="domedome Logo" 
+            width={120} // Adjusted width
+            height={40} // Adjusted height
+            data-ai-hint="domedome logo" 
+            className="h-10 w-auto" // Maintain height, auto width for responsiveness
+          />
         </Link>
         
         {user && (
