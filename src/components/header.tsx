@@ -26,9 +26,9 @@ export function Header() {
           <Image
             src="/domedome-logo.svg" // Caminho para o SVG na pasta public
             alt="domedome Logo"
-            width={120} // Ajuste se necessário para o aspect ratio do seu SVG
-            height={40} // Ajuste se necessário para o aspect ratio do seu SVG
-            className="h-10 w-auto"
+            width={250} // Nova largura do logo
+            height={83}  // Nova altura do logo (aproximadamente 250 / (120/40))
+            className="h-auto" // Permite que a altura se ajuste automaticamente com base na proporção
             priority 
           />
         </Link>
