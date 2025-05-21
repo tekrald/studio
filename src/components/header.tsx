@@ -24,12 +24,12 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image 
-            src="/domedome-logo.png" // Alterado para usar o logo local
+            src="/domedome-logo.svg" // Alterado para usar o logo SVG
             alt="domedome Logo" 
-            width={120} // Mantenha ou ajuste para as dimensões reais do seu logo
-            height={40} // Mantenha ou ajuste para as dimensões reais do seu logo
+            width={120} 
+            height={40} 
             className="h-10 w-auto" 
-            priority // Bom para elementos LCP como logos
+            priority 
           />
         </Link>
         
