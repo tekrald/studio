@@ -24,12 +24,12 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image 
-            src="https://placehold.co/150x50.png" // Adjusted placeholder size for a typical logo aspect ratio
+            src="/domedome-logo.png" // Alterado para usar o logo local
             alt="domedome Logo" 
-            width={120} // Adjusted width
-            height={40} // Adjusted height
-            data-ai-hint="domedome logo" 
-            className="h-10 w-auto" // Maintain height, auto width for responsiveness
+            width={120} // Mantenha ou ajuste para as dimensões reais do seu logo
+            height={40} // Mantenha ou ajuste para as dimensões reais do seu logo
+            className="h-10 w-auto" 
+            priority // Bom para elementos LCP como logos
           />
         </Link>
         
