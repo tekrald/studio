@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/dashboard', label: 'Holding', icon: Briefcase },
-  { href: '/profile', label: 'Perfil', icon: UserCircle }, // Fallback label
+  { href: '/profile', label: 'Perfil', icon: UserCircle }, 
 ];
 
 export function Header() {
@@ -57,9 +57,7 @@ export function Header() {
             <div className="h-8 w-20 bg-muted rounded-md animate-pulse"></div>
           ) : user ? (
             <>
-              <span className="text-sm hidden sm:inline text-muted-foreground">
-                Olá, {user.displayName || user.email?.split('@')[0]}
-              </span>
+              {/* Removido: <span className="text-sm hidden sm:inline text-muted-foreground">Olá, {user.displayName || user.email?.split('@')[0]}</span> */}
               <Button variant="outline" size="sm" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" /> Sair
               </Button>
