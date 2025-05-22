@@ -261,7 +261,7 @@ export default function SignupPage() {
                     <Button 
                       type="button" 
                       variant="outline" 
-                      onClick={() => window.open('https://toolsforthecommons.org/', '_blank')}
+                      onClick={() => window.open('https://toolsforthecommons.com/', '_blank')}
                       className="w-full sm:w-auto"
                     >
                       Consultar Tools for The Commons <ExternalLink size={16} className="ml-2" />
