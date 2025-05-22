@@ -57,15 +57,10 @@ const formSchema = z.object({
   if (data.nomeAtivo.length > 0 && data.nomeAtivo.length < 3) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
   }
-  if (data.tipo === 'digital') {
-    if (data.quantidadeDigital === undefined || data.quantidadeDigital === null) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade é obrigatória para esta transação digital.", path: ['quantidadeDigital'] });
-    }
-    // valorPagoEpocaDigital é opcional no schema base, mas pode ser obrigatório dependendo da lógica da primeira transação.
-    // Se for sempre obrigatório para transações digitais, a validação deveria ser mais estrita aqui ou no schema base.
-    // Por agora, mantemos como está, mas é um ponto de atenção.
+  if (data.tipo === 'digital' && (data.quantidadeDigital === undefined || data.quantidadeDigital === null)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade é obrigatória para esta transação digital.", path: ['quantidadeDigital'] });
   }
-  if (data.tipo === 'fisico') {
+  if (data.tipo === 'fisico' && (!existingAssetToUpdate || existingAssetToUpdate.transactions?.length === 0) ) { // Only validate for first transaction of physical asset
     if (!data.tipoImovelBemFisico || data.tipoImovelBemFisico.trim() === '') {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de bem físico é obrigatório.", path: ['tipoImovelBemFisico'] });
     }
@@ -78,7 +73,7 @@ interface AssetFormProps {
   onClose: () => void;
   availableMembers: { id: string; name: string; birthDate?: Date | string }[];
   targetMemberId?: string | null;
-  existingAssetToUpdate?: { name: string; type: 'digital' | 'fisico'; assignedTo?: string | null };
+  existingAssetToUpdate?: { name: string; type: 'digital' | 'fisico'; assignedTo?: string | null, transactions?: any[] };
 }
 
 const TOTAL_STEPS = 4; 
@@ -114,7 +109,8 @@ export function AssetForm({
     mode: "onChange",
   });
 
-  const assetType = form.watch('tipo');
+  const watchedTipo = form.watch('tipo');
+  const watchedNomeAtivo = form.watch('nomeAtivo');
   const quemComprouWatch = form.watch('quemComprou');
   const assignedToMemberIdWatch = form.watch('assignedToMemberId');
   const setReleaseConditionWatch = form.watch('setReleaseCondition');
@@ -127,16 +123,50 @@ export function AssetForm({
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
 
   useEffect(() => {
+    // Reset form fields when existingAssetToUpdate or targetMemberId changes
+    // This ensures the form starts fresh or pre-fills correctly
     if (existingAssetToUpdate) {
-      form.setValue('nomeAtivo', existingAssetToUpdate.name);
-      form.setValue('tipo', existingAssetToUpdate.type);
-      form.setValue('assignedToMemberId', existingAssetToUpdate.assignedTo || "UNASSIGNED");
-    } else if (targetMemberId) {
-      form.setValue('assignedToMemberId', targetMemberId);
-    } else {
-      form.setValue('assignedToMemberId', "UNASSIGNED");
+      form.reset({
+        tipo: existingAssetToUpdate.type,
+        nomeAtivo: existingAssetToUpdate.name,
+        assignedToMemberId: existingAssetToUpdate.assignedTo || "UNASSIGNED",
+        // Fields for a new transaction (should be empty)
+        dataAquisicao: new Date(),
+        observacoes: '',
+        quemComprou: '',
+        contribuicaoParceiro1: undefined,
+        contribuicaoParceiro2: undefined,
+        quantidadeDigital: undefined,
+        valorPagoEpocaDigital: undefined,
+        // tipoImovelBemFisico and enderecoLocalizacaoFisico are for the *first* transaction of a physical asset.
+        // They shouldn't be reset if we are adding a new transaction to an *existing* physical asset.
+        // This logic might need refinement if we allow editing these for existing physical assets.
+        // For now, assume these are only set on the first transaction.
+        tipoImovelBemFisico: form.getValues('tipoImovelBemFisico') || '', // Keep if already set
+        enderecoLocalizacaoFisico: form.getValues('enderecoLocalizacaoFisico') || '', // Keep if already set
+        setReleaseCondition: false, // Reset for new transaction logic
+        releaseTargetAge: undefined,
+      });
+    } else { // New asset
+      form.reset({
+        tipo: undefined,
+        nomeAtivo: '',
+        dataAquisicao: new Date(),
+        observacoes: '',
+        quemComprou: '',
+        contribuicaoParceiro1: undefined,
+        contribuicaoParceiro2: undefined,
+        quantidadeDigital: undefined,
+        valorPagoEpocaDigital: undefined,
+        tipoImovelBemFisico: '',
+        enderecoLocalizacaoFisico: '',
+        assignedToMemberId: targetMemberId || "UNASSIGNED",
+        setReleaseCondition: false,
+        releaseTargetAge: undefined,
+      });
     }
-  }, [targetMemberId, form, existingAssetToUpdate]);
+  }, [targetMemberId, existingAssetToUpdate, form.reset]);
+
 
   useEffect(() => {
     if (user?.displayName) {
@@ -165,7 +195,7 @@ export function AssetForm({
 
     if (step === 1) {
       fieldsToValidate = ['tipo'];
-      if (!existingAssetToUpdate) { // Only validate nomeAtivo if it's a new asset
+      if (!existingAssetToUpdate) { 
         fieldsToValidate.push('nomeAtivo');
       }
     } else if (step === 2) {
@@ -176,12 +206,16 @@ export function AssetForm({
         fieldsToValidate.push('contribuicaoParceiro1', 'contribuicaoParceiro2');
       }
     } else if (step === 4) {
-      if (assetType === 'digital') {
+      if (watchedTipo === 'digital') {
         fieldsToValidate = ['quantidadeDigital', 'valorPagoEpocaDigital'];
-      } else if (assetType === 'fisico') {
-        fieldsToValidate = ['tipoImovelBemFisico', 'enderecoLocalizacaoFisico', 'documentacaoFisicoFile'];
+      } else if (watchedTipo === 'fisico') {
+         // Only validate these for the first transaction of a physical asset
+        if(!existingAssetToUpdate || existingAssetToUpdate.transactions?.length === 0) {
+            fieldsToValidate.push('tipoImovelBemFisico');
+        }
+        // 'enderecoLocalizacaoFisico' and 'documentacaoFisicoFile' are optional.
       }
-      if (!existingAssetToUpdate) {
+      if (!existingAssetToUpdate) { // Only for new assets, not when adding transaction to existing
          fieldsToValidate.push('assignedToMemberId');
          if (form.getValues('setReleaseCondition')) {
             fieldsToValidate.push('releaseTargetAge');
@@ -205,11 +239,11 @@ export function AssetForm({
       }
     }
      
-    if (step === 1 && !form.getValues('tipo')) {
+    if (step === 1 && !watchedTipo) {
         setFormError("Selecione o tipo de ativo.");
         return false;
     }
-    if (step === 1 && !existingAssetToUpdate && (!form.getValues('nomeAtivo') || form.getValues('nomeAtivo').trim().length < 1)) {
+    if (step === 1 && !existingAssetToUpdate && (!watchedNomeAtivo || watchedNomeAtivo.trim().length < 1)) {
         setFormError("O nome do ativo é obrigatório.");
         return false;
     }
@@ -238,13 +272,11 @@ export function AssetForm({
 
   const isNextButtonDisabled = () => {
     if (isLoading) return true;
-    if (currentStep === 1 && !existingAssetToUpdate) {
-        return !form.getValues('tipo') || !form.getValues('nomeAtivo');
+    if (currentStep === 1) {
+        if (existingAssetToUpdate) return false; 
+        return !watchedTipo || !watchedNomeAtivo || watchedNomeAtivo.trim().length < 1;
     }
-    if (currentStep === 1 && existingAssetToUpdate) { // For existing assets, type and name are fixed
-        return false;
-    }
-    // Add more specific step validations if needed
+    // Add more specific step validations if needed for other steps
     return false; 
   };
 
@@ -265,7 +297,11 @@ export function AssetForm({
               name="tipo"
               control={form.control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value} disabled={isLoading || !!existingAssetToUpdate}>
+                <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value} 
+                    disabled={isLoading || !!existingAssetToUpdate}
+                >
                   <SelectTrigger id="tipo" >
                     <SelectValue placeholder="Selecione o tipo de ativo" />
                   </SelectTrigger>
@@ -280,7 +316,12 @@ export function AssetForm({
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="nomeAtivo">Nome do Ativo</Label>
-            <Input id="nomeAtivo" {...form.register('nomeAtivo')} placeholder="Ex: Bitcoin, Casa da Praia" disabled={isLoading || !!existingAssetToUpdate} />
+            <Input 
+                id="nomeAtivo" 
+                {...form.register('nomeAtivo')} 
+                placeholder="Ex: Bitcoin, Casa da Praia" 
+                disabled={isLoading || !!existingAssetToUpdate} 
+            />
             {form.formState.errors.nomeAtivo && <p className="text-sm text-destructive">{form.formState.errors.nomeAtivo.message}</p>}
           </div>
         </>
@@ -302,25 +343,48 @@ export function AssetForm({
                       disabled={isLoading}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? format(new Date(field.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
+                      {field.value ? format(new Date(field.value), "PPP 'às' HH:mm", { locale: ptBR }) : <span>Escolha uma data e hora</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
                       selected={field.value ? new Date(field.value) : undefined}
-                      onSelect={field.onChange}
+                      onSelect={(date) => {
+                        const currentVal = field.value ? new Date(field.value) : new Date();
+                        const newDate = date ? new Date(date) : currentVal;
+                        newDate.setHours(currentVal.getHours());
+                        newDate.setMinutes(currentVal.getMinutes());
+                        field.onChange(newDate);
+                      }}
                       initialFocus
                       locale={ptBR}
                       disabled={(date) => date > new Date() || date < new Date("1900-01-01") || isLoading}
                     />
+                    <div className="p-2 border-t">
+                      <Label htmlFor="time" className="text-sm">Hora da Aquisição</Label>
+                       <Input 
+                        id="time"
+                        type="time"
+                        defaultValue={field.value ? format(new Date(field.value), "HH:mm") : "00:00"}
+                        onChange={(e) => {
+                            const currentTime = field.value ? new Date(field.value) : new Date();
+                            const [hours, minutes] = e.target.value.split(':');
+                            currentTime.setHours(parseInt(hours,10));
+                            currentTime.setMinutes(parseInt(minutes,10));
+                            field.onChange(new Date(currentTime));
+                        }}
+                        className="w-full mt-1"
+                        disabled={isLoading}
+                       />
+                    </div>
                   </PopoverContent>
                 </Popover>
               )}
             />
             {form.formState.errors.dataAquisicao && <p className="text-sm text-destructive">{form.formState.errors.dataAquisicao.message}</p>}
           </div>
-          <div className="space-y-1.5">
+           <div className="space-y-1.5">
             <Label htmlFor="observacoes">Observações (desta transação - Opcional)</Label>
             <Textarea id="observacoes" {...form.register('observacoes')} placeholder="Alguma observação sobre esta ação" disabled={isLoading} rows={3} />
             {form.formState.errors.observacoes && <p className="text-sm text-destructive">{form.formState.errors.observacoes.message}</p>}
@@ -397,7 +461,7 @@ export function AssetForm({
       
       {currentStep === 4 && (
         <>
-          {assetType === 'digital' && (
+          {watchedTipo === 'digital' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30 mb-4">
               <h4 className="text-md font-semibold text-primary">Detalhes da Transação Digital</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -415,30 +479,44 @@ export function AssetForm({
             </div>
           )}
 
-          {assetType === 'fisico' && (
+          {watchedTipo === 'fisico' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30 mb-4">
-              <h4 className="text-md font-semibold text-primary">Detalhes do Ativo Físico (para primeira aquisição)</h4>
+               <h4 className="text-md font-semibold text-primary">Detalhes do Ativo Físico {(!existingAssetToUpdate || existingAssetToUpdate.transactions?.length === 0) ? '(para primeira aquisição)' : ''}</h4>
               <div className="space-y-1.5">
                 <Label htmlFor="tipoImovelBemFisico">Tipo de Imóvel/Bem</Label>
-                <Input id="tipoImovelBemFisico" {...form.register('tipoImovelBemFisico')} placeholder="Ex: Casa, Apartamento, Carro, Jóia" disabled={isLoading || !!existingAssetToUpdate} />
+                <Input 
+                    id="tipoImovelBemFisico" 
+                    {...form.register('tipoImovelBemFisico')} 
+                    placeholder="Ex: Casa, Apartamento, Carro, Jóia" 
+                    disabled={isLoading || (!!existingAssetToUpdate && (existingAssetToUpdate.transactions?.length || 0) > 0)} 
+                />
                 {form.formState.errors.tipoImovelBemFisico && <p className="text-sm text-destructive">{form.formState.errors.tipoImovelBemFisico.message}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="enderecoLocalizacaoFisico">Endereço/Localização (Opcional para imóveis)</Label>
-                <Input id="enderecoLocalizacaoFisico" {...form.register('enderecoLocalizacaoFisico')} placeholder="Ex: Rua Exemplo, 123, Cidade - UF" disabled={isLoading || !!existingAssetToUpdate} />
+                <Input 
+                    id="enderecoLocalizacaoFisico" 
+                    {...form.register('enderecoLocalizacaoFisico')} 
+                    placeholder="Ex: Rua Exemplo, 123, Cidade - UF" 
+                    disabled={isLoading || (!!existingAssetToUpdate && (existingAssetToUpdate.transactions?.length || 0) > 0)} 
+                />
                 {form.formState.errors.enderecoLocalizacaoFisico && <p className="text-sm text-destructive">{form.formState.errors.enderecoLocalizacaoFisico.message}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="documentacaoFisicoFile">Documentação (Opcional)</Label>
-                <Input id="documentacaoFisicoFile" type="file" {...form.register('documentacaoFisicoFile')} disabled={isLoading || !!existingAssetToUpdate}
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                  accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                <Input 
+                    id="documentacaoFisicoFile" 
+                    type="file" {...form.register('documentacaoFisicoFile')} 
+                    disabled={isLoading || (!!existingAssetToUpdate && (existingAssetToUpdate.transactions?.length || 0) > 0)}
+                    className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                    accept={ACCEPTED_IMAGE_TYPES.join(',')}
                 />
                 <p className="text-xs text-muted-foreground">Max 5MB. Tipos: JPG, PNG, PDF.</p>
                 {form.formState.errors.documentacaoFisicoFile && <p className="text-sm text-destructive">{String(form.formState.errors.documentacaoFisicoFile.message)}</p>}
               </div>
             </div>
           )}
+          {/* This section is only for NEW assets, not when adding a transaction to an existing one */}
           {!existingAssetToUpdate && (
             <div className="space-y-4 p-4 border rounded-md bg-card">
                 <h4 className="text-md font-semibold text-primary flex items-center"><UserCheck size={18} className="mr-2"/> Designação e Liberação do Ativo (Opcional)</h4>
@@ -540,5 +618,3 @@ export function AssetForm({
     </form>
   );
 }
-
-    
