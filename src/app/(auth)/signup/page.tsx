@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink } from 'lucide-react';
@@ -118,8 +118,11 @@ export default function SignupPage() {
     setError(null);
 
     try {
+      // Simulação de chamada de API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      signup(email, name);
+      // Em uma aplicação real, você passaria mais dados aqui.
+      // Por enquanto, o AuthProvider só usa email e name.
+      signup(email, name); 
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
     } finally {
@@ -132,10 +135,9 @@ export default function SignupPage() {
       <Card className="w-full max-w-lg shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority />
+            <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority data-ai-hint="logo domedome" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardTitle className="text-3xl font-lato">Formulário de Cadastro</CardTitle>
-          <CardDescription className="font-lato">Siga as etapas para começar a planejar seu dia especial. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
+          <CardDescription className="font-lato text-lg">Siga as etapas para começar a planejar seu dia especial. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
