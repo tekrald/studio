@@ -18,7 +18,7 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="bg-[#A09DF3] shadow-md sticky top-0 z-50">
+    <header className="bg-card shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
@@ -35,12 +35,12 @@ export function Header() {
         {user && (
           <nav className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => {
-              const label = link.href === '/profile' ? (user?.displayName || link.label) : link.label;
+              const label = link.href === '/profile' && user?.displayName ? user.displayName : link.label;
               return (
                 <Button key={link.href} variant="ghost" asChild
                   className={cn(
-                    "text-sm text-white hover:bg-white/10 hover:text-white",
-                    pathname === link.href ? "bg-white/20 text-white" : ""
+                    "text-sm text-muted-foreground hover:text-primary",
+                    pathname === link.href ? "bg-primary/10 text-primary font-semibold" : ""
                   )}
                 >
                   <Link href={link.href}>
@@ -58,14 +58,14 @@ export function Header() {
             <div className="h-8 w-20 bg-muted/50 rounded-md animate-pulse"></div>
           ) : user ? (
             <>
-              <Button variant="outline" size="sm" onClick={logout} className="text-white border-white/70 hover:bg-white/10 hover:text-white hover:border-white">
+              <Button variant="ghost" size="sm" onClick={logout} className="text-muted-foreground hover:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" /> Sair
               </Button>
             </>
           ) : (
             <>
               {!pathname.includes('/login') && !pathname.includes('/signup') && (
-                <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10 hover:text-white">
+                <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-primary">
                   <Link href="/login">
                     <LogIn className="mr-2 h-4 w-4" /> Entrar
                   </Link>
@@ -84,14 +84,14 @@ export function Header() {
       </div>
       {/* Mobile Nav */}
       {user && (
-        <div className="md:hidden bg-[#A09DF3] border-t border-white/30 p-2 flex justify-around">
+        <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
            {navLinks.map((link) => {
-              const label = link.href === '/profile' ? (user?.displayName || link.label) : link.label;
+              const label = link.href === '/profile' && user?.displayName ? user.displayName : link.label;
               return (
                 <Button key={link.href} variant="ghost" size="sm" asChild
                   className={cn(
-                    "flex-col h-auto p-1 text-white hover:bg-white/10 hover:text-white",
-                    pathname === link.href ? "bg-white/20 text-white" : ""
+                    "flex-col h-auto p-1 text-muted-foreground hover:text-primary",
+                    pathname === link.href ? "bg-primary/10 text-primary" : ""
                   )}
                 >
                   <Link href={link.href}>

@@ -9,7 +9,7 @@ import { ArrowRight, Lock, Users, Briefcase, BarChart3, Network, GitFork, Shield
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background font-lato">
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
@@ -38,7 +38,7 @@ export default function HomePage() {
                   alt="Ilustração de um contrato de casamento domedome"
                   width={500}
                   height={400}
-                  className="" /* Removido rounded-lg shadow-2xl */
+                  className="" 
                   data-ai-hint="contract illustration"
                   priority
                 />
@@ -48,9 +48,9 @@ export default function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 lg:py-24 bg-indigo-700">
+        <section className="py-16 lg:py-24 bg-background">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-white">Construa Seu Legado Familiar</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-primary">Construa Seu Legado Familiar</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
               <FeatureCard
                 icon={<Network className="h-12 w-12 text-primary" />}
