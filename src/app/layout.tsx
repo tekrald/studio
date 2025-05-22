@@ -1,19 +1,15 @@
 
 import type { Metadata } from 'next';
-import { Pacifico, Lato } from 'next/font/google';
+import { Lato } from 'next/font/google'; // Removido Pacifico
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/components/auth-provider';
 
-const pacifico = Pacifico({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-pacifico',
-});
+// Removida a configuração da fonte Pacifico
 
 const lato = Lato({
   subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['300', '400', '700', '900'], // Adicionando mais pesos se necessário
   variable: '--font-lato',
 });
 
@@ -29,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${pacifico.variable} ${lato.variable} antialiased`}>
+      <body className={`${lato.variable} antialiased`}> {/* Removida pacifico.variable */}
         <AuthProvider>
           {children}
           <Toaster />

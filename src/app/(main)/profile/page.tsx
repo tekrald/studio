@@ -19,7 +19,6 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [avatarText, setAvatarText] = useState('');
   
-  // Estados para a holding
   const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
   const [companyType, setCompanyType] = useState('');
   const [jurisdiction, setJurisdiction] = useState('');
@@ -59,7 +58,7 @@ export default function ProfilePage() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula chamada de API
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
       updateProfile({
         displayName,
         holdingType,
@@ -91,7 +90,6 @@ export default function ProfilePage() {
   }
   
   if (!user) {
-    // Idealmente, o layout (main)/layout.tsx já redirecionaria, mas como fallback:
     return (
        <div className="flex flex-col min-h-[calc(100vh-var(--header-height,100px)-2rem)] items-center justify-center">
         <p>Usuário não encontrado. Faça login para acessar seu perfil.</p>
@@ -105,7 +103,7 @@ export default function ProfilePage() {
         <Card className="shadow-xl mb-8">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl font-pacifico">Nosso Perfil</CardTitle>
+            <CardTitle className="text-3xl">Nosso Perfil</CardTitle> {/* Removido font-pacifico */}
             <CardDescription>
               Gerencie suas informações compartilhadas do casal aqui.
             </CardDescription>
@@ -148,7 +146,7 @@ export default function ProfilePage() {
 
         <Card className="shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl font-pacifico flex items-center"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle>
+            <CardTitle className="text-2xl flex items-center"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle> {/* Removido font-pacifico */}
             <CardDescription>
               Indique como vocês pretendem ou já formalizaram a holding para seus ativos.
             </CardDescription>
@@ -175,7 +173,7 @@ export default function ProfilePage() {
             {holdingType === 'digital' && (
               <Card className="p-4 bg-muted/30 space-y-3">
                 <p className="text-sm text-foreground">
-                  Para holdings com maximalismo digital, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
+                  Para holdings com maximalismo, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
                 </p>
                 <Button 
                   type="button" 

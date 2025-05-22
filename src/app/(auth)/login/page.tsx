@@ -42,7 +42,7 @@ export default function LoginPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
              <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="logo domedome" className="rounded-full"/>
           </Link>
-          <CardTitle className="text-3xl font-pacifico">Bem-vindo(a) de Volta!</CardTitle>
+          <CardTitle className="text-3xl">Bem-vindo(a) de Volta!</CardTitle> {/* Removido font-pacifico */}
           <CardDescription>Faça login na sua conta domedome para continuar planejando seu dia especial.</CardDescription>
         </CardHeader>
         <CardContent>

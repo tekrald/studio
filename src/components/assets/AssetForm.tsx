@@ -144,8 +144,8 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     } else if (step === 3) { 
       fieldsToValidate = ['quemComprou'];
       if (form.getValues('quemComprou') === 'Ambos') {
-        fieldsToValidate.push('contribuicaoParceiro1'); // Opcional, mas se preenchido, precisa ser válido
-        fieldsToValidate.push('contribuicaoParceiro2'); // Opcional, mas se preenchido, precisa ser válido
+        fieldsToValidate.push('contribuicaoParceiro1'); 
+        fieldsToValidate.push('contribuicaoParceiro2'); 
       }
     } else if (step === 4) { 
       if (assetType === 'digital') {
@@ -180,8 +180,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         return false;
     }
      if (step === 3) {
-        // 'quemComprou' é opcional por padrão ("Não especificado").
-        // Se 'Ambos' for selecionado, as contribuições são opcionais, Zod valida o tipo se preenchido.
+        // Validação adicional pode ser necessária para contribuições se 'Ambos'
     }
      if (step === 4) {
         if (assetType === 'digital' && (!form.getValues('tipoAtivoDigital') || form.getValues('quantidadeDigital') === undefined || form.getValues('valorPagoEpocaDigital') === undefined) ) {
@@ -451,5 +450,3 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
   );
 }
 
-
-    

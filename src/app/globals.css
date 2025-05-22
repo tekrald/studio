@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --font-pacifico: 'Pacifico', cursive;
-    --font-lato: 'Lato', sans-serif;
+    --font-lato: 'Lato', sans-serif; /* Mantido --font-lato */
+    /* Removido --font-pacifico */
 
     --background: 60 56% 91%; /* Light Beige #F5F5DC */
     --foreground: 40 50% 15%; /* Dark Warm Brown */
@@ -112,9 +112,10 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-lato);
+    font-family: var(--font-lato); /* Lato como fonte principal para o body */
   }
-  h1, h2, h3, h4, h5, h6 {
+  /* Removida a regra para h1-h6 usar Pacifico. Eles herdarão Lato do body. */
+  /* h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-pacifico);
-  }
+  } */
 }

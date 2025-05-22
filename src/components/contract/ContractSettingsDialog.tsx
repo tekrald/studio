@@ -43,10 +43,6 @@ const suggestedClausesTemplates = {
     { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de R$ [VALOR]) deverão ser discutidas e aprovadas por todas as partes envolvidas no contrato." },
     { id: 'sug_rc_3', text: "Viagens individuais: [Definir regras, ex: permitidas com comunicação prévia de X dias/semanas]." },
   ],
-  // Removido: personalizado
-  // personalizado: [
-  //    { id: 'sug_cust_1', text: "Defina aqui seu acordo personalizado sobre [TEMA ESPECÍFICO]: [Descrever o acordo aqui]." }
-  // ]
 };
 
 export function ContractSettingsDialog({
@@ -84,7 +80,7 @@ export function ContractSettingsDialog({
   
   const handleAddSuggestion = (text: string) => {
     setNewClauseText(prev => prev ? `${prev}\n${text}` : text);
-    setEditingClauseId(null); // Se estava editando, e adiciona sugestão, sai do modo de edição
+    setEditingClauseId(null); 
   };
 
   useEffect(() => {
@@ -98,7 +94,7 @@ export function ContractSettingsDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-pacifico text-primary">Configurações do Contrato da União</DialogTitle>
+          <DialogTitle className="text-2xl text-primary">Configurações do Contrato da União</DialogTitle> {/* Removido font-pacifico */}
           <DialogDescription>
             Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Estas cláusulas são flexíveis e podem ser adaptadas a qualquer configuração familiar e crença.
           </DialogDescription>
@@ -179,16 +175,6 @@ export function ContractSettingsDialog({
                         </Button>
                     ))}
                   </div>
-                  {/* Removido: Seção "Acordo Personalizado"
-                  <div>
-                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Edit3 size={18} className="mr-2"/>Acordo Personalizado</h4>
-                     {suggestedClausesTemplates.personalizado.map(sug => (
-                        <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5" onClick={() => handleAddSuggestion(sug.text)}>
-                         {sug.text}
-                        </Button>
-                    ))}
-                  </div>
-                  */}
                 </div>
               </ScrollArea>
             </div>
@@ -206,4 +192,3 @@ export function ContractSettingsDialog({
     </Dialog>
   );
 }
-

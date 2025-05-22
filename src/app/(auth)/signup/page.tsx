@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink } from 'lucide-react';
 
-const TOTAL_STEPS = 5; // Aumentado para 5 etapas
+const TOTAL_STEPS = 5; 
 
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -28,7 +28,6 @@ export default function SignupPage() {
   const [photo2, setPhoto2] = useState<File | null>(null);
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
 
-  // Novos estados para a etapa de formalização da holding
   const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
   const [companyType, setCompanyType] = useState('');
   const [jurisdiction, setJurisdiction] = useState('');
@@ -80,12 +79,12 @@ export default function SignupPage() {
       }
     } else if (currentStep === 3) {
       // Upload de fotos é opcional
-    } else if (currentStep === 4) { // Nova etapa de Formalização da Holding
+    } else if (currentStep === 4) { 
       if (!holdingType) {
         setError("Por favor, selecione como vocês pretendem estruturar a holding.");
         return false;
       }
-    } else if (currentStep === 5) { // Antiga etapa 4 (Termos)
+    } else if (currentStep === 5) { 
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos e Condições para continuar.');
         return false;
@@ -120,7 +119,6 @@ export default function SignupPage() {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      // Nota: holdingType, companyType, etc., não são enviados para o mock signup atual.
       signup(email, name);
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
@@ -136,7 +134,7 @@ export default function SignupPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
             <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority />
           </Link>
-          <CardTitle className="text-3xl font-pacifico">Crie Sua Conta domedome</CardTitle>
+          <CardTitle className="text-3xl">Crie Sua Conta domedome</CardTitle> {/* Removido font-pacifico */}
           <CardDescription>Siga as etapas para começar a planejar seu dia especial. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
@@ -237,7 +235,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 4 && ( // Nova etapa de Formalização da Holding
+            {currentStep === 4 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center"><Briefcase size={20} className="mr-2 text-primary" />Formalização da Holding Familiar</Label>
                 <CardDescription>Como vocês pretendem estruturar a holding para seus ativos?</CardDescription>
@@ -256,7 +254,7 @@ export default function SignupPage() {
                 {holdingType === 'digital' && (
                   <Card className="p-4 bg-muted/30 space-y-3">
                     <p className="text-sm text-foreground">
-                      Para holdings com maximalismo digital, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
+                      Para holdings com maximalismo, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
                     </p>
                     <Button 
                       type="button" 
@@ -316,7 +314,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 5 && ( // Antiga etapa 4 (Termos)
+            {currentStep === 5 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold">Termos e Condições do Aplicativo</Label>
                 <div className="p-4 border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm">

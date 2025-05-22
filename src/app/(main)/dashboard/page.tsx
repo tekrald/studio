@@ -199,7 +199,7 @@ export default function AssetManagementDashboard() {
                 <Network className="h-10 w-10 text-white" />
               </div>
               <div>
-                <CardTitle className="text-4xl text-white font-pacifico">Holding Familiar</CardTitle>
+                <CardTitle className="text-4xl text-white">Holding Familiar</CardTitle> {/* Removido font-pacifico */}
                 <CardDescription className="text-white/90 text-lg mt-1">
                   Visualize e gerencie os membros e ativos da sua família.
                 </CardDescription>
@@ -209,14 +209,14 @@ export default function AssetManagementDashboard() {
         </Card>
 
         <div style={{ '--actions-bar-height': '76px' } as React.CSSProperties} className="mb-4 p-4 rounded-lg shadow-md bg-card flex flex-wrap items-center gap-3">
-            <h3 className="text-xl font-pacifico text-primary mr-auto md:mr-4">Ações do Canvas:</h3>
+            <h3 className="text-xl text-primary mr-auto md:mr-4">Ações do Canvas:</h3> {/* Removido font-pacifico */}
              <p className="text-sm text-muted-foreground">Use o <Plus size={16} className="inline text-primary"/> no nó da Holding para adicionar itens.</p>
         </div>
 
          <Dialog open={isAssetModalOpen} onOpenChange={setIsAssetModalOpen}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-pacifico text-primary">Adicionar Novo Ativo</DialogTitle>
+                <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo</DialogTitle> {/* Removido font-pacifico */}
                 <DialogDescription>Preencha os detalhes do seu ativo.</DialogDescription>
               </DialogHeader>
               <AssetForm onSubmit={handleAddAssetSubmit} isLoading={isSubmittingAsset} onClose={() => setIsAssetModalOpen(false)} />
@@ -234,7 +234,7 @@ export default function AssetManagementDashboard() {
 
         <Card className="flex-grow shadow-lg relative overflow-hidden">
             <CardHeader className="absolute top-2 left-3 z-10 pointer-events-none">
-              <CardTitle className="text-lg font-pacifico text-muted-foreground">Canvas de Gestão</CardTitle>
+              <CardTitle className="text-lg text-muted-foreground">Canvas de Gestão</CardTitle> {/* Removido font-pacifico */}
             </CardHeader>
             <div className="w-full h-full bg-muted/30 rounded-md border-2 border-dashed border-gray-300">
               <ReactFlow

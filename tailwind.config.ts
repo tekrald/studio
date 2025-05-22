@@ -10,7 +10,7 @@ export default {
   theme: {
   	extend: {
       fontFamily: {
-        pacifico: ['var(--font-pacifico)'],
+        // pacifico: ['var(--font-pacifico)'], // Removido pacifico
         lato: ['var(--font-lato)'],
       },
   		colors: {
