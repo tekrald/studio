@@ -43,9 +43,10 @@ const suggestedClausesTemplates = {
     { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de R$ [VALOR]) deverão ser discutidas e aprovadas por todas as partes envolvidas no contrato." },
     { id: 'sug_rc_3', text: "Viagens individuais: [Definir regras, ex: permitidas com comunicação prévia de X dias/semanas]." },
   ],
-  personalizado: [
-     { id: 'sug_cust_1', text: "Defina aqui seu acordo personalizado sobre [TEMA ESPECÍFICO]: [Descrever o acordo aqui]." }
-  ]
+  // Removido: personalizado
+  // personalizado: [
+  //    { id: 'sug_cust_1', text: "Defina aqui seu acordo personalizado sobre [TEMA ESPECÍFICO]: [Descrever o acordo aqui]." }
+  // ]
 };
 
 export function ContractSettingsDialog({
@@ -178,6 +179,7 @@ export function ContractSettingsDialog({
                         </Button>
                     ))}
                   </div>
+                  {/* Removido: Seção "Acordo Personalizado"
                   <div>
                     <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Edit3 size={18} className="mr-2"/>Acordo Personalizado</h4>
                      {suggestedClausesTemplates.personalizado.map(sug => (
@@ -186,6 +188,7 @@ export function ContractSettingsDialog({
                         </Button>
                     ))}
                   </div>
+                  */}
                 </div>
               </ScrollArea>
             </div>
