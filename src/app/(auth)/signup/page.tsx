@@ -131,11 +131,11 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-orange-50 to-yellow-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-gray-100 to-[#f0f0f0] p-4">
       <Card className="w-full max-w-lg shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority data-ai-hint="logo domedome" style={{ filter: 'brightness(0) invert(1)' }}/>
+            <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority data-ai-hint="logo domedome" />
           </Link>
           <CardDescription className="font-lato text-lg">Siga as etapas para começar a planejar seu dia especial. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
@@ -382,3 +382,6 @@ export default function SignupPage() {
 
     
 
+
+
+    
