@@ -9,11 +9,11 @@ import { ArrowRight, Lock, Users, Briefcase, BarChart3, Network, GitFork, Shield
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background font-lato">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-32 bg-gradient-to-br from-pink-100 via-gray-100 to-gray-200">
+        <section className="relative py-20 md:py-32 bg-gradient-to-br from-pink-100 via-gray-100 to-[#f0f0f0]">
           <div className="absolute inset-0 opacity-30">
              {/* Decorative background image or pattern can go here */}
           </div>
@@ -142,3 +142,4 @@ function FeatureCard({ icon, title, description, titleColor = "text-card-foregro
     </div>
   );
 }
+
