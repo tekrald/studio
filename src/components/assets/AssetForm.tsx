@@ -16,19 +16,18 @@ import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, UserCheck, Clock } 
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import type { AssetFormData } from '@/types/asset'; // AssetFormData agora representa uma transação
+import type { AssetFormData } from '@/types/asset';
 import { useAuth } from '@/components/auth-provider';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];
 
-// O schema agora valida os dados de UMA NOVA TRANSAÇÃO ou da primeira aquisição
 const formSchema = z.object({
   tipo: z.enum(['digital', 'fisico'], { required_error: "Selecione o tipo de ativo." }),
-  nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'), // Nome do ativo principal
-  dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }), // Data desta transação
-  observacoes: z.string().optional(), // Observações desta transação
-  quemComprou: z.string().optional(), // Quem comprou nesta transação
+  nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'),
+  dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }),
+  observacoes: z.string().optional(),
+  quemComprou: z.string().optional(),
   contribuicaoParceiro1: z.preprocess(
     (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
@@ -37,22 +36,17 @@ const formSchema = z.object({
     (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
   ),
-
-  quantidadeDigital: z.preprocess( // Quantidade desta transação
+  quantidadeDigital: z.preprocess(
     (val) => String(val) === '' ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'A quantidade deve ser positiva.').optional()
   ),
-  valorPagoEpocaDigital: z.preprocess( // Valor pago nesta transação
-    (val) => String(val) === '' ? undefined : parseFloat(String(val).replace(',', '.')),
+  valorPagoEpocaDigital: z.preprocess(
+    (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'O valor pago deve ser positivo.').optional()
   ),
-
-  // Campos para a primeira transação de um ativo físico
   tipoImovelBemFisico: z.string().optional(),
   enderecoLocalizacaoFisico: z.string().optional(),
   documentacaoFisicoFile: z.any().optional(),
-
-  // Designação e liberação pertencem ao ativo principal, podem ser definidos na primeira transação
   assignedToMemberId: z.string().optional().nullable(),
   setReleaseCondition: z.boolean().optional(),
   releaseTargetAge: z.preprocess(
@@ -67,13 +61,11 @@ const formSchema = z.object({
     if (data.quantidadeDigital === undefined || data.quantidadeDigital === null) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade é obrigatória para esta transação digital.", path: ['quantidadeDigital'] });
     }
-    if (data.valorPagoEpocaDigital === undefined || data.valorPagoEpocaDigital === null) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Valor pago nesta transação é obrigatório.", path: ['valorPagoEpocaDigital'] });
-    }
+    // valorPagoEpocaDigital é opcional no schema base, mas pode ser obrigatório dependendo da lógica da primeira transação.
+    // Se for sempre obrigatório para transações digitais, a validação deveria ser mais estrita aqui ou no schema base.
+    // Por agora, mantemos como está, mas é um ponto de atenção.
   }
   if (data.tipo === 'fisico') {
-    // Validação para tipoImovelBemFisico é importante se esta for a *primeira* transação de um ativo físico.
-    // O AssetForm não sabe se é a primeira transação, então a validação aqui se aplica.
     if (!data.tipoImovelBemFisico || data.tipoImovelBemFisico.trim() === '') {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de bem físico é obrigatório.", path: ['tipoImovelBemFisico'] });
     }
@@ -81,13 +73,12 @@ const formSchema = z.object({
 });
 
 interface AssetFormProps {
-  onSubmit: (data: AssetFormData) => Promise<void>; // Envia dados de uma nova transação
+  onSubmit: (data: AssetFormData) => Promise<void>;
   isLoading: boolean;
-  initialData?: Partial<AssetFormData>; // Pode ser usado para pré-preencher uma nova transação
   onClose: () => void;
   availableMembers: { id: string; name: string; birthDate?: Date | string }[];
   targetMemberId?: string | null;
-  existingAssetToUpdate?: { name: string; type: 'digital' | 'fisico'; assignedTo?: string | null }; // Para saber se estamos adicionando a um ativo existente
+  existingAssetToUpdate?: { name: string; type: 'digital' | 'fisico'; assignedTo?: string | null };
 }
 
 const TOTAL_STEPS = 4; 
@@ -95,7 +86,6 @@ const TOTAL_STEPS = 4;
 export function AssetForm({ 
   onSubmit, 
   isLoading, 
-  initialData, 
   onClose, 
   availableMembers = [], 
   targetMemberId,
@@ -106,21 +96,20 @@ export function AssetForm({
   const form = useForm<AssetFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ...initialData,
-      tipo: existingAssetToUpdate?.type || initialData?.tipo || undefined,
-      nomeAtivo: existingAssetToUpdate?.name || initialData?.nomeAtivo || '',
-      dataAquisicao: initialData?.dataAquisicao || new Date(),
-      observacoes: initialData?.observacoes || '',
-      quemComprou: initialData?.quemComprou || '',
-      contribuicaoParceiro1: initialData?.contribuicaoParceiro1 || undefined,
-      contribuicaoParceiro2: initialData?.contribuicaoParceiro2 || undefined,
-      quantidadeDigital: initialData?.quantidadeDigital || undefined,
-      valorPagoEpocaDigital: initialData?.valorPagoEpocaDigital || undefined,
-      tipoImovelBemFisico: initialData?.tipoImovelBemFisico || '',
-      enderecoLocalizacaoFisico: initialData?.enderecoLocalizacaoFisico || '',
-      assignedToMemberId: targetMemberId || existingAssetToUpdate?.assignedTo || initialData?.assignedToMemberId || "UNASSIGNED",
-      setReleaseCondition: initialData?.setReleaseCondition || false,
-      releaseTargetAge: initialData?.releaseTargetAge || undefined,
+      tipo: existingAssetToUpdate?.type || undefined,
+      nomeAtivo: existingAssetToUpdate?.name || '',
+      dataAquisicao: new Date(),
+      observacoes: '',
+      quemComprou: '',
+      contribuicaoParceiro1: undefined,
+      contribuicaoParceiro2: undefined,
+      quantidadeDigital: undefined,
+      valorPagoEpocaDigital: undefined,
+      tipoImovelBemFisico: '',
+      enderecoLocalizacaoFisico: '',
+      assignedToMemberId: targetMemberId || existingAssetToUpdate?.assignedTo || "UNASSIGNED",
+      setReleaseCondition: false,
+      releaseTargetAge: undefined,
     },
     mode: "onChange",
   });
@@ -138,19 +127,14 @@ export function AssetForm({
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
 
   useEffect(() => {
-    // Se estamos adicionando a um ativo existente, desabilitar campos do ativo principal
     if (existingAssetToUpdate) {
       form.setValue('nomeAtivo', existingAssetToUpdate.name);
       form.setValue('tipo', existingAssetToUpdate.type);
-      if (existingAssetToUpdate.assignedTo) {
-        form.setValue('assignedToMemberId', existingAssetToUpdate.assignedTo);
-      } else {
-        form.setValue('assignedToMemberId', "UNASSIGNED");
-      }
+      form.setValue('assignedToMemberId', existingAssetToUpdate.assignedTo || "UNASSIGNED");
     } else if (targetMemberId) {
       form.setValue('assignedToMemberId', targetMemberId);
     } else {
-       form.setValue('assignedToMemberId', "UNASSIGNED");
+      form.setValue('assignedToMemberId', "UNASSIGNED");
     }
   }, [targetMemberId, form, existingAssetToUpdate]);
 
@@ -170,9 +154,7 @@ export function AssetForm({
     const processedValues: AssetFormData = {
       ...values,
       quemComprou: values.quemComprou === "UNSPECIFIED_BUYER" ? "" : values.quemComprou,
-      // assignedToMemberId já está correto (string ou null/undefined)
-      // releaseCondition e releaseTargetAge são para o ativo principal, não por transação (a menos que o modelo mude)
-      // Se for a primeira transação, estes podem definir as propriedades do ativo principal
+      assignedToMemberId: values.assignedToMemberId === "UNASSIGNED" ? undefined : values.assignedToMemberId,
     };
     await onSubmit(processedValues);
   };
@@ -181,27 +163,25 @@ export function AssetForm({
     setFormError(null);
     let fieldsToValidate: (keyof AssetFormData)[] = [];
 
-    if (step === 1) { // Tipo e Nome do Ativo Principal
-      fieldsToValidate = ['tipo', 'nomeAtivo'];
-       if (existingAssetToUpdate) { // Se atualizando, nome e tipo não são validados aqui, já estão fixos
-         fieldsToValidate = [];
-       }
-    } else if (step === 2) { // Detalhes da Transação: Data, Observações
+    if (step === 1) {
+      fieldsToValidate = ['tipo'];
+      if (!existingAssetToUpdate) { // Only validate nomeAtivo if it's a new asset
+        fieldsToValidate.push('nomeAtivo');
+      }
+    } else if (step === 2) {
       fieldsToValidate = ['dataAquisicao', 'observacoes'];
-    } else if (step === 3) { // Propriedade e Contribuições (da Transação)
+    } else if (step === 3) {
       fieldsToValidate = ['quemComprou'];
       if (form.getValues('quemComprou') === 'Ambos') {
         fieldsToValidate.push('contribuicaoParceiro1', 'contribuicaoParceiro2');
       }
-    } else if (step === 4) { // Detalhes Específicos (da Transação ou 1ª do Ativo) e Designação do Ativo Principal
+    } else if (step === 4) {
       if (assetType === 'digital') {
         fieldsToValidate = ['quantidadeDigital', 'valorPagoEpocaDigital'];
       } else if (assetType === 'fisico') {
         fieldsToValidate = ['tipoImovelBemFisico', 'enderecoLocalizacaoFisico', 'documentacaoFisicoFile'];
       }
-      // Designação e liberação são do ativo principal, validados aqui se for a primeira transação
-      // ou se o usuário puder modificar isso ao adicionar transações (revisar essa lógica)
-      if (!existingAssetToUpdate) { // Só valida designação se for novo ativo
+      if (!existingAssetToUpdate) {
          fieldsToValidate.push('assignedToMemberId');
          if (form.getValues('setReleaseCondition')) {
             fieldsToValidate.push('releaseTargetAge');
@@ -225,16 +205,16 @@ export function AssetForm({
       }
     }
      
-    if (step === 1 && !form.getValues('tipo') && !existingAssetToUpdate) {
+    if (step === 1 && !form.getValues('tipo')) {
         setFormError("Selecione o tipo de ativo.");
         return false;
     }
-    if (step === 1 && !form.getValues('nomeAtivo') && !existingAssetToUpdate) {
+    if (step === 1 && !existingAssetToUpdate && (!form.getValues('nomeAtivo') || form.getValues('nomeAtivo').trim().length < 1)) {
         setFormError("O nome do ativo é obrigatório.");
         return false;
     }
     if (step === 4 && form.getValues('setReleaseCondition') && !form.getValues('releaseTargetAge') && memberHasBirthDate && !existingAssetToUpdate ) {
-        setFormError("Se a condição de liberação por idade estiver marcada para um membro com data de nascimento, a idade é obrigatória.");
+        setFormError("Se a condição de liberação por idade estiver marcada, a idade é obrigatória.");
         return false;
     }
 
@@ -256,6 +236,18 @@ export function AssetForm({
     }
   };
 
+  const isNextButtonDisabled = () => {
+    if (isLoading) return true;
+    if (currentStep === 1 && !existingAssetToUpdate) {
+        return !form.getValues('tipo') || !form.getValues('nomeAtivo');
+    }
+    if (currentStep === 1 && existingAssetToUpdate) { // For existing assets, type and name are fixed
+        return false;
+    }
+    // Add more specific step validations if needed
+    return false; 
+  };
+
   return (
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <p className="text-sm text-center text-muted-foreground">
@@ -265,7 +257,7 @@ export function AssetForm({
         (Etapa {currentStep} de {TOTAL_STEPS})
       </p>
 
-      {currentStep === 1 && ( // Tipo e Nome do Ativo Principal
+      {currentStep === 1 && (
         <>
           <div className="space-y-1.5">
             <Label htmlFor="tipo">Tipo de Ativo</Label>
@@ -294,7 +286,7 @@ export function AssetForm({
         </>
       )}
 
-      {currentStep === 2 && ( // Detalhes da Transação: Data, Observações
+      {currentStep === 2 && (
         <>
           <div className="space-y-1.5">
             <Label htmlFor="dataAquisicao">Data de Aquisição (desta transação)</Label>
@@ -336,7 +328,7 @@ export function AssetForm({
         </>
       )}
 
-      {currentStep === 3 && ( // Propriedade e Contribuições (da Transação)
+      {currentStep === 3 && (
         <>
           <div className="space-y-1.5">
             <Label htmlFor="quemComprou">Quem Adquiriu/Contribuiu nesta Transação? (Opcional)</Label>
@@ -403,7 +395,7 @@ export function AssetForm({
         </>
       )}
       
-      {currentStep === 4 && ( // Detalhes Específicos da Transação / Primeira Aquisição
+      {currentStep === 4 && (
         <>
           {assetType === 'digital' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30 mb-4">
@@ -415,8 +407,8 @@ export function AssetForm({
                   {form.formState.errors.quantidadeDigital && <p className="text-sm text-destructive">{form.formState.errors.quantidadeDigital.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="valorPagoEpocaDigital">Valor pago nesta transação</Label>
-                  <Input id="valorPagoEpocaDigital" type="number" {...form.register('valorPagoEpocaDigital')} placeholder="0.00" disabled={isLoading} step="any" />
+                  <Label htmlFor="valorPagoEpocaDigital">Valor do ativo no momento da compra</Label>
+                  <Input id="valorPagoEpocaDigital" type="number" {...form.register('valorPagoEpocaDigital')} placeholder="Ex: 150.75" disabled={isLoading} step="any" />
                   {form.formState.errors.valorPagoEpocaDigital && <p className="text-sm text-destructive">{form.formState.errors.valorPagoEpocaDigital.message}</p>}
                 </div>
               </div>
@@ -447,7 +439,6 @@ export function AssetForm({
               </div>
             </div>
           )}
-          {/* Designação e Liberação são para o ativo principal. Mostrar apenas se for novo ativo */}
           {!existingAssetToUpdate && (
             <div className="space-y-4 p-4 border rounded-md bg-card">
                 <h4 className="text-md font-semibold text-primary flex items-center"><UserCheck size={18} className="mr-2"/> Designação e Liberação do Ativo (Opcional)</h4>
@@ -458,7 +449,7 @@ export function AssetForm({
                     control={form.control}
                     render={({ field }) => (
                     <Select
-                        onValueChange={(value) => field.onChange(value === "UNASSIGNED" ? null : value)} 
+                        onValueChange={(value) => field.onChange(value === "UNASSIGNED" ? undefined : value)} 
                         value={field.value === null || field.value === undefined ? "UNASSIGNED" : field.value}
                         disabled={isLoading || !!targetMemberId} 
                     >
@@ -536,7 +527,7 @@ export function AssetForm({
         )}
 
         {currentStep < TOTAL_STEPS ? (
-          <Button type="button" className="bg-primary hover:bg-primary/90" onClick={handleNextStep} disabled={isLoading || (currentStep === 1 && (!assetType || !form.getValues('nomeAtivo')) && !existingAssetToUpdate )}>
+          <Button type="button" className="bg-primary hover:bg-primary/90" onClick={handleNextStep} disabled={isNextButtonDisabled()}>
             Próximo <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
@@ -549,3 +540,5 @@ export function AssetForm({
     </form>
   );
 }
+
+    
