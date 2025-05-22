@@ -32,13 +32,13 @@ export default function HomePage() {
                   </Link>
                 </Button>
               </div>
-              <div className="flex justify-center items-center">
-                <Image 
-                  src="/hero-contract-illustration.png" 
-                  alt="Ilustração de um contrato de casamento domedome" 
-                  width={500} 
+              <div className="flex justify-center items-center bg-transparent"> {/* Adicionado bg-transparent */}
+                <Image
+                  src="/hero-contract-illustration.png"
+                  alt="Ilustração de um contrato de casamento domedome"
+                  width={500}
                   height={400}
-                  className="rounded-lg shadow-2xl object-cover"
+                  className="rounded-lg shadow-2xl" /* Removido object-cover para teste */
                   data-ai-hint="contract illustration"
                   priority
                 />
