@@ -32,7 +32,7 @@ export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
   
   const [religion, setReligion] = useState('');
-  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | 'other' | ''>('');
+  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -168,7 +168,7 @@ export default function SignupPage() {
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2"><Users size={20} className="mr-2 text-primary" />Estrutura da Relação</Label>
                     <RadioGroup 
                         value={relationshipStructure} 
-                        onValueChange={(value: 'monogamous' | 'polygamous' | 'other' | '') => setRelationshipStructure(value)} 
+                        onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous' | '')}
                         className="space-y-2"
                         disabled={isLoading}
                     >
@@ -179,10 +179,6 @@ export default function SignupPage() {
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="polygamous" id="rel-polygamous" />
                             <Label htmlFor="rel-polygamous" className="font-normal">Poligâmica</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="other" id="rel-other" />
-                            <Label htmlFor="rel-other" className="font-normal">Outra</Label>
                         </div>
                     </RadioGroup>
                 </div>
@@ -416,3 +412,5 @@ export default function SignupPage() {
     </div>
   );
 }
+
+    

@@ -37,7 +37,7 @@ export default function ProfilePage() {
   const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
   const [acknowledgedPhysicalInfoProfile, setAcknowledgedPhysicalInfoProfile] = useState(false);
 
-  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | 'other' | ''>('');
+  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
   const [religion, setReligion] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -185,7 +185,7 @@ export default function ProfilePage() {
                 <Label htmlFor="relationshipStructure" className="flex items-center"><Users size={18} className="mr-2 text-primary" />Estrutura da Relação</Label>
                 <RadioGroup 
                     value={relationshipStructure} 
-                    onValueChange={(value: 'monogamous' | 'polygamous' | 'other' | '') => setRelationshipStructure(value)} 
+                    onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous' | '')}
                     className="space-y-2 pt-1"
                     disabled={isLoading}
                 >
@@ -196,14 +196,6 @@ export default function ProfilePage() {
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="polygamous" id="profile-rel-polygamous" />
                         <Label htmlFor="profile-rel-polygamous" className="font-normal">Poligâmica</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="other" id="profile-rel-other" />
-                        <Label htmlFor="profile-rel-other" className="font-normal">Outra</Label>
-                    </div>
-                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="" id="profile-rel-undefined" />
-                        <Label htmlFor="profile-rel-undefined" className="font-normal">Não especificado</Label>
                     </div>
                 </RadioGroup>
             </div>
@@ -316,3 +308,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

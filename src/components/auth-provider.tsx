@@ -11,7 +11,7 @@ interface User {
   // Campos da Holding
   holdingType?: 'digital' | 'physical' | '';
   // Campos da União
-  relationshipStructure?: 'monogamous' | 'polygamous' | 'other' | '';
+  relationshipStructure?: 'monogamous' | 'polygamous' | '';
   religion?: string;
   // Campos da empresa (se holding física) - estes não são mais coletados nos formulários principais
   // companyType?: string;
@@ -22,7 +22,7 @@ interface User {
 interface UpdateProfileData {
   displayName?: string;
   holdingType?: 'digital' | 'physical' | '';
-  relationshipStructure?: 'monogamous' | 'polygamous' | 'other' | '';
+  relationshipStructure?: 'monogamous' | 'polygamous' | '';
   religion?: string;
 }
 
@@ -33,7 +33,7 @@ interface AuthContextType {
     email: string,
     name: string,
     holdingTypeParam?: 'digital' | 'physical' | '',
-    relationshipStructureParam?: 'monogamous' | 'polygamous' | 'other' | '',
+    relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
     religionParam?: string
   ) => void;
   logout: () => void;
@@ -45,7 +45,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Manter loading como true inicialmente
   const router = useRouter();
   const pathname = usePathname();
 
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     email: string,
     name: string,
     holdingTypeParam?: 'digital' | 'physical' | '',
-    relationshipStructureParam?: 'monogamous' | 'polygamous' | 'other' | '',
+    relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
     religionParam?: string
   ) => {
     const mockUser: User = {
@@ -174,3 +174,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+    
