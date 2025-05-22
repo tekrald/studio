@@ -4,8 +4,6 @@
 
 @layer base {
   :root {
-    /* Removida a definição de --font-lato daqui */
-
     --background: 60 56% 91%; /* Light Beige #F5F5DC */
     --foreground: 40 50% 15%; /* Dark Warm Brown */
 
@@ -24,8 +22,8 @@
     --muted: 40 60% 88%; /* Muted beige/brown */
     --muted-foreground: 40 50% 35%; /* Lighter brown for muted text */
 
-    --accent: 51 100% 50%; /* Gold #FFD700 */
-    --accent-foreground: 40 100% 20%; /* Dark rich brown for text on gold */
+    --accent: 265 65% 60%; /* New Purple */
+    --accent-foreground: 0 0% 100%; /* White (was Dark rich brown) */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -46,8 +44,8 @@
     --sidebar-foreground: 40 50% 15%;
     --sidebar-primary: 16 100% 60%; /* Coral for sidebar primary elements */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 51 100% 55%; /* Gold for sidebar accents */
-    --sidebar-accent-foreground: 40 100% 20%;
+    --sidebar-accent: 265 65% 65%; /* New Purple for sidebar */
+    --sidebar-accent-foreground: 0 0% 100%; /* White */
     --sidebar-border: 60 40% 78%;
     --sidebar-ring: 16 100% 55%;
 
@@ -75,8 +73,8 @@
     --muted: 40 10% 20%;
     --muted-foreground: 60 30% 65%;
 
-    --accent: 51 100% 45%; /* Slightly desaturated Gold for dark mode */
-    --accent-foreground: 0 0% 100%;
+    --accent: 265 65% 70%; /* New Lighter Purple for dark mode */
+    --accent-foreground: 0 0% 100%; /* White */
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -95,8 +93,8 @@
     --sidebar-foreground: 60 30% 85%;
     --sidebar-primary: 16 100% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 51 100% 45%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-accent: 265 65% 70%; /* New Lighter Purple for dark mode sidebar */
+    --sidebar-accent-foreground: 0 0% 100%; /* White */
     --sidebar-border: 40 10% 20%;
     --sidebar-ring: 16 100% 50%;
     
@@ -110,7 +108,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans; /* Garante que Tailwind aplique sua font-sans padrão (que agora é Lato) */
-    /* font-family: 'Lato', sans-serif; */ /* Esta linha pode ser redundante se @apply font-sans funcionar bem */
+    @apply bg-background text-foreground font-sans;
+    /* font-family: 'Lato', sans-serif; // This is handled by tailwind.config.ts if 'Lato' is in the sans array */
   }
 }
