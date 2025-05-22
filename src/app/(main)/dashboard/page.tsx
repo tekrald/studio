@@ -173,10 +173,10 @@ export default function AssetManagementDashboard() {
                       <div className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] p-1.5 rounded-t-md flex justify-end items-center">
                         <button
                           onClick={handleUnionSettingsClick}
-                          className="p-1 text-white/80 hover:text-white focus:outline-none focus:ring-1 focus:ring-white rounded"
+                          className="p-1 text-white hover:opacity-75 focus:outline-none focus:ring-1 focus:ring-white rounded"
                           aria-label="Configurações da União"
                         >
-                          <Settings size={14} />
+                          <Settings size={16} />
                         </button>
                       </div>
                       {/* Conteúdo branco interno */}
