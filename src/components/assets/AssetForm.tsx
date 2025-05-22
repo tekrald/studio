@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, Users } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -25,11 +25,8 @@ const formSchema = z.object({
   tipo: z.enum(['digital', 'fisico'], { required_error: "Selecione o tipo de ativo." }),
   nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'),
   dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }),
-  valorAtualEstimado: z.preprocess(
-    (val) => parseFloat(String(val).replace(',', '.')),
-    z.number().min(0, 'O valor estimado deve ser positivo.')
-  ),
-  descricaoDetalhada: z.string().min(1, 'A descrição é obrigatória.'),
+  // valorAtualEstimado removido do form
+  observacoes: z.string().optional(), // Alterado de descricaoDetalhada, agora opcional
   quemComprou: z.string().optional(),
   contribuicaoParceiro1: z.preprocess(
     (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
@@ -41,12 +38,12 @@ const formSchema = z.object({
   ),
   
   // Campos Digitais Condicionais
-  tipoCriptoAtivoDigital: z.string().optional(),
+  tipoAtivoDigital: z.string().optional(), // Alterado de tipoCriptoAtivoDigital, será um select
   quantidadeDigital: z.preprocess(
     (val) => String(val) === '' ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'A quantidade deve ser positiva.').optional()
   ),
-  valorPagoEpocaDigital: z.preprocess(
+  valorPagoEpocaDigital: z.preprocess( // Label alterada
     (val) => String(val) === '' ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'O valor pago deve ser positivo.').optional()
   ),
@@ -59,19 +56,17 @@ const formSchema = z.object({
   if (data.nomeAtivo.length > 0 && data.nomeAtivo.length < 3) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
   }
-  if (data.descricaoDetalhada.length > 0 && data.descricaoDetalhada.length < 10) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A descrição detalhada deve ter pelo menos 10 caracteres.", path: ['descricaoDetalhada'] });
-  }
-
+  // Validação de 'observacoes' (antiga 'descricaoDetalhada') removida, pois é opcional
+  
   if (data.tipo === 'digital') {
-    if (!data.tipoCriptoAtivoDigital || data.tipoCriptoAtivoDigital.trim() === '') {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de ativo digital é obrigatório.", path: ['tipoCriptoAtivoDigital'] });
+    if (!data.tipoAtivoDigital || data.tipoAtivoDigital.trim() === '') { // Validando o select
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de ativo digital é obrigatório.", path: ['tipoAtivoDigital'] });
     }
     if (data.quantidadeDigital === undefined || data.quantidadeDigital === null) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade é obrigatória para ativo digital.", path: ['quantidadeDigital'] });
     }
      if (data.valorPagoEpocaDigital === undefined || data.valorPagoEpocaDigital === null) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Valor pago na época é obrigatório para ativo digital.", path: ['valorPagoEpocaDigital'] });
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Valor do ativo no momento da compra é obrigatório.", path: ['valorPagoEpocaDigital'] });
     }
   }
   if (data.tipo === 'fisico') {
@@ -89,7 +84,7 @@ interface AssetFormProps {
   onClose: () => void;
 }
 
-const TOTAL_STEPS = 4; // Atualizado para 4 etapas
+const TOTAL_STEPS = 4; // Mantido em 4 etapas
 
 export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -100,11 +95,15 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
       tipo: undefined,
       nomeAtivo: '',
       dataAquisicao: new Date(),
-      valorAtualEstimado: 0,
-      descricaoDetalhada: '',
+      observacoes: '', // Default para observacoes
       quemComprou: '', 
       contribuicaoParceiro1: undefined,
       contribuicaoParceiro2: undefined,
+      tipoAtivoDigital: undefined,
+      quantidadeDigital: undefined,
+      valorPagoEpocaDigital: undefined,
+      tipoImovelBemFisico: '',
+      enderecoLocalizacaoFisico: '',
     },
     mode: "onChange", 
   });
@@ -144,14 +143,16 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     
     if (step === 1) { // Tipo
       fieldsToValidate = ['tipo'];
-    } else if (step === 2) { // Detalhes Principais
-      fieldsToValidate = ['nomeAtivo', 'dataAquisicao', 'valorAtualEstimado', 'descricaoDetalhada'];
+    } else if (step === 2) { // Detalhes Principais (Nome, Data, Observações)
+      fieldsToValidate = ['nomeAtivo', 'dataAquisicao', 'observacoes'];
     } else if (step === 3) { // Propriedade e Contribuições
-      // 'quemComprou' é obrigatório, Select se encarrega
-      // 'contribuicaoParceiro1' e 'contribuicaoParceiro2' são opcionais, validação de tipo no Zod
+      fieldsToValidate = ['quemComprou'];
+      if (form.getValues('quemComprou') === 'Ambos') {
+        // contribuições são opcionais, Zod cuida do tipo
+      }
     } else if (step === 4) { // Detalhes Específicos
       if (assetType === 'digital') {
-        fieldsToValidate = ['tipoCriptoAtivoDigital', 'quantidadeDigital', 'valorPagoEpocaDigital'];
+        fieldsToValidate = ['tipoAtivoDigital', 'quantidadeDigital', 'valorPagoEpocaDigital'];
       } else if (assetType === 'fisico') {
         fieldsToValidate = ['tipoImovelBemFisico']; 
       }
@@ -160,11 +161,16 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     if (fieldsToValidate.length > 0) {
       await form.trigger(fieldsToValidate);
       const errors = form.formState.errors;
+      let firstErrorMessage = null;
       for (const field of fieldsToValidate) {
         if (errors[field]) {
-          setFormError(errors[field]?.message || "Preencha os campos obrigatórios.");
-          return false;
+          firstErrorMessage = errors[field]?.message || "Preencha os campos obrigatórios corretamente.";
+          break; 
         }
+      }
+      if (firstErrorMessage) {
+        setFormError(firstErrorMessage);
+        return false;
       }
     }
     
@@ -175,17 +181,26 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     }
     if (step === 2 && (
         !form.getValues('nomeAtivo').trim() || 
-        !form.getValues('dataAquisicao') ||
-        form.getValues('valorAtualEstimado') === null || form.getValues('valorAtualEstimado') < 0 ||
-        !form.getValues('descricaoDetalhada').trim() 
+        !form.getValues('dataAquisicao')
+        // 'observacoes' é opcional
     )) {
-        setFormError("Nome, data, valor estimado e descrição são obrigatórios.");
+        setFormError("Nome e data de aquisição são obrigatórios.");
         return false;
     }
-    if (step === 3 && !form.getValues('quemComprou')) {
-        // O SelectItem "Não especificado" tem valor "UNSPECIFIED_BUYER"
-        // Se for obrigatório, o placeholder do Select deve ser removido ou uma opção default selecionada
+     if (step === 3 && !form.getValues('quemComprou')) {
+        // Se quemComprou for "UNSPECIFIED_BUYER", está ok, pois é opcional
     }
+     if (step === 4) {
+        if (assetType === 'digital' && (!form.getValues('tipoAtivoDigital') || !form.getValues('quantidadeDigital') || form.getValues('valorPagoEpocaDigital') === null || form.getValues('valorPagoEpocaDigital') === undefined) ) {
+             setFormError("Para ativo digital, tipo, quantidade e valor no momento da compra são obrigatórios.");
+             return false;
+        }
+        if (assetType === 'fisico' && !form.getValues('tipoImovelBemFisico')) {
+             setFormError("Para ativo físico, o tipo do bem é obrigatório.");
+             return false;
+        }
+    }
+
 
     return true;
   };
@@ -275,14 +290,9 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
             {form.formState.errors.dataAquisicao && <p className="text-sm text-destructive">{form.formState.errors.dataAquisicao.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="valorAtualEstimado">Valor Atual Estimado (R$)</Label>
-            <Input id="valorAtualEstimado" type="number" {...form.register('valorAtualEstimado')} placeholder="0,00" disabled={isLoading} step="0.01" />
-            {form.formState.errors.valorAtualEstimado && <p className="text-sm text-destructive">{form.formState.errors.valorAtualEstimado.message}</p>}
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="descricaoDetalhada">Descrição Detalhada</Label>
-            <Textarea id="descricaoDetalhada" {...form.register('descricaoDetalhada')} placeholder="Descreva o ativo..." disabled={isLoading} rows={3}/>
-            {form.formState.errors.descricaoDetalhada && <p className="text-sm text-destructive">{form.formState.errors.descricaoDetalhada.message}</p>}
+            <Label htmlFor="observacoes">Observações (Opcional)</Label>
+            <Textarea id="observacoes" {...form.register('observacoes')} placeholder="Alguma observação sobre o ativo..." disabled={isLoading} rows={3}/>
+            {form.formState.errors.observacoes && <p className="text-sm text-destructive">{form.formState.errors.observacoes.message}</p>}
           </div>
         </>
       )}
@@ -290,7 +300,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
       {currentStep === 3 && ( // Propriedade e Contribuições
         <>
           <div className="space-y-1.5">
-            <Label htmlFor="quemComprou">Quem Adquiriu o Ativo?</Label>
+            <Label htmlFor="quemComprou">Quem Adquiriu o Ativo? (Opcional)</Label>
             <Controller
               name="quemComprou"
               control={form.control}
@@ -301,7 +311,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
                   disabled={isLoading}
                 >
                   <SelectTrigger id="quemComprou">
-                    <SelectValue placeholder="Selecione quem adquiriu (opcional)" />
+                    <SelectValue placeholder="Selecione quem adquiriu" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="UNSPECIFIED_BUYER">Não especificado</SelectItem>
@@ -360,9 +370,24 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
             <div className="space-y-4 p-4 border rounded-md bg-muted/30">
               <h4 className="text-md font-semibold text-primary">Detalhes do Ativo Digital</h4>
               <div className="space-y-1.5">
-                <Label htmlFor="tipoCriptoAtivoDigital">Tipo de Criptomoeda/Ativo Digital</Label>
-                <Input id="tipoCriptoAtivoDigital" {...form.register('tipoCriptoAtivoDigital')} placeholder="Ex: Bitcoin, Ethereum, NFT" disabled={isLoading}/>
-                {form.formState.errors.tipoCriptoAtivoDigital && <p className="text-sm text-destructive">{form.formState.errors.tipoCriptoAtivoDigital.message}</p>}
+                <Label htmlFor="tipoAtivoDigital">Tipo de Ativo Digital</Label>
+                <Controller
+                    name="tipoAtivoDigital"
+                    control={form.control}
+                    render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                        <SelectTrigger id="tipoAtivoDigital">
+                        <SelectValue placeholder="Selecione o tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        <SelectItem value="cripto">Criptomoeda</SelectItem>
+                        <SelectItem value="nft">NFT (Token Não Fungível)</SelectItem>
+                        <SelectItem value="outro">Outro Ativo Digital</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    )}
+                />
+                {form.formState.errors.tipoAtivoDigital && <p className="text-sm text-destructive">{form.formState.errors.tipoAtivoDigital.message}</p>}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -371,7 +396,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
                   {form.formState.errors.quantidadeDigital && <p className="text-sm text-destructive">{form.formState.errors.quantidadeDigital.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="valorPagoEpocaDigital">Valor Pago na Época (R$)</Label>
+                  <Label htmlFor="valorPagoEpocaDigital">Valor do ativo no momento da compra (R$)</Label>
                   <Input id="valorPagoEpocaDigital" type="number" {...form.register('valorPagoEpocaDigital')} placeholder="R$ 0,00" disabled={isLoading} step="0.01"/>
                   {form.formState.errors.valorPagoEpocaDigital && <p className="text-sm text-destructive">{form.formState.errors.valorPagoEpocaDigital.message}</p>}
                 </div>
@@ -396,6 +421,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
                 <Label htmlFor="documentacaoFisicoFile">Documentação (Opcional)</Label>
                 <Input id="documentacaoFisicoFile" type="file" {...form.register('documentacaoFisicoFile')} disabled={isLoading} 
                       className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                      accept={ACCEPTED_IMAGE_TYPES.join(',')}
                 />
                 <p className="text-xs text-muted-foreground">Max 5MB. Tipos: JPG, PNG, PDF.</p>
                 {form.formState.errors.documentacaoFisicoFile && <p className="text-sm text-destructive">{String(form.formState.errors.documentacaoFisicoFile.message)}</p>}

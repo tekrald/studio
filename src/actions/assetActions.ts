@@ -3,7 +3,7 @@
 // import type { User } from 'firebase/auth'; // Firebase Auth não está sendo usado no momento
 // import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Firestore não está sendo usado no momento
 // import { db } from '@/lib/firebase'; // db será null
-import type { AssetFormData, DigitalAsset, PhysicalAsset } from '@/types/asset';
+import type { AssetFormData } from '@/types/asset';
 // import { auth } from '@/lib/firebase'; // auth será null
 
 export async function addAsset(data: AssetFormData, userId: string): Promise<{ success: boolean; error?: string; assetId?: string }> {
@@ -16,16 +16,15 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
     tipo: data.tipo,
     nomeAtivo: data.nomeAtivo,
     dataAquisicao: data.dataAquisicao,
-    valorAtualEstimado: data.valorAtualEstimado,
-    descricaoDetalhada: data.descricaoDetalhada,
+    observacoes: data.observacoes, // Alterado de descricaoDetalhada
+    // valorAtualEstimado: data.valorAtualEstimado, // Removido da simulação do form
     quemComprou: data.quemComprou,
     contribuicaoParceiro1: data.contribuicaoParceiro1,
     contribuicaoParceiro2: data.contribuicaoParceiro2,
-    // observacoesInvestimento: data.observacoesInvestimento, // Removido
     // Campos específicos (serão undefined se não aplicável ao tipo)
-    tipoCriptoAtivoDigital: data.tipoCriptoAtivoDigital,
+    tipoAtivoDigital: data.tipoAtivoDigital, // Alterado de tipoCriptoAtivoDigital
     quantidadeDigital: data.quantidadeDigital,
-    valorPagoEpocaDigital: data.valorPagoEpocaDigital,
+    valorPagoEpocaDigital: data.valorPagoEpocaDigital, // Label alterada no form, campo permanece
     tipoImovelBemFisico: data.tipoImovelBemFisico,
     enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico,
     documentacaoFisicoFileName: data.documentacaoFisicoFile?.[0]?.name,
@@ -50,11 +49,11 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
   //   const commonData = {
   //     userId,
   //     nomeAtivo: data.nomeAtivo,
-  //     descricaoDetalhada: data.descricaoDetalhada,
-  //     valorAtualEstimado: data.valorAtualEstimado,
-        // quemComprou: data.quemComprou || '',
-        // contribuicaoParceiro1: data.contribuicaoParceiro1,
-        // contribuicaoParceiro2: data.contribuicaoParceiro2,
+  //     observacoes: data.observacoes, // Alterado
+  //     // valorAtualEstimado: data.valorAtualEstimado, // Removido
+  //     quemComprou: data.quemComprou || '',
+  //     contribuicaoParceiro1: data.contribuicaoParceiro1,
+  //     contribuicaoParceiro2: data.contribuicaoParceiro2,
   //     dataAquisicao: data.dataAquisicao, 
   //     tipo: data.tipo,
   //     createdAt: serverTimestamp(),
@@ -64,17 +63,17 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
   //   if (data.tipo === 'digital') {
   //     assetDataToSave = {
   //       ...commonData,
-  //       tipoCriptoAtivoDigital: data.tipoCriptoAtivoDigital!,
+  //       tipoAtivoDigital: data.tipoAtivoDigital!, // Alterado
   //       quantidadeDigital: data.quantidadeDigital!,
   //       valorPagoEpocaDigital: data.valorPagoEpocaDigital!,
-  //     } as Omit<DigitalAsset, 'id' | 'observacoesInvestimento'>;
+  //     } // as Omit<DigitalAsset, 'id' | 'valorAtualEstimado'>; // Ajustar Omit se valorAtualEstimado foi removido de DigitalAsset
   //   } else { // fisico
   //     assetDataToSave = {
   //       ...commonData,
   //       tipoImovelBemFisico: data.tipoImovelBemFisico!,
   //       enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico || '',
   //       // documentacaoFisico: "url_do_arquivo_no_storage" // Lógica de upload seria separada
-  //     } as Omit<PhysicalAsset, 'id' | 'observacoesInvestimento'>;
+  //     } // as Omit<PhysicalAsset, 'id' | 'valorAtualEstimado'>; // Ajustar Omit se valorAtualEstimado foi removido de PhysicalAsset
   //   }
   //   const docRef = await addDoc(collection(db!, 'assets'), assetDataToSave); // db! aqui assume que db não é null
   //   return { success: true, assetId: docRef.id };
