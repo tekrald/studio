@@ -4,7 +4,8 @@
 
 @layer base {
   :root {
-    --font-lato: 'Lato', sans-serif; /* Mantido --font-lato */
+    /* Removida a definição manual de --font-lato, pois next/font cuida disso */
+    /* --font-lato: 'Lato', sans-serif; */ /* ESTA LINHA FOI REMOVIDA */
     /* Removido --font-pacifico */
 
     --background: 60 56% 91%; /* Light Beige #F5F5DC */
