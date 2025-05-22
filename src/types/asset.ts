@@ -5,10 +5,12 @@ export interface AssetBase {
   nomeAtivo: string;
   descricaoDetalhada: string;
   valorAtualEstimado: number;
-  observacoesInvestimento: string;
+  // observacoesInvestimento: string; // Removido
   dataAquisicao: Date;
   tipo: 'digital' | 'fisico';
-  quemComprou?: string; // Novo campo
+  quemComprou?: string; 
+  contribuicaoParceiro1?: number; // Novo campo
+  contribuicaoParceiro2?: number; // Novo campo
 }
 
 export interface DigitalAsset extends AssetBase {
@@ -27,15 +29,17 @@ export interface PhysicalAsset extends AssetBase {
 
 export type Asset = DigitalAsset | PhysicalAsset;
 
-export type AssetFormData = Omit<DigitalAsset, 'id' | 'userId' | 'tipo'> | Omit<PhysicalAsset, 'id' | 'userId' | 'tipo'> & {
+export type AssetFormData = Omit<DigitalAsset, 'id' | 'userId' | 'tipo' | 'observacoesInvestimento'> | Omit<PhysicalAsset, 'id' | 'userId' | 'tipo' | 'observacoesInvestimento'> & {
   tipo: 'digital' | 'fisico';
   // Campos comuns para validação unificada, antes de serem divididos
   nomeAtivo: string;
   descricaoDetalhada: string;
   valorAtualEstimado: number;
-  observacoesInvestimento: string;
+  // observacoesInvestimento: string; // Removido
   dataAquisicao: Date;
-  quemComprou?: string; // Novo campo
+  quemComprou?: string; 
+  contribuicaoParceiro1?: number; // Novo campo
+  contribuicaoParceiro2?: number; // Novo campo
   // Digitais
   tipoCriptoAtivoDigital?: string;
   quantidadeDigital?: number;

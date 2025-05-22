@@ -16,17 +16,19 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
     tipo: data.tipo,
     nomeAtivo: data.nomeAtivo,
     dataAquisicao: data.dataAquisicao,
-    quemComprou: data.quemComprou, // Log do novo campo
     valorAtualEstimado: data.valorAtualEstimado,
     descricaoDetalhada: data.descricaoDetalhada,
-    observacoesInvestimento: data.observacoesInvestimento,
+    quemComprou: data.quemComprou,
+    contribuicaoParceiro1: data.contribuicaoParceiro1,
+    contribuicaoParceiro2: data.contribuicaoParceiro2,
+    // observacoesInvestimento: data.observacoesInvestimento, // Removido
     // Campos específicos (serão undefined se não aplicável ao tipo)
     tipoCriptoAtivoDigital: data.tipoCriptoAtivoDigital,
     quantidadeDigital: data.quantidadeDigital,
     valorPagoEpocaDigital: data.valorPagoEpocaDigital,
     tipoImovelBemFisico: data.tipoImovelBemFisico,
     enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico,
-    documentacaoFisicoFileName: data.documentacaoFisicoFile?.[0]?.name, // Log do nome do arquivo
+    documentacaoFisicoFileName: data.documentacaoFisicoFile?.[0]?.name,
   });
 
   // Simula um atraso de rede
@@ -50,9 +52,10 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
   //     nomeAtivo: data.nomeAtivo,
   //     descricaoDetalhada: data.descricaoDetalhada,
   //     valorAtualEstimado: data.valorAtualEstimado,
-  //     observacoesInvestimento: data.observacoesInvestimento || '',
-  //     dataAquisicao: data.dataAquisicao, // Idealmente serverTimestamp.fromDate(data.dataAquisicao)
-  //     quemComprou: data.quemComprou || '',
+        // quemComprou: data.quemComprou || '',
+        // contribuicaoParceiro1: data.contribuicaoParceiro1,
+        // contribuicaoParceiro2: data.contribuicaoParceiro2,
+  //     dataAquisicao: data.dataAquisicao, 
   //     tipo: data.tipo,
   //     createdAt: serverTimestamp(),
   //     updatedAt: serverTimestamp(),
@@ -64,14 +67,14 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
   //       tipoCriptoAtivoDigital: data.tipoCriptoAtivoDigital!,
   //       quantidadeDigital: data.quantidadeDigital!,
   //       valorPagoEpocaDigital: data.valorPagoEpocaDigital!,
-  //     } as Omit<DigitalAsset, 'id'>;
+  //     } as Omit<DigitalAsset, 'id' | 'observacoesInvestimento'>;
   //   } else { // fisico
   //     assetDataToSave = {
   //       ...commonData,
   //       tipoImovelBemFisico: data.tipoImovelBemFisico!,
   //       enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico || '',
   //       // documentacaoFisico: "url_do_arquivo_no_storage" // Lógica de upload seria separada
-  //     } as Omit<PhysicalAsset, 'id'>;
+  //     } as Omit<PhysicalAsset, 'id' | 'observacoesInvestimento'>;
   //   }
   //   const docRef = await addDoc(collection(db!, 'assets'), assetDataToSave); // db! aqui assume que db não é null
   //   return { success: true, assetId: docRef.id };

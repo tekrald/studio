@@ -25,14 +25,20 @@ const formSchema = z.object({
   tipo: z.enum(['digital', 'fisico'], { required_error: "Selecione o tipo de ativo." }),
   nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'),
   dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }),
-  quemComprou: z.string().optional(), // Novo campo
   valorAtualEstimado: z.preprocess(
     (val) => parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'O valor estimado deve ser positivo.')
   ),
   descricaoDetalhada: z.string().min(1, 'A descrição é obrigatória.'),
-  
-  observacoesInvestimento: z.string().optional(),
+  quemComprou: z.string().optional(),
+  contribuicaoParceiro1: z.preprocess(
+    (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
+    z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
+  ),
+  contribuicaoParceiro2: z.preprocess(
+    (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
+    z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
+  ),
   
   // Campos Digitais Condicionais
   tipoCriptoAtivoDigital: z.string().optional(),
@@ -48,8 +54,7 @@ const formSchema = z.object({
   // Campos Físicos Condicionais
   tipoImovelBemFisico: z.string().optional(),
   enderecoLocalizacaoFisico: z.string().optional(),
-  documentacaoFisicoFile: z.any()
-    .optional(),
+  documentacaoFisicoFile: z.any().optional(),
 }).superRefine((data, ctx) => {
   if (data.nomeAtivo.length > 0 && data.nomeAtivo.length < 3) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
@@ -84,7 +89,7 @@ interface AssetFormProps {
   onClose: () => void;
 }
 
-const TOTAL_STEPS = 5; // Atualizado para 5 etapas
+const TOTAL_STEPS = 4; // Atualizado para 4 etapas
 
 export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -94,30 +99,38 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     defaultValues: initialData || {
       tipo: undefined,
       nomeAtivo: '',
-      descricaoDetalhada: '',
-      valorAtualEstimado: 0,
-      observacoesInvestimento: '',
       dataAquisicao: new Date(),
-      quemComprou: '', // Default to empty string, placeholder will handle "Não especificado" display
+      valorAtualEstimado: 0,
+      descricaoDetalhada: '',
+      quemComprou: '', 
+      contribuicaoParceiro1: undefined,
+      contribuicaoParceiro2: undefined,
     },
     mode: "onChange", 
   });
 
   const assetType = form.watch('tipo');
+  const quemComprou = form.watch('quemComprou');
   const [formError, setFormError] = useState<string | null>(null);
 
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
+  const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
+
 
   useEffect(() => {
     if (user?.displayName) {
       const names = user.displayName.split('&').map(name => name.trim()).filter(name => name);
       setPartnerNames(names);
+      if (names.length === 1) {
+        setPartnerLabels([names[0], "Outro Contribuinte"]);
+      } else if (names.length > 1) {
+        setPartnerLabels([names[0], names[1]]);
+      }
     }
   }, [user]);
 
 
   const handleFormSubmit = async (values: AssetFormData) => {
-    // If 'quemComprou' is our special "UNSPECIFIED_BUYER" value, convert it to empty string or undefined for backend
     const processedValues = {
       ...values,
       quemComprou: values.quemComprou === "UNSPECIFIED_BUYER" ? "" : values.quemComprou,
@@ -129,16 +142,14 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     setFormError(null);
     let fieldsToValidate: (keyof AssetFormData)[] = [];
     
-    if (step === 1) {
+    if (step === 1) { // Tipo
       fieldsToValidate = ['tipo'];
-    } else if (step === 2) {
-      fieldsToValidate = ['nomeAtivo', 'dataAquisicao'];
-    } else if (step === 3) {
-      // 'quemComprou' is optional, but if a value is selected it should be valid.
-      // The Select component handles this internally.
-    } else if (step === 4) {
-      fieldsToValidate = ['valorAtualEstimado', 'descricaoDetalhada'];
-    } else if (step === 5) {
+    } else if (step === 2) { // Detalhes Principais
+      fieldsToValidate = ['nomeAtivo', 'dataAquisicao', 'valorAtualEstimado', 'descricaoDetalhada'];
+    } else if (step === 3) { // Propriedade e Contribuições
+      // 'quemComprou' é obrigatório, Select se encarrega
+      // 'contribuicaoParceiro1' e 'contribuicaoParceiro2' são opcionais, validação de tipo no Zod
+    } else if (step === 4) { // Detalhes Específicos
       if (assetType === 'digital') {
         fieldsToValidate = ['tipoCriptoAtivoDigital', 'quantidadeDigital', 'valorPagoEpocaDigital'];
       } else if (assetType === 'fisico') {
@@ -157,18 +168,25 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
       }
     }
     
+    // Validações específicas de preenchimento por etapa
     if (step === 1 && !form.getValues('tipo')) {
         setFormError("Selecione o tipo de ativo.");
         return false;
     }
-    if (step === 2 && (!form.getValues('nomeAtivo').trim() || !form.getValues('dataAquisicao'))) {
-        setFormError("Nome do ativo e data de aquisição são obrigatórios.");
+    if (step === 2 && (
+        !form.getValues('nomeAtivo').trim() || 
+        !form.getValues('dataAquisicao') ||
+        form.getValues('valorAtualEstimado') === null || form.getValues('valorAtualEstimado') < 0 ||
+        !form.getValues('descricaoDetalhada').trim() 
+    )) {
+        setFormError("Nome, data, valor estimado e descrição são obrigatórios.");
         return false;
     }
-     if (step === 4 && (!form.getValues('descricaoDetalhada').trim() || form.getValues('valorAtualEstimado') === null || form.getValues('valorAtualEstimado') < 0 )) {
-        setFormError("Descrição detalhada e valor estimado são obrigatórios.");
-        return false;
+    if (step === 3 && !form.getValues('quemComprou')) {
+        // O SelectItem "Não especificado" tem valor "UNSPECIFIED_BUYER"
+        // Se for obrigatório, o placeholder do Select deve ser removido ou uma opção default selecionada
     }
+
     return true;
   };
 
@@ -214,7 +232,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         </div>
       )}
 
-      {currentStep === 2 && ( // Identificação do Ativo
+      {currentStep === 2 && ( // Detalhes Principais
         <>
           <div className="space-y-1.5">
             <Label htmlFor="nomeAtivo">Nome do Ativo</Label>
@@ -256,46 +274,6 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
             />
             {form.formState.errors.dataAquisicao && <p className="text-sm text-destructive">{form.formState.errors.dataAquisicao.message}</p>}
           </div>
-        </>
-      )}
-
-      {currentStep === 3 && ( // Propriedade do Ativo
-        <div className="space-y-1.5">
-          <Label htmlFor="quemComprou">Quem Adquiriu o Ativo?</Label>
-           <Controller
-            name="quemComprou"
-            control={form.control}
-            render={({ field }) => (
-              <Select 
-                onValueChange={(value) => field.onChange(value === "UNSPECIFIED_BUYER" ? "" : value)} 
-                value={field.value === "" ? "UNSPECIFIED_BUYER" : field.value}
-                disabled={isLoading}
-              >
-                <SelectTrigger id="quemComprou">
-                  <SelectValue placeholder="Selecione quem adquiriu (opcional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="UNSPECIFIED_BUYER">Não especificado</SelectItem>
-                  {partnerNames.length === 1 && (
-                    <SelectItem value={partnerNames[0]}>{partnerNames[0]}</SelectItem>
-                  )}
-                  {partnerNames.length > 1 && partnerNames.map(name => (
-                    <SelectItem key={name} value={name}>{name}</SelectItem>
-                  ))}
-                  <SelectItem value="Ambos">Ambos</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <p className="text-xs text-muted-foreground">
-            Se o nome do membro não aparecer, verifique o nome de exibição do casal no Perfil.
-          </p>
-          {form.formState.errors.quemComprou && <p className="text-sm text-destructive">{form.formState.errors.quemComprou.message}</p>}
-        </div>
-      )}
-
-      {currentStep === 4 && ( // Valores e Descrição
-        <>
           <div className="space-y-1.5">
             <Label htmlFor="valorAtualEstimado">Valor Atual Estimado (R$)</Label>
             <Input id="valorAtualEstimado" type="number" {...form.register('valorAtualEstimado')} placeholder="0,00" disabled={isLoading} step="0.01" />
@@ -308,8 +286,75 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
           </div>
         </>
       )}
+
+      {currentStep === 3 && ( // Propriedade e Contribuições
+        <>
+          <div className="space-y-1.5">
+            <Label htmlFor="quemComprou">Quem Adquiriu o Ativo?</Label>
+            <Controller
+              name="quemComprou"
+              control={form.control}
+              render={({ field }) => (
+                <Select 
+                  onValueChange={(value) => field.onChange(value === "UNSPECIFIED_BUYER" ? "" : value)} 
+                  value={field.value === "" || field.value === undefined ? "UNSPECIFIED_BUYER" : field.value}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger id="quemComprou">
+                    <SelectValue placeholder="Selecione quem adquiriu (opcional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="UNSPECIFIED_BUYER">Não especificado</SelectItem>
+                    {partnerNames.length === 1 && (
+                      <SelectItem value={partnerNames[0]}>{partnerNames[0]}</SelectItem>
+                    )}
+                    {partnerNames.length > 1 && partnerNames.map(name => (
+                      <SelectItem key={name} value={name}>{name}</SelectItem>
+                    ))}
+                    <SelectItem value="Ambos">Ambos</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <p className="text-xs text-muted-foreground">
+              Se o nome do membro não aparecer, verifique o nome de exibição do casal no Perfil.
+            </p>
+            {form.formState.errors.quemComprou && <p className="text-sm text-destructive">{form.formState.errors.quemComprou.message}</p>}
+          </div>
+
+          {quemComprou === 'Ambos' && (
+            <div className="space-y-4 mt-4 p-4 border rounded-md bg-muted/30">
+              <h4 className="text-md font-semibold text-primary">Detalhes da Contribuição (Opcional)</h4>
+              <div className="space-y-1.5">
+                <Label htmlFor="contribuicaoParceiro1">Valor Contribuído por {partnerLabels[0]} (R$)</Label>
+                <Input 
+                  id="contribuicaoParceiro1" 
+                  type="number" 
+                  {...form.register('contribuicaoParceiro1')} 
+                  placeholder="0,00" 
+                  disabled={isLoading} 
+                  step="0.01" 
+                />
+                {form.formState.errors.contribuicaoParceiro1 && <p className="text-sm text-destructive">{form.formState.errors.contribuicaoParceiro1.message}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="contribuicaoParceiro2">Valor Contribuído por {partnerLabels[1]} (R$)</Label>
+                <Input 
+                  id="contribuicaoParceiro2" 
+                  type="number" 
+                  {...form.register('contribuicaoParceiro2')} 
+                  placeholder="0,00" 
+                  disabled={isLoading} 
+                  step="0.01"
+                />
+                {form.formState.errors.contribuicaoParceiro2 && <p className="text-sm text-destructive">{form.formState.errors.contribuicaoParceiro2.message}</p>}
+              </div>
+            </div>
+          )}
+        </>
+      )}
       
-      {currentStep === 5 && ( // Detalhes Específicos e Observações
+      {currentStep === 4 && ( // Detalhes Específicos do Ativo
         <>
           {assetType === 'digital' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30">
@@ -357,12 +402,6 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
               </div>
             </div>
           )}
-          
-          <div className="space-y-1.5 pt-2">
-            <Label htmlFor="observacoesInvestimento">Observações/Detalhes de Investimento (Opcional)</Label>
-            <Textarea id="observacoesInvestimento" {...form.register('observacoesInvestimento')} placeholder="Ex: João deu R$10.000 de entrada, Maria R$5.000..." disabled={isLoading} rows={3} />
-            {form.formState.errors.observacoesInvestimento && <p className="text-sm text-destructive">{form.formState.errors.observacoesInvestimento.message}</p>}
-          </div>
         </>
       )}
       
@@ -393,6 +432,3 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     </form>
   );
 }
-
-
-    
