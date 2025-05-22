@@ -13,7 +13,7 @@ export default function HomePage() {
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-32 bg-gradient-to-br from-pink-100 via-orange-50 to-yellow-50">
+        <section className="relative py-20 md:py-32 bg-gradient-to-br from-pink-100 via-gray-100 to-gray-200">
           <div className="absolute inset-0 opacity-30">
              {/* Decorative background image or pattern can go here */}
           </div>
