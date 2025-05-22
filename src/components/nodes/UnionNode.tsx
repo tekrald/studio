@@ -49,7 +49,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
 
   return (
     <Card 
-      className={`w-60 shadow-xl border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-primary/60'} bg-card p-0 overflow-visible relative`}
+      className={`w-60 shadow-xl border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-primary/60'} bg-card p-0 overflow-hidden relative`}
       style={{ overflow: 'visible' }} // Ensure popover is not clipped
     >
       {/* Invisible handles for standard connections if needed later */}
@@ -57,7 +57,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
       
       {/* Colored Header */}
       <div className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] p-2 rounded-t-md flex justify-between items-center">
-        <span className="text-xs font-semibold text-white">Holding Familiar</span>
+        <span className="text-xs font-semibold text-white">Contrato</span>
         <Button
           variant="ghost"
           size="icon"
