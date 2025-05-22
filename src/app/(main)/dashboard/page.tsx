@@ -5,10 +5,14 @@ import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Network, DollarSign, Users, LayoutGrid, Settings, Plus, FileText, Edit3 as Edit3Icon } from 'lucide-react';
+import { Network, DollarSign, Users, LayoutGrid, Settings, PlusCircle, UserPlus as UserPlusIcon } from 'lucide-react'; // Plus removido, PlusCircle adicionado
 import { AssetForm } from '@/components/assets/AssetForm';
-import type { AssetFormData } from '@/types/asset';
+import type { AssetFormData } from '@/types/asset'; // Asset removido pois não era usado
 import { addAsset } from '@/actions/assetActions';
+import { AddMemberForm } from '@/components/members/AddMemberForm';
+import type { MemberFormData } from '@/types/member';
+import { addMember } from '@/actions/memberActions';
+
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import ReactFlow, {
@@ -22,6 +26,7 @@ import ReactFlow, {
   type Node,
   type Edge,
   type OnConnect,
+  NodeOrigin,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { UnionNode, type UnionNodeData } from '@/components/nodes/UnionNode';
@@ -29,6 +34,7 @@ import { ContractSettingsDialog, type ContractClause } from '@/components/contra
 
 
 const UNION_NODE_ID = 'union-node';
+const nodeOrigin: NodeOrigin = [0.5, 0.5];
 
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
@@ -40,8 +46,12 @@ const nodeTypes = {
 export default function AssetManagementDashboard() {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isSubmittingAsset, setIsSubmittingAsset] = useState(false);
+  
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [isSubmittingMember, setIsSubmittingMember] = useState(false);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<UnionNodeData | { label: string }>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -74,7 +84,7 @@ export default function AssetManagementDashboard() {
     setContractClauses(prev => prev.filter(clause => clause.id !== id));
     toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida do contrato.' });
   };
-
+  
   const handleUpdateContractClause = (id: string, newText: string) => {
     setContractClauses(prev => prev.map(clause => clause.id === id ? { ...clause, text: newText } : clause));
     toast({ title: 'Cláusula Atualizada', description: 'A cláusula foi modificada com sucesso.' });
@@ -83,11 +93,11 @@ export default function AssetManagementDashboard() {
   const handleOpenAssetModal = useCallback(() => {
     setIsAssetModalOpen(true);
   }, []);
-  
-  const handleAddMemberDashboard = useCallback(() => {
-    toast({ title: 'Em Breve!', description: 'Funcionalidade de adicionar membros será implementada.' });
-  }, [toast]);
 
+  const handleOpenAddMemberModal = useCallback(() => {
+    setIsAddMemberModalOpen(true);
+  }, []);
+  
 
   useEffect(() => {
     if (user && !authLoading && !nodes.find(node => node.id === UNION_NODE_ID)) {
@@ -99,13 +109,14 @@ export default function AssetManagementDashboard() {
           label: user.displayName || 'Nossa União',
           onSettingsClick: handleOpenContractSettings,
           onOpenAssetModal: handleOpenAssetModal,
-          onAddMember: handleAddMemberDashboard,
+          onAddMember: handleOpenAddMemberModal,
         },
         draggable: true,
+        nodeOrigin,
       };
       setNodes([unionNode]);
     }
-  }, [user, authLoading, nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleAddMemberDashboard]);
+  }, [user, authLoading, nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal]);
 
 
   const handleAddAssetSubmit = async (data: AssetFormData) => {
@@ -125,17 +136,18 @@ export default function AssetManagementDashboard() {
         setIsSubmittingAsset(false);
         return;
       }
-      const existingAssetNodesCount = nodes.filter(n => n.id !== UNION_NODE_ID).length;
-
-      const angle = (existingAssetNodesCount * Math.PI) / 6; 
-      const radius = 200 + Math.floor(existingAssetNodesCount / 6) * 50; 
       
-      const unionNodeX = unionNodeInstance.position?.x ?? (unionNodeInstance.width ? unionNodeInstance.position?.x + unionNodeInstance.width / 2 : 250);
-      const unionNodeY = unionNodeInstance.position?.y ?? (unionNodeInstance.height ? unionNodeInstance.position?.y + unionNodeInstance.height / 2 : 50);
+      const assetNodes = nodes.filter(n => n.type !== 'unionNode' && !n.data?.tipoRelacao); // Exclui nós de união e nós de membro
+      const existingAssetNodesCount = assetNodes.length;
 
+      const angle = (existingAssetNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3); // Ajusta o divisor para espalhar mais
+      const radius = 200 + Math.floor(existingAssetNodesCount / (nodes.length > 5 ? 8 : 6)) * 60;
+      
+      const unionNodeX = unionNodeInstance.position?.x ?? 250;
+      const unionNodeY = unionNodeInstance.position?.y ?? 50;
 
       const newAssetNodeX = unionNodeX + radius * Math.cos(angle);
-      const newAssetNodeY = unionNodeY + 150 + radius * Math.sin(angle);
+      const newAssetNodeY = unionNodeY + (unionNodeInstance.height ?? 100) / 2 + 50 + radius * Math.sin(angle);
 
 
       const newAssetNode: Node = {
@@ -155,9 +167,11 @@ export default function AssetManagementDashboard() {
           borderRadius: 'var(--radius)',
           fontSize: '0.9rem',
           textAlign: 'center',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         },
         sourcePosition: Position.Top,
         targetPosition: Position.Bottom,
+        nodeOrigin,
       };
       setNodes((prevNodes) => prevNodes.concat(newAssetNode));
 
@@ -177,6 +191,79 @@ export default function AssetManagementDashboard() {
     }
     setIsSubmittingAsset(false);
   };
+
+  const handleAddMemberSubmit = async (data: MemberFormData) => {
+    if (!user) {
+      toast({ title: 'Erro!', description: 'Usuário não autenticado.', variant: 'destructive' });
+      return;
+    }
+    setIsSubmittingMember(true);
+    const result = await addMember(data, UNION_NODE_ID); // Usando UNION_NODE_ID como referência da união
+    if (result.success && result.memberId) {
+      toast({ title: 'Sucesso!', description: 'Membro adicionado com sucesso.' });
+
+      const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID);
+      if (!unionNodeInstance) {
+        console.error("Nó da união não encontrado para adicionar o membro.");
+        toast({ title: 'Erro Interno', description: 'Nó da união não encontrado.', variant: 'destructive' });
+        setIsSubmittingMember(false);
+        return;
+      }
+
+      const memberNodes = nodes.filter(n => n.data?.tipoRelacao); // Nós que são membros
+      const existingMemberNodesCount = memberNodes.length;
+      
+      const angle = (existingMemberNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3) + Math.PI; // Adiciona PI para colocar em lado oposto aos ativos
+      const radius = 180 + Math.floor(existingMemberNodesCount / (nodes.length > 5 ? 8 : 6)) * 50;
+      
+      const unionNodeX = unionNodeInstance.position?.x ?? 250;
+      const unionNodeY = unionNodeInstance.position?.y ?? 50;
+
+      const newMemberNodeX = unionNodeX + radius * Math.cos(angle);
+      const newMemberNodeY = unionNodeY + (unionNodeInstance.height ?? 100) / 2 + 50 + radius * Math.sin(angle);
+
+      const newMemberNode: Node = {
+        id: result.memberId,
+        type: 'default',
+        data: {
+          label: `${data.nome} (${data.tipoRelacao})`, // Inclui tipo de relação no label
+          tipoRelacao: data.tipoRelacao, // Para identificar que é um membro
+        },
+        position: { x: newMemberNodeX, y: newMemberNodeY },
+        draggable: true,
+        style: {
+          background: 'hsl(var(--accent))', // Cor diferente para membros
+          color: 'hsl(var(--accent-foreground))',
+          border: '1px solid hsl(var(--ring))',
+          width: 160,
+          padding: '10px',
+          borderRadius: 'var(--radius)',
+          fontSize: '0.9rem',
+          textAlign: 'center',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        },
+        sourcePosition: Position.Top,
+        targetPosition: Position.Bottom,
+        nodeOrigin,
+      };
+      setNodes((prevNodes) => prevNodes.concat(newMemberNode));
+
+      const newEdge: Edge = {
+        id: `e-${UNION_NODE_ID}-${result.memberId}`,
+        source: UNION_NODE_ID,
+        target: result.memberId,
+        type: 'smoothstep',
+        markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--accent))' },
+        style: { stroke: 'hsl(var(--accent))', strokeWidth: 2 },
+      };
+      setEdges((prevEdges) => prevEdges.concat(newEdge));
+
+      setIsAddMemberModalOpen(false);
+    } else {
+      toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar o membro.', variant: 'destructive' });
+    }
+    setIsSubmittingMember(false);
+  };
   
   if (authLoading && !user && nodes.length === 0) {
     return (
@@ -186,9 +273,9 @@ export default function AssetManagementDashboard() {
     );
   }
   
-  if (!user) {
-    return null; 
-  }
+  // if (!user) { // Removido para não redirecionar e permitir visualização se authProvider estiver desabilitado
+  //   return null; 
+  // }
 
   return (
       <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-var(--actions-bar-height,76px)-4rem)]">
@@ -199,7 +286,7 @@ export default function AssetManagementDashboard() {
                 <Network className="h-10 w-10 text-white" />
               </div>
               <div>
-                <CardTitle className="text-4xl text-white">Holding Familiar</CardTitle> {/* Removido font-pacifico */}
+                <CardTitle className="text-4xl text-white">Holding Familiar</CardTitle>
                 <CardDescription className="text-white/90 text-lg mt-1">
                   Visualize e gerencie os membros e ativos da sua família.
                 </CardDescription>
@@ -209,17 +296,27 @@ export default function AssetManagementDashboard() {
         </Card>
 
         <div style={{ '--actions-bar-height': '76px' } as React.CSSProperties} className="mb-4 p-4 rounded-lg shadow-md bg-card flex flex-wrap items-center gap-3">
-            <h3 className="text-xl text-primary mr-auto md:mr-4">Ações do Canvas:</h3> {/* Removido font-pacifico */}
-             <p className="text-sm text-muted-foreground">Use o <Plus size={16} className="inline text-primary"/> no nó da Holding para adicionar itens.</p>
+            <h3 className="text-xl text-primary mr-auto md:mr-4">Ações do Canvas:</h3>
+             <p className="text-sm text-muted-foreground">Use o <PlusCircle size={16} className="inline text-primary"/> no nó da Holding para adicionar itens.</p>
         </div>
 
          <Dialog open={isAssetModalOpen} onOpenChange={setIsAssetModalOpen}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo</DialogTitle> {/* Removido font-pacifico */}
+                <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo</DialogTitle>
                 <DialogDescription>Preencha os detalhes do seu ativo.</DialogDescription>
               </DialogHeader>
               <AssetForm onSubmit={handleAddAssetSubmit} isLoading={isSubmittingAsset} onClose={() => setIsAssetModalOpen(false)} />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isAddMemberModalOpen} onOpenChange={setIsAddMemberModalOpen}>
+            <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-2xl text-primary">Adicionar Novo Membro</DialogTitle>
+                <DialogDescription>Insira os dados do novo membro da família.</DialogDescription>
+              </DialogHeader>
+              <AddMemberForm onSubmit={handleAddMemberSubmit} isLoading={isSubmittingMember} onClose={() => setIsAddMemberModalOpen(false)} />
             </DialogContent>
           </Dialog>
 
@@ -234,7 +331,7 @@ export default function AssetManagementDashboard() {
 
         <Card className="flex-grow shadow-lg relative overflow-hidden">
             <CardHeader className="absolute top-2 left-3 z-10 pointer-events-none">
-              <CardTitle className="text-lg text-muted-foreground">Canvas de Gestão</CardTitle> {/* Removido font-pacifico */}
+              <CardTitle className="text-lg text-muted-foreground">Canvas de Gestão</CardTitle>
             </CardHeader>
             <div className="w-full h-full bg-muted/30 rounded-md border-2 border-dashed border-gray-300">
               <ReactFlow
@@ -247,16 +344,17 @@ export default function AssetManagementDashboard() {
                 fitView
                 attributionPosition="bottom-left"
                 proOptions={{ hideAttribution: true }}
+                nodeOrigin={nodeOrigin}
               >
                 <Controls />
                 <Background gap={16} />
               </ReactFlow>
-              {nodes.length === 0 && !authLoading && (
+              {nodes.length === 0 && !authLoading && ( // Condição ajustada para quando user pode ser null
                  <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground pointer-events-none">
                     <div>
                         <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
                         <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
-                        <p className="text-sm">O nó da sua Holding Familiar será criado automaticamente.</p>
+                        <p className="text-sm">O nó da sua Holding Familiar será criado automaticamente ao logar.</p>
                     </div>
                 </div>
               )}
@@ -265,4 +363,3 @@ export default function AssetManagementDashboard() {
       </div>
   );
 }
-
