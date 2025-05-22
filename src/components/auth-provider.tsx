@@ -1,3 +1,4 @@
+
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -6,8 +7,20 @@ import { useRouter, usePathname } from 'next/navigation';
 interface User {
   email: string;
   uid: string;
-  displayName?: string; // Added for profile
-  // Add other relevant user properties
+  displayName?: string;
+  // Campos da Holding
+  holdingType?: 'digital' | 'physical' | '';
+  companyType?: string;
+  jurisdiction?: string;
+  notesForAccountant?: string;
+}
+
+interface UpdateProfileData {
+  displayName?: string;
+  holdingType?: 'digital' | 'physical' | '';
+  companyType?: string;
+  jurisdiction?: string;
+  notesForAccountant?: string;
 }
 
 interface AuthContextType {
@@ -16,7 +29,7 @@ interface AuthContextType {
   signup: (email: string, name: string) => void;
   logout: () => void;
   loading: boolean;
-  updateProfile: (name: string) => void;
+  updateProfile: (data: UpdateProfileData) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,16 +65,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   
   const login = useCallback((email: string, name?: string) => {
-    // In a real app, this would call Firebase auth
-    // For mock, we check if user exists. If using for signup, name is passed.
-    const mockUser: User = { email, uid: `mock-${email}`, displayName: name || email.split('@')[0] };
+    const mockUser: User = { 
+      email, 
+      uid: `mock-${email}`, 
+      displayName: name || email.split('@')[0],
+      holdingType: '', // Inicializa campos da holding
+      companyType: '',
+      jurisdiction: '',
+      notesForAccountant: '',
+    };
     handleAuthChange(mockUser);
     router.push('/dashboard');
   }, [handleAuthChange, router]);
 
   const signup = useCallback((email: string, name: string) => {
-    // Mock signup, essentially same as login for this mock
-    const mockUser: User = { email, uid: `mock-${email}-signup`, displayName: name };
+    const mockUser: User = { 
+      email, 
+      uid: `mock-${email}-signup`, 
+      displayName: name,
+      holdingType: '', // Inicializa campos da holding
+      companyType: '',
+      jurisdiction: '',
+      notesForAccountant: '',
+    };
     handleAuthChange(mockUser);
     router.push('/dashboard');
   }, [handleAuthChange, router]);
@@ -71,9 +97,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push('/login');
   }, [handleAuthChange, router]);
 
-  const updateProfile = useCallback((name: string) => {
+  const updateProfile = useCallback((data: UpdateProfileData) => {
     if (user) {
-      const updatedUser = { ...user, displayName: name };
+      const updatedUser = { 
+        ...user, 
+        ...data, // Mescla todos os dados passados
+      };
       handleAuthChange(updatedUser);
     }
   }, [user, handleAuthChange]);
