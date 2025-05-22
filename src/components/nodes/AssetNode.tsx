@@ -8,40 +8,25 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DollarSign, Coins, Landmark, Building, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import type { ExtendedAssetNodeData } from '@/app/(main)/dashboard/page'; // Importando o tipo estendido
 
-export type AssetNodeData = {
-  id: string; 
-  name: string;
-  assetMainType: 'digital' | 'fisico';
-  // digitalAssetType?: string; // Removido
-  quantity?: number;
-  physicalAssetType?: string;
-  releaseCondition?: { type: 'age'; targetAge: number };
-  assignedToMemberId?: string; 
-  onOpenDetails?: () => void; 
-  dataAquisicao?: Date | string;
-  observacoes?: string;
-  quemComprou?: string;
-  contribuicaoParceiro1?: number;
-  contribuicaoParceiro2?: number;
-  valorPagoEpocaDigital?: number;
-  enderecoLocalizacaoFisico?: string;
-};
+// AssetNodeData aqui refere-se ao tipo de dados que este componente espera.
+// Usaremos ExtendedAssetNodeData para garantir que temos 'transactions' e 'nomeAtivo'.
+// A prop 'data' em NodeProps<AssetNodeData> será inferida como ExtendedAssetNodeData pelo React Flow.
 
-const getIconForAsset = (data: AssetNodeData) => {
-  if (data.assetMainType === 'digital') {
-    // Como tipo específico foi removido, usamos um ícone genérico para digital
+const getIconForAsset = (data: ExtendedAssetNodeData) => {
+  if (data.tipo === 'digital') {
     return <Coins size={18} className="text-primary mr-2" />;
   }
-  if (data.assetMainType === 'fisico') {
-    if (data.physicalAssetType?.toLowerCase().includes('casa') || data.physicalAssetType?.toLowerCase().includes('apartamento') || data.physicalAssetType?.toLowerCase().includes('imóvel')) return <Landmark size={18} className="text-primary mr-2" />;
-    if (data.physicalAssetType?.toLowerCase().includes('veículo') || data.physicalAssetType?.toLowerCase().includes('carro')) return <Building size={18} className="text-primary mr-2" />;
+  if (data.tipo === 'fisico') {
+    if (data.tipoImovelBemFisico?.toLowerCase().includes('casa') || data.tipoImovelBemFisico?.toLowerCase().includes('apartamento') || data.tipoImovelBemFisico?.toLowerCase().includes('imóvel')) return <Landmark size={18} className="text-primary mr-2" />;
+    if (data.tipoImovelBemFisico?.toLowerCase().includes('veículo') || data.tipoImovelBemFisico?.toLowerCase().includes('carro')) return <Building size={18} className="text-primary mr-2" />;
     return <Landmark size={18} className="text-primary mr-2" />;
   }
   return <DollarSign size={18} className="text-primary mr-2" />;
 };
 
-export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeData>) {
+export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAssetNodeData>) {
   const icon = getIconForAsset(data);
   const { toast } = useToast();
 
@@ -49,7 +34,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
     e.stopPropagation(); 
     toast({
       title: 'Configurar Liberação',
-      description: `Em breve: configurar liberação do ativo "${data.name}" ${data.releaseCondition?.targetAge ? `aos ${data.releaseCondition.targetAge} anos` : ''}.`,
+      description: `Em breve: configurar liberação do ativo "${data.nomeAtivo}" ${data.releaseCondition?.targetAge ? `aos ${data.releaseCondition.targetAge} anos` : ''}.`,
     });
   };
 
@@ -59,7 +44,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
     } else {
       toast({
         title: 'Detalhes do Ativo',
-        description: `Visualizando detalhes de "${data.name}". (onOpenDetails não configurado)`,
+        description: `Visualizando detalhes de "${data.nomeAtivo}". (onOpenDetails não configurado)`,
       });
     }
   };
@@ -78,8 +63,8 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
         <div className="flex items-center justify-between">
           <div className="flex items-center overflow-hidden">
             {icon}
-            <CardTitle className="text-sm font-semibold text-card-foreground truncate" title={data.name}>
-              {data.name}
+            <CardTitle className="text-sm font-semibold text-card-foreground truncate" title={data.nomeAtivo}>
+              {data.nomeAtivo}
             </CardTitle>
           </div>
           {data.releaseCondition?.type === 'age' && (
@@ -97,21 +82,14 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
       </CardHeader>
 
       <CardContent className="p-3 text-xs space-y-1">
-        {data.assetMainType === 'digital' && (
-          <>
-            <Badge variant="secondary" className="text-xs">
-              Digital
+        {data.tipo === 'digital' && data.quantidadeTotalDigital !== undefined && (
+            <Badge variant="outline" className="text-xs">
+                Qtd Total: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
             </Badge>
-            {data.quantity !== undefined && (
-              <Badge variant="outline" className="ml-1 text-xs">
-                Qtd: {data.quantity.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
-              </Badge>
-            )}
-          </>
         )}
-        {data.assetMainType === 'fisico' && (
+        {data.tipo === 'fisico' && data.tipoImovelBemFisico && (
           <Badge variant="secondary" className="text-xs">
-            {data.physicalAssetType || 'Físico'}
+            {data.tipoImovelBemFisico}
           </Badge>
         )}
         {data.releaseCondition?.targetAge && (

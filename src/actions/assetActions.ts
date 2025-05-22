@@ -1,88 +1,52 @@
 
 'use server';
-// import type { User } from 'firebase/auth'; // Firebase Auth não está sendo usado no momento
-// import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Firestore não está sendo usado no momento
-// import { db } from '@/lib/firebase'; // db será null
-import type { AssetFormData } from '@/types/asset';
-// import { auth } from '@/lib/firebase'; // auth será null
+import type { AssetFormData, AssetTransaction } from '@/types/asset';
 
-export async function addAsset(data: AssetFormData, userId: string): Promise<{ success: boolean; error?: string; assetId?: string }> {
+export async function addAsset(data: AssetFormData, userId: string): Promise<{ success: boolean; error?: string; assetId?: string, transactionId?: string }> {
   if (!userId) {
     return { success: false, error: 'Usuário não autenticado.' };
   }
 
-  console.log('Simulando adição de ativo (Firebase desabilitado):', {
+  const newTransactionId = `mock-tx-${Date.now()}`;
+  // O assetId seria o ID do ativo principal. Se é um novo ativo, geramos um novo.
+  // Se é uma nova transação para um ativo existente, o assetId viria da UI.
+  // Por enquanto, o mock do dashboard gerencia isso.
+  const assetIdForLog = `mock-asset-${data.nomeAtivo.replace(/\s+/g, '-')}`;
+
+  console.log('Simulando adição de transação de ativo (Firebase desabilitado):', {
     userId,
-    tipo: data.tipo,
-    nomeAtivo: data.nomeAtivo,
-    dataAquisicao: data.dataAquisicao,
-    observacoes: data.observacoes,
-    quemComprou: data.quemComprou,
-    contribuicaoParceiro1: data.contribuicaoParceiro1,
-    contribuicaoParceiro2: data.contribuicaoParceiro2,
-    // Campos específicos (serão undefined se não aplicável ao tipo)
-    // tipoAtivoDigital: data.tipoAtivoDigital, // Removido
-    quantidadeDigital: data.quantidadeDigital,
-    valorPagoEpocaDigital: data.valorPagoEpocaDigital, 
+    assetIdTarget: assetIdForLog, // A qual ativo esta transação se refere
+    newTransactionId,
+    tipoAtivoPrincipal: data.tipo,
+    nomeAtivoPrincipal: data.nomeAtivo,
+    
+    // Detalhes da transação específica
+    dataAquisicaoTransacao: data.dataAquisicao,
+    observacoesTransacao: data.observacoes,
+    quemComprouTransacao: data.quemComprou,
+    contribuicaoParceiro1Transacao: data.contribuicaoParceiro1,
+    contribuicaoParceiro2Transacao: data.contribuicaoParceiro2,
+    
+    quantidadeDigitalTransacao: data.quantidadeDigital,
+    valorPagoEpocaDigitalTransacao: data.valorPagoEpocaDigital, 
+    
+    // Campos para a primeira transação de um ativo físico
     tipoImovelBemFisico: data.tipoImovelBemFisico,
     enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico,
     documentacaoFisicoFileName: data.documentacaoFisicoFile?.[0]?.name,
+    
+    // Designação e liberação (pertencem ao ativo principal, mas podem ser definidos na primeira transação)
     assignedToMemberId: data.assignedToMemberId,
-    releaseCondition: data.releaseCondition,
+    releaseCondition: data.setReleaseCondition && data.releaseTargetAge ? { type: 'age', targetAge: data.releaseTargetAge } : undefined,
   });
 
-  // Simula um atraso de rede
   await new Promise(resolve => setTimeout(resolve, 500));
 
-  let assetTypeForLog: string;
-  if (data.tipo === 'digital') {
-    assetTypeForLog = 'digital';
-  } else if (data.tipo === 'fisico') {
-    assetTypeForLog = 'fisico';
-  } else {
-    return { success: false, error: 'Tipo de ativo inválido.' };
-  }
+  // Em uma implementação real com Firebase, você faria:
+  // 1. Verificar se o ativo 'nomeAtivo' para 'userId' e 'assignedToMemberId' já existe.
+  // 2. Se não existe, criar um novo documento de ativo com a primeira transação.
+  // 3. Se existe, adicionar a nova transação a uma subcoleção 'transactions' do ativo existente
+  //    e atualizar campos consolidados (como quantidadeTotalDigital).
 
-  console.log(`Tipo de ativo simulado: ${assetTypeForLog}`);
-  
-  // Em uma implementação real com Firebase, você usaria:
-  // try {
-  //   const commonData = {
-  //     userId,
-  //     nomeAtivo: data.nomeAtivo,
-  //     observacoes: data.observacoes,
-  //     quemComprou: data.quemComprou || '',
-  //     contribuicaoParceiro1: data.contribuicaoParceiro1,
-  //     contribuicaoParceiro2: data.contribuicaoParceiro2,
-  //     dataAquisicao: data.dataAquisicao, 
-  //     tipo: data.tipo,
-  //     assignedToMemberId: data.assignedToMemberId,
-  //     releaseCondition: data.releaseCondition,
-  //     createdAt: serverTimestamp(),
-  //     updatedAt: serverTimestamp(),
-  //   };
-  //   let assetDataToSave;
-  //   if (data.tipo === 'digital') {
-  //     assetDataToSave = {
-  //       ...commonData,
-  //       // tipoAtivoDigital: data.tipoAtivoDigital!, // Removido
-  //       quantidadeDigital: data.quantidadeDigital!,
-  //       valorPagoEpocaDigital: data.valorPagoEpocaDigital!,
-  //     } 
-  //   } else { // fisico
-  //     assetDataToSave = {
-  //       ...commonData,
-  //       tipoImovelBemFisico: data.tipoImovelBemFisico!,
-  //       enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico || '',
-  //       // documentacaoFisico: "url_do_arquivo_no_storage" 
-  //     } 
-  //   }
-  //   const docRef = await addDoc(collection(db!, 'assets'), assetDataToSave); 
-  //   return { success: true, assetId: docRef.id };
-  // } catch (error) {
-  //   console.error('Erro ao adicionar ativo:', error);
-  //   return { success: false, error: 'Falha ao adicionar ativo no Firestore.' };
-  // }
-
-  return { success: true, assetId: `mock-asset-${Date.now()}` };
+  return { success: true, assetId: assetIdForLog, transactionId: newTransactionId };
 }

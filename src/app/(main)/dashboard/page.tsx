@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Loader2, PlusCircle, Users, Settings, Network, DollarSign, Trash2, Edit3 } from 'lucide-react'; // Removido LayoutGrid, Home, Brain, FileText
+import { Loader2, PlusCircle, Users, Settings, Network, DollarSign, Trash2, Edit3, Plus } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
-import type { AssetFormData } from '@/types/asset';
+import type { AssetFormData, AssetTransaction, DigitalAsset, PhysicalAsset, Asset as AssetType } from '@/types/asset'; // Atualizado para novos tipos
 import { addAsset } from '@/actions/assetActions';
 import { AddMemberForm } from '@/components/members/AddMemberForm';
 import type { MemberFormData, Member } from '@/types/member';
@@ -50,19 +50,29 @@ const nodeTypes = {
   memberNode: MemberNode,
 };
 
-export type CustomNodeData = UnionNodeData | AssetNodeData | MemberNodeData;
+// Nó de ativo agora contém uma lista de transações
+export type ExtendedAssetNodeData = AssetNodeData & (Omit<DigitalAsset, 'userId'> | Omit<PhysicalAsset, 'userId'>) & {
+  transactions: AssetTransaction[];
+  // Para ativos digitais, quantidadeTotalDigital já está em DigitalAsset
+  // Para ativos físicos, podemos não ter uma "quantidade total" somável da mesma forma
+};
+
+
+export type CustomNodeData = UnionNodeData | ExtendedAssetNodeData | MemberNodeData;
 
 interface MemberWithBirthDate extends Member {
   dataNascimento?: Date | string; 
 }
 
 export default function AssetManagementDashboard() {
-  const { user, loading: authLoading } = useAuth(); // AuthProvider foi desabilitado, user será null ou mock
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isSubmittingAsset, setIsSubmittingAsset] = useState(false);
   const [memberContextForAssetAdd, setMemberContextForAssetAdd] = useState<string | null>(null);
+  const [existingAssetToUpdate, setExistingAssetToUpdate] = useState<{name: string, type: 'digital' | 'fisico', assignedTo?: string | null} | null>(null);
+
 
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
@@ -78,7 +88,7 @@ export default function AssetManagementDashboard() {
   ]);
 
   const [isAssetDetailsModalOpen, setIsAssetDetailsModalOpen] = useState(false);
-  const [selectedAssetForDetails, setSelectedAssetForDetails] = useState<AssetNodeData | null>(null);
+  const [selectedAssetForDetails, setSelectedAssetForDetails] = useState<ExtendedAssetNodeData | null>(null);
 
 
   const onConnect: OnConnect = useCallback(
@@ -109,21 +119,24 @@ export default function AssetManagementDashboard() {
     toast({ title: 'Cláusula Atualizada', description: 'A cláusula foi modificada com sucesso.' });
   };
 
-  const handleOpenAssetModal = useCallback(() => {
-    setMemberContextForAssetAdd(null);
+  const handleOpenAssetModal = useCallback((assetToUpdate?: {name: string, type: 'digital' | 'fisico', assignedTo?: string | null}) => {
+    setMemberContextForAssetAdd(null); // Reset context unless explicitly for member
+    setExistingAssetToUpdate(assetToUpdate || null);
     setIsAssetModalOpen(true);
   }, []);
 
-  const handleOpenAssetModalForMember = useCallback((memberId: string) => {
+  const handleOpenAssetModalForMember = useCallback((memberId: string, assetToUpdate?: {name: string, type: 'digital' | 'fisico', assignedTo?: string | null}) => {
     setMemberContextForAssetAdd(memberId);
+    setExistingAssetToUpdate(assetToUpdate || null);
     setIsAssetModalOpen(true);
   }, []);
+
 
   const handleOpenAddMemberModal = useCallback(() => {
     setIsAddMemberModalOpen(true);
   }, []);
 
-  const handleOpenAssetDetailsModal = useCallback((assetData: AssetNodeData) => {
+  const handleOpenAssetDetailsModal = useCallback((assetData: ExtendedAssetNodeData) => {
     setSelectedAssetForDetails(assetData);
     setIsAssetDetailsModalOpen(true);
   }, []);
@@ -133,8 +146,6 @@ export default function AssetManagementDashboard() {
     setSelectedAssetForDetails(null);
   }, []);
 
-  // Como o AuthProvider foi desabilitado, user pode ser null.
-  // Fornecer um mock para evitar erros, mas as funcionalidades dependentes do usuário estarão limitadas.
   const effectiveUser = user || { 
     uid: 'mock-uid-default', 
     displayName: 'Nossa União (Mock)',
@@ -155,7 +166,7 @@ export default function AssetManagementDashboard() {
         data: {
           label: effectiveUser.displayName || 'Nossa União',
           onSettingsClick: handleOpenContractSettings,
-          onOpenAssetModal: handleOpenAssetModal,
+          onOpenAssetModal: () => handleOpenAssetModal(), // Passando sem arg para novo ativo
           onAddMember: handleOpenAddMemberModal,
         },
         draggable: true,
@@ -186,64 +197,76 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingAsset(true);
-    const result = await addAsset(formData, effectiveUser.uid);
+    const result = await addAsset(formData, effectiveUser.uid); // addAsset agora retorna assetId e transactionId
 
-    if (result.success && result.assetId) {
-      toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
+    if (result.success && result.assetId && result.transactionId) {
+      toast({ title: 'Sucesso!', description: 'Transação do ativo adicionada com sucesso.' });
 
+      const newTransaction: AssetTransaction = {
+        id: result.transactionId,
+        dataAquisicao: formData.dataAquisicao,
+        quantidadeDigital: formData.quantidadeDigital,
+        valorPagoEpoca: formData.valorPagoEpocaDigital,
+        quemComprou: formData.quemComprou,
+        contribuicaoParceiro1: formData.contribuicaoParceiro1,
+        contribuicaoParceiro2: formData.contribuicaoParceiro2,
+        observacoes: formData.observacoes,
+      };
+      
       const processedAssignedToMemberId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" ? undefined : formData.assignedToMemberId);
-      let nodeToUpdate: Node<AssetNodeData> | undefined = undefined;
 
-      if (formData.tipo === 'digital' && formData.nomeAtivo && formData.quantidadeDigital !== undefined) {
-        nodeToUpdate = nodes.find(node =>
-          node.type === 'assetNode' &&
-          (node.data as AssetNodeData).assetMainType === 'digital' &&
-          (node.data as AssetNodeData).name === formData.nomeAtivo &&
-          (node.data as AssetNodeData).assignedToMemberId === processedAssignedToMemberId
-        );
-      }
+      let existingNode = nodes.find(node =>
+        node.type === 'assetNode' &&
+        (node.data as ExtendedAssetNodeData).nomeAtivo === formData.nomeAtivo &&
+        (node.data as ExtendedAssetNodeData).tipo === formData.tipo &&
+        (node.data as ExtendedAssetNodeData).assignedToMemberId === processedAssignedToMemberId
+      ) as Node<ExtendedAssetNodeData> | undefined;
 
-      if (nodeToUpdate) {
+
+      if (existingNode) {
+        // Adicionar nova transação ao ativo existente e atualizar
         setNodes(prevNodes =>
           prevNodes.map(n => {
-            if (n.id === nodeToUpdate!.id) {
-              const existingData = n.data as AssetNodeData;
-              const newQuantity = (existingData.quantity || 0) + (formData.quantidadeDigital || 0);
-              const updatedData: AssetNodeData = {
-                ...existingData,
-                id: existingData.id, // Manter o ID existente
-                name: existingData.name, // Manter o nome existente
-                quantity: newQuantity,
-                dataAquisicao: formData.dataAquisicao, 
-                observacoes: formData.observacoes,
-                quemComprou: formData.quemComprou,
-                contribuicaoParceiro1: formData.contribuicaoParceiro1,
-                contribuicaoParceiro2: formData.contribuicaoParceiro2,
-                valorPagoEpocaDigital: formData.valorPagoEpocaDigital,
-                releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId)
-                  ? { type: 'age', targetAge: formData.releaseTargetAge }
-                  : existingData.releaseCondition,
+            if (n.id === existingNode!.id) {
+              const currentData = n.data as ExtendedAssetNodeData;
+              const updatedTransactions = [...currentData.transactions, newTransaction];
+              let updatedQuantityTotal = currentData.tipo === 'digital' ? (currentData as ExtendedAssetNodeData & DigitalAsset).quantidadeTotalDigital : 0;
+
+              if (formData.tipo === 'digital' && formData.quantidadeDigital !== undefined) {
+                updatedQuantityTotal = updatedTransactions.reduce((sum, tx) => sum + (tx.quantidadeDigital || 0), 0);
+              }
+              
+              const updatedNodeData: ExtendedAssetNodeData = {
+                ...currentData,
+                transactions: updatedTransactions,
+                // Atualizar campos do ativo principal se necessário (ex: releaseCondition, se foi alterado)
+                // Por simplicidade, não estamos permitindo alterar designação ou release condition ao adicionar transação
+                ...(formData.tipo === 'digital' && { quantidadeTotalDigital: updatedQuantityTotal }),
+                 // Os campos como observacoes, dataAquisicao, etc., que agora são por transação,
+                 // podem refletir a última transação na visualização principal do nó, se desejado.
+                 // Por ora, o AssetNode pega o nome do ativo.
               };
-              updatedData.onOpenDetails = () => handleOpenAssetDetailsModal(updatedData);
-              return { ...n, data: updatedData };
+              updatedNodeData.onOpenDetails = () => handleOpenAssetDetailsModal(updatedNodeData);
+              return { ...n, data: updatedNodeData };
             }
             return n;
           })
         );
-      } else { // Se o nó não existe, crie um novo
+      } else { // Criar novo ativo com sua primeira transação
         const sourceNodeId = processedAssignedToMemberId || UNION_NODE_ID;
         const sourceNodeInstance = nodes.find(n => n.id === sourceNodeId);
 
         if (!sourceNodeInstance) {
-          console.error("Nó de origem (União ou Membro) não encontrado para adicionar o ativo.", sourceNodeId, processedAssignedToMemberId);
+          console.error("Nó de origem (União ou Membro) não encontrado.", sourceNodeId);
           setIsSubmittingAsset(false);
           setMemberContextForAssetAdd(null);
+          setExistingAssetToUpdate(null);
           return;
         }
         
         const assetNodesLinkedToSource = nodes.filter(n => {
             if (n.type !== 'assetNode') return false;
-            const nodeData = n.data as AssetNodeData;
+            const nodeData = n.data as ExtendedAssetNodeData;
             const isLinkedToUnion = sourceNodeId === UNION_NODE_ID && !nodeData.assignedToMemberId;
             const isLinkedToMember = nodeData.assignedToMemberId === sourceNodeId;
             return isLinkedToUnion || isLinkedToMember;
@@ -266,44 +289,37 @@ export default function AssetManagementDashboard() {
         const newAssetNodeX = sourceNodeX + radius * Math.cos(angle);
         const newAssetNodeY = sourceNodeY + (sourceNodeInstance.height ?? (sourceNodeInstance.type === 'unionNode' ? 100 : 80)) + 50 + radius * Math.sin(angle);
 
+        let nodeDataPayload: ExtendedAssetNodeData;
 
-        let nodeDataPayload: AssetNodeData;
         if (formData.tipo === 'digital') {
           nodeDataPayload = {
-            id: result.assetId!,
-            name: formData.nomeAtivo,
-            assetMainType: 'digital',
-            quantity: formData.quantidadeDigital || 0,
+            id: result.assetId!, // ID do ativo principal
+            userId: effectiveUser.uid,
+            nomeAtivo: formData.nomeAtivo,
+            tipo: 'digital',
+            quantidadeTotalDigital: formData.quantidadeDigital || 0,
+            transactions: [newTransaction],
             assignedToMemberId: processedAssignedToMemberId,
             releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
-            dataAquisicao: formData.dataAquisicao,
-            observacoes: formData.observacoes,
-            quemComprou: formData.quemComprou,
-            contribuicaoParceiro1: formData.contribuicaoParceiro1,
-            contribuicaoParceiro2: formData.contribuicaoParceiro2,
-            valorPagoEpocaDigital: formData.valorPagoEpocaDigital,
             onOpenDetails: () => {} 
           };
-        } else { 
+        } else { // fisico
           nodeDataPayload = {
-            id: result.assetId!,
-            name: formData.nomeAtivo,
-            assetMainType: 'fisico',
-            physicalAssetType: formData.tipoImovelBemFisico,
+            id: result.assetId!, // ID do ativo principal
+            userId: effectiveUser.uid,
+            nomeAtivo: formData.nomeAtivo,
+            tipo: 'fisico',
+            tipoImovelBemFisico: formData.tipoImovelBemFisico!,
+            enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
+            transactions: [newTransaction], // Primeira transação para ativo físico
             assignedToMemberId: processedAssignedToMemberId,
             releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
-            dataAquisicao: formData.dataAquisicao,
-            observacoes: formData.observacoes,
-            quemComprou: formData.quemComprou,
-            contribuicaoParceiro1: formData.contribuicaoParceiro1,
-            contribuicaoParceiro2: formData.contribuicaoParceiro2,
-            enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
             onOpenDetails: () => {} 
           };
         }
         nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
 
-        const newAssetNodeReactFlow: Node<AssetNodeData> = {
+        const newAssetNodeReactFlow: Node<ExtendedAssetNodeData> = {
           id: result.assetId!,
           type: 'assetNode',
           data: nodeDataPayload,
@@ -325,8 +341,9 @@ export default function AssetManagementDashboard() {
       }
       setIsAssetModalOpen(false);
       setMemberContextForAssetAdd(null);
+      setExistingAssetToUpdate(null);
     } else {
-      toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar o ativo.', variant: 'destructive' });
+      toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar a transação do ativo.', variant: 'destructive' });
     }
     setIsSubmittingAsset(false);
   };
@@ -376,7 +393,7 @@ export default function AssetManagementDashboard() {
         name: data.nome,
         relationshipType: data.tipoRelacao,
         dataNascimento: data.dataNascimento, 
-        onAddAssetClick: handleOpenAssetModalForMember,
+        onAddAssetClick: (memberId) => handleOpenAssetModalForMember(memberId), // Passando sem assetToUpdate para novo ativo
       };
 
       const newMemberNodeReactFlow: Node<MemberNodeData> = {
@@ -432,12 +449,17 @@ export default function AssetManagementDashboard() {
     <div className="flex flex-col h-[calc(100vh-var(--header-height,60px)-1rem)] py-2">
       <Dialog open={isAssetModalOpen} onOpenChange={(isOpen) => {
         setIsAssetModalOpen(isOpen);
-        if (!isOpen) setMemberContextForAssetAdd(null); 
+        if (!isOpen) {
+            setMemberContextForAssetAdd(null); 
+            setExistingAssetToUpdate(null);
+        }
       }}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo</DialogTitle>
-            <DialogDescription>Preencha os detalhes do seu ativo.</DialogDescription>
+            <DialogTitle className="text-2xl text-primary">
+              {existingAssetToUpdate ? `Adicionar Transação para ${existingAssetToUpdate.name}` : "Adicionar Novo Ativo"}
+            </DialogTitle>
+            <DialogDescription>Preencha os detalhes da aquisição do seu ativo.</DialogDescription>
           </DialogHeader>
           <AssetForm
             onSubmit={handleAddAssetSubmit}
@@ -445,9 +467,11 @@ export default function AssetManagementDashboard() {
             onClose={() => {
                 setIsAssetModalOpen(false);
                 setMemberContextForAssetAdd(null);
+                setExistingAssetToUpdate(null);
             }}
             availableMembers={availableMembersForAssetForm}
             targetMemberId={memberContextForAssetAdd}
+            existingAssetToUpdate={existingAssetToUpdate}
           />
         </DialogContent>
       </Dialog>
@@ -463,77 +487,45 @@ export default function AssetManagementDashboard() {
       </Dialog>
 
        <Dialog open={isAssetDetailsModalOpen} onOpenChange={handleCloseAssetDetailsModal}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">Detalhes do Ativo</DialogTitle>
-            <DialogDescription>Informações sobre o ativo selecionado. O histórico detalhado de transações (para ativos com múltiplas aquisições) será implementado em breve.</DialogDescription>
+            <DialogTitle className="text-2xl text-primary">Detalhes do Ativo: {selectedAssetForDetails?.nomeAtivo}</DialogTitle>
+            <DialogDescription>
+              Informações sobre o ativo e histórico de aquisições.
+            </DialogDescription>
           </DialogHeader>
           {selectedAssetForDetails && (
-            <div className="space-y-3 py-4 text-sm">
+            <div className="space-y-4 py-4 text-sm">
               <div>
                 <Label className="text-xs font-medium text-muted-foreground">Nome do Ativo</Label>
-                <p className="font-semibold text-foreground">{selectedAssetForDetails.name}</p>
+                <p className="font-semibold text-foreground">{selectedAssetForDetails.nomeAtivo}</p>
               </div>
               <div>
                 <Label className="text-xs font-medium text-muted-foreground">Tipo Principal</Label>
-                <p className="text-foreground capitalize">{selectedAssetForDetails.assetMainType}</p>
+                <p className="text-foreground capitalize">{selectedAssetForDetails.tipo}</p>
               </div>
-              {selectedAssetForDetails.assetMainType === 'digital' && (
-                <>
-                  <div>
-                    <Label className="text-xs font-medium text-muted-foreground">Quantidade Total</Label>
-                    <p className="text-foreground">{selectedAssetForDetails.quantity?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) || 'N/A'}</p>
-                  </div>
-                   {selectedAssetForDetails.valorPagoEpocaDigital !== undefined && (
-                    <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Valor Pago (Última Aquisição)</Label>
-                        <p className="text-foreground">{selectedAssetForDetails.valorPagoEpocaDigital.toLocaleString(undefined, { style: 'currency', currency: 'BRL', minimumFractionDigits:2, maximumFractionDigits: 2 })}</p>
-                    </div>
-                   )}
-                </>
+
+              {selectedAssetForDetails.tipo === 'digital' && (
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Quantidade Total</Label>
+                  <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData & DigitalAsset).quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) || 'N/A'}</p>
+                </div>
               )}
-              {selectedAssetForDetails.assetMainType === 'fisico' && (
+              {selectedAssetForDetails.tipo === 'fisico' && (
                 <>
                   <div>
                     <Label className="text-xs font-medium text-muted-foreground">Tipo de Bem Físico</Label>
-                    <p className="text-foreground">{selectedAssetForDetails.physicalAssetType || 'Não especificado'}</p>
+                    <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData & PhysicalAsset).tipoImovelBemFisico || 'Não especificado'}</p>
                   </div>
-                  {selectedAssetForDetails.enderecoLocalizacaoFisico && (
+                  {(selectedAssetForDetails as ExtendedAssetNodeData & PhysicalAsset).enderecoLocalizacaoFisico && (
                     <div>
                         <Label className="text-xs font-medium text-muted-foreground">Endereço/Localização</Label>
-                        <p className="text-foreground">{selectedAssetForDetails.enderecoLocalizacaoFisico}</p>
+                        <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData & PhysicalAsset).enderecoLocalizacaoFisico}</p>
                     </div>
                   )}
                 </>
               )}
-              {selectedAssetForDetails.dataAquisicao && (
-                <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Data de Aquisição (Última)</Label>
-                  <p className="text-foreground">{format(new Date(selectedAssetForDetails.dataAquisicao), "dd/MM/yyyy", { locale: ptBR })}</p>
-                </div>
-              )}
-              {selectedAssetForDetails.quemComprou && (
-                <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Adquirido por (Última Aquisição)</Label>
-                  <p className="text-foreground">{effectiveUser?.displayName?.includes(selectedAssetForDetails.quemComprou) ? selectedAssetForDetails.quemComprou : getMemberNameById(selectedAssetForDetails.quemComprou)}</p>
-                </div>
-              )}
-               {selectedAssetForDetails.quemComprou === 'Ambos' && (
-                <div className='pl-4 border-l-2 border-muted space-y-2 py-1'>
-                  {selectedAssetForDetails.contribuicaoParceiro1 !== undefined && (
-                    <div>
-                      <Label className="text-xs font-medium text-muted-foreground">Contribuição ({user?.displayName?.split('&')[0]?.trim() || 'Parceiro 1'}) (Última Aquisição)</Label>
-                      <p className="text-foreground">{selectedAssetForDetails.contribuicaoParceiro1.toLocaleString(undefined, { style: 'currency', currency: 'BRL', minimumFractionDigits:2, maximumFractionDigits: 2 })}</p>
-                    </div>
-                  )}
-                  {selectedAssetForDetails.contribuicaoParceiro2 !== undefined && (
-                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground">Contribuição ({user?.displayName?.split('&')[1]?.trim() || 'Parceiro 2'}) (Última Aquisição)</Label>
-                      <p className="text-foreground">{selectedAssetForDetails.contribuicaoParceiro2.toLocaleString(undefined, { style: 'currency', currency: 'BRL', minimumFractionDigits:2, maximumFractionDigits: 2 })}</p>
-                    </div>
-                  )}
-                </div>
-              )}
+              
               {selectedAssetForDetails.assignedToMemberId && (
                 <div>
                   <Label className="text-xs font-medium text-muted-foreground">Designado para</Label>
@@ -546,12 +538,73 @@ export default function AssetManagementDashboard() {
                   <p className="text-foreground">Liberar aos {selectedAssetForDetails.releaseCondition.targetAge} anos</p>
                 </div>
               )}
-               {selectedAssetForDetails.observacoes && (
+               {selectedAssetForDetails.observacoesGerais && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Observações (Última Aquisição)</Label>
-                  <p className="text-foreground whitespace-pre-wrap">{selectedAssetForDetails.observacoes}</p>
+                  <Label className="text-xs font-medium text-muted-foreground">Observações Gerais do Ativo</Label>
+                  <p className="text-foreground whitespace-pre-wrap">{selectedAssetForDetails.observacoesGerais}</p>
                 </div>
               )}
+
+              <div className="space-y-3 pt-3 mt-3 border-t">
+                <h4 className="text-md font-semibold text-primary">Histórico de Aquisições/Transações</h4>
+                {selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 0 ? (
+                  <div className="max-h-60 overflow-y-auto space-y-4 pr-2">
+                    {selectedAssetForDetails.transactions.map((tx, index) => (
+                      <Card key={tx.id || index} className="p-3 bg-muted/50">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
+                          <div>
+                            <Label className="text-xs font-medium text-muted-foreground">Data da Aquisição</Label>
+                            <p className="text-foreground">{format(new Date(tx.dataAquisicao), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
+                          </div>
+                          {tx.quantidadeDigital !== undefined && selectedAssetForDetails.tipo === 'digital' && (
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground">Quantidade Adquirida</Label>
+                              <p className="text-foreground">{tx.quantidadeDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}</p>
+                            </div>
+                          )}
+                          {tx.valorPagoEpoca !== undefined && (
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground">Valor Pago na Época</Label>
+                              <p className="text-foreground">{tx.valorPagoEpoca.toLocaleString(undefined, { style: 'currency', currency: 'BRL' })}</p>
+                            </div>
+                          )}
+                           {tx.quemComprou && (
+                            <div>
+                              <Label className="text-xs font-medium text-muted-foreground">Adquirido por</Label>
+                              <p className="text-foreground">{effectiveUser?.displayName?.includes(tx.quemComprou) ? tx.quemComprou : getMemberNameById(tx.quemComprou)}</p>
+                            </div>
+                          )}
+                          {tx.quemComprou === 'Ambos' && (
+                            <>
+                              {tx.contribuicaoParceiro1 !== undefined && (
+                                <div>
+                                  <Label className="text-xs font-medium text-muted-foreground">Contrib. ({user?.displayName?.split('&')[0]?.trim() || 'Parceiro 1'})</Label>
+                                  <p className="text-foreground">{tx.contribuicaoParceiro1.toLocaleString(undefined, { style: 'currency', currency: 'BRL' })}</p>
+                                </div>
+                              )}
+                              {tx.contribuicaoParceiro2 !== undefined && (
+                                <div>
+                                  <Label className="text-xs font-medium text-muted-foreground">Contrib. ({user?.displayName?.split('&')[1]?.trim() || 'Parceiro 2'})</Label>
+                                  <p className="text-foreground">{tx.contribuicaoParceiro2.toLocaleString(undefined, { style: 'currency', currency: 'BRL' })}</p>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                        {tx.observacoes && (
+                          <div className="mt-2 pt-2 border-t border-dashed">
+                            <Label className="text-xs font-medium text-muted-foreground">Observações da Transação</Label>
+                            <p className="text-foreground whitespace-pre-wrap text-xs">{tx.observacoes}</p>
+                          </div>
+                        )}
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">Nenhuma transação registrada para este ativo.</p>
+                )}
+              </div>
+
               <div className="pt-4">
                 <Button onClick={handleCloseAssetDetailsModal} className="w-full" variant="outline">Fechar</Button>
               </div>
@@ -595,34 +648,29 @@ export default function AssetManagementDashboard() {
 
 declare module 'reactflow' {
   interface NodeData {
-    // From UnionNodeData
+    // UnionNodeData
     id?: string; 
     label?: string;
     onSettingsClick?: () => void;
-    onOpenAssetModal?: () => void;
+    onOpenAssetModal?: (assetToUpdate?: {name: string, type: 'digital' | 'fisico', assignedTo?: string | null}) => void; // Atualizado para aceitar assetToUpdate
     onAddMember?: () => void;
-    // From AssetNodeData
-    name?: string; 
-    assetMainType?: 'digital' | 'fisico';
-    quantity?: number;
-    physicalAssetType?: string;
+    
+    // AssetNodeData (agora ExtendedAssetNodeData)
+    nomeAtivo?: string; 
+    tipo?: 'digital' | 'fisico';
+    quantidadeTotalDigital?: number; // Para DigitalAsset
+    tipoImovelBemFisico?: string; // Para PhysicalAsset
+    enderecoLocalizacaoFisico?: string; // Para PhysicalAsset
+    transactions?: AssetTransaction[];
     releaseCondition?: { type: 'age'; targetAge: number };
     assignedToMemberId?: string;
     onOpenDetails?: () => void; 
-    dataAquisicao?: Date | string;
-    observacoes?: string;
-    quemComprou?: string;
-    contribuicaoParceiro1?: number;
-    contribuicaoParceiro2?: number;
-    valorPagoEpocaDigital?: number;
-    enderecoLocalizacaoFisico?: string;
-    // From MemberNodeData
-    // name?: string; // Já existe acima
+    observacoesGerais?: string;
+
+    // MemberNodeData
+    name?: string; 
     relationshipType?: string;
     dataNascimento?: Date | string;
     onAddAssetClick?: (memberId: string) => void; 
   }
 }
-
-
-    
