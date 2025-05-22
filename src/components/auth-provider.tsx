@@ -94,14 +94,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     handleAuthChange(null);
-    router.push('/'); // Alterado de '/login' para '/'
+    router.push('/'); // Garante redirecionamento para a landing page
   }, [handleAuthChange, router]);
 
   const updateProfile = useCallback((data: UpdateProfileData) => {
     if (user) {
       const updatedUser = { 
         ...user, 
-        ...data, // Mescla todos os dados passados
+        ...data, 
       };
       handleAuthChange(updatedUser);
     }
