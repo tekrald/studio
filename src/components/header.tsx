@@ -27,7 +27,8 @@ export function Header() {
             width={250} 
             height={83}  
             className="h-auto" 
-            priority 
+            priority
+            style={{ filter: 'brightness(0) invert(1)' }}
           />
         </Link>
         
