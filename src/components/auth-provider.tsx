@@ -13,6 +13,10 @@ interface User {
   // Campos da União
   relationshipStructure?: 'monogamous' | 'polygamous' | 'other' | '';
   religion?: string;
+  // Campos da empresa (se holding física) - estes não são mais coletados nos formulários principais
+  // companyType?: string;
+  // jurisdiction?: string;
+  // notesForAccountant?: string;
 }
 
 interface UpdateProfileData {
@@ -24,10 +28,10 @@ interface UpdateProfileData {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, name?: string) => void; 
+  login: (email: string, name?: string) => void;
   signup: (
-    email: string, 
-    name: string, 
+    email: string,
+    name: string,
     holdingTypeParam?: 'digital' | 'physical' | '',
     relationshipStructureParam?: 'monogamous' | 'polygamous' | 'other' | '',
     religionParam?: string
@@ -46,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
   useEffect(() => {
+    // This effect runs once on mount to check for a stored user
     try {
       const storedUser = localStorage.getItem('domedomeMockUser');
       if (storedUser) {
@@ -53,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem('domedomeMockUser');
+      localStorage.removeItem('domedomeMockUser'); // Clear corrupted data
     }
     setLoading(false);
   }, []);
@@ -66,9 +71,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem('domedomeMockUser');
     }
   }, []);
-  
+
   const login = useCallback((email: string, name?: string) => {
-    // Try to load existing user data to preserve holding/union details if they re-login
     let existingUser: Partial<User> = {};
     try {
       const storedUser = localStorage.getItem('domedomeMockUser');
@@ -79,15 +83,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     } catch (error) {
-        // ignore
+        // ignore error during load attempt
     }
 
-    const mockUser: User = { 
+    const mockUser: User = {
       ...existingUser, // spread existing data first
-      email, 
-      uid: `mock-${email}`, 
+      email,
+      uid: `mock-${email}`,
       displayName: name || existingUser.displayName || email.split('@')[0],
-      holdingType: existingUser.holdingType || '', 
+      // Ensure all fields from User interface are initialized if not present in existingUser
+      holdingType: existingUser.holdingType || '',
       relationshipStructure: existingUser.relationshipStructure || '',
       religion: existingUser.religion || '',
     };
@@ -96,15 +101,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [handleAuthChange, router]);
 
   const signup = useCallback((
-    email: string, 
-    name: string, 
+    email: string,
+    name: string,
     holdingTypeParam?: 'digital' | 'physical' | '',
     relationshipStructureParam?: 'monogamous' | 'polygamous' | 'other' | '',
     religionParam?: string
   ) => {
-    const mockUser: User = { 
-      email, 
-      uid: `mock-${email}-signup`, 
+    const mockUser: User = {
+      email,
+      uid: `mock-${email}-signup`,
       displayName: name,
       holdingType: holdingTypeParam || '',
       relationshipStructure: relationshipStructureParam || '',
@@ -116,14 +121,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     handleAuthChange(null);
-    router.push('/'); 
+    router.push('/'); // Explicitly redirect to the landing page
   }, [handleAuthChange, router]);
 
   const updateProfile = useCallback((data: UpdateProfileData) => {
     if (user) {
-      const updatedUser = { 
-        ...user, 
-        ...data, 
+      const updatedUser = {
+        ...user,
+        ...data,
       };
       handleAuthChange(updatedUser);
     }
@@ -131,17 +136,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
+    // Route protection logic
     if (loading) {
-      return;
+      return; // Don't do anything while loading initial user state
     }
 
     const isAuthRoute = pathname === '/login' || pathname === '/signup';
-    const isPublicRoute = pathname === '/'; 
+    const isPublicRoute = pathname === '/'; // Landing page is public
 
-    if (!user && !isAuthRoute && !isPublicRoute) {
-      router.push('/login');
-    } else if (user && isAuthRoute) {
-      router.push('/dashboard');
+    if (!user) { // If the user is not logged in
+      if (!isAuthRoute && !isPublicRoute) {
+        // And they are trying to access a protected page (not login, signup, or landing)
+        router.push('/login'); // Redirect to login
+      }
+      // If they are on an auth route or the public landing page, do nothing (allow access)
+    } else { // If the user is logged in
+      if (isAuthRoute) {
+        // And they are on a login/signup page
+        router.push('/dashboard'); // Redirect to dashboard
+      }
+      // If they are on any other page (including landing or protected routes), do nothing (allow access)
     }
   }, [user, loading, pathname, router]);
 
