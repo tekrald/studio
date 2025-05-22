@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { LayoutGrid, Settings, PlusCircle } from 'lucide-react'; 
+import { PlusCircle, Users, Briefcase, Settings, LayoutGrid, Plus, Network } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
-import type { AssetFormData, DigitalAsset, PhysicalAsset } from '@/types/asset';
+import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
 import { AddMemberForm } from '@/components/members/AddMemberForm';
-import type { MemberFormData } from '@/types/member';
+import type { MemberFormData, Member } from '@/types/member'; // Import Member type
 import { addMember } from '@/actions/memberActions';
 
 import { useToast } from '@/hooks/use-toast';
@@ -45,22 +45,28 @@ const nodeTypes = {
   memberNode: MemberNode,
 };
 
-// Combined Node Data type for React Flow
-type CustomNodeData = UnionNodeData | AssetNodeData | MemberNodeData;
+export type CustomNodeData = UnionNodeData | AssetNodeData | MemberNodeData;
 
+interface MemberWithBirthDate extends Member {
+  birthDate?: Date | string; // Adicionado para passar para AssetForm
+}
 
 export default function AssetManagementDashboard() {
-  const { user, loading: authLoading } = useAuth(); 
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
-  
+
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isSubmittingAsset, setIsSubmittingAsset] = useState(false);
-  
+  const [memberContextForAssetAdd, setMemberContextForAssetAdd] = useState<string | null>(null);
+
+
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNodeData>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [allMembers, setAllMembers] = useState<MemberWithBirthDate[]>([]); // Para armazenar membros com data de nascimento
+
 
   const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
   const [contractClauses, setContractClauses] = useState<ContractClause[]>([
@@ -72,7 +78,7 @@ export default function AssetManagementDashboard() {
     (params) => setEdges((eds) => addEdge({ ...params, type: 'smoothstep', markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' } }, eds)),
     [setEdges]
   );
-  
+
   const handleOpenContractSettings = useCallback(() => {
     setIsContractSettingsModalOpen(true);
   }, []);
@@ -85,7 +91,7 @@ export default function AssetManagementDashboard() {
     setContractClauses(prev => [...prev, newClause]);
     toast({ title: 'Cláusula Adicionada', description: 'Nova cláusula salva no contrato.' });
   };
-  
+
   const handleRemoveClause = (id: string) => {
     setContractClauses(prev => prev.filter(clause => clause.id !== id));
     toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida do contrato.' });
@@ -97,36 +103,49 @@ export default function AssetManagementDashboard() {
   };
 
   const handleOpenAssetModal = useCallback(() => {
+    setMemberContextForAssetAdd(null);
     setIsAssetModalOpen(true);
   }, []);
+
+  const handleOpenAssetModalForMember = useCallback((memberId: string) => {
+    setMemberContextForAssetAdd(memberId);
+    setIsAssetModalOpen(true);
+  }, []);
+
 
   const handleOpenAddMemberModal = useCallback(() => {
     setIsAddMemberModalOpen(true);
   }, []);
-  
-  const effectiveUser = user || { uid: 'mock-uid-default', displayName: 'Nossa União (Mock)'};
 
+  const effectiveUser = user || { uid: 'mock-uid-default', displayName: 'Nossa União (Mock)' };
 
   useEffect(() => {
     const currentUnionNode = nodes.find(node => node.id === UNION_NODE_ID);
-    if (!currentUnionNode && !authLoading && user?.displayName) { 
-        const unionNode: Node<UnionNodeData> = {
-            id: UNION_NODE_ID,
-            type: 'unionNode', 
-            position: { x: 400, y: 100 },
-            data: { 
-              label: user.displayName || 'Nossa União',
-              onSettingsClick: handleOpenContractSettings,
-              onOpenAssetModal: handleOpenAssetModal,
-              onAddMember: handleOpenAddMemberModal,
-            },
-            draggable: true,
-            nodeOrigin,
-        };
-        setNodes([unionNode]);
+    if (!currentUnionNode && !authLoading && user?.displayName) {
+      const unionNode: Node<UnionNodeData> = {
+        id: UNION_NODE_ID,
+        type: 'unionNode',
+        position: { x: 400, y: 100 },
+        data: {
+          label: user.displayName || 'Nossa União',
+          onSettingsClick: handleOpenContractSettings,
+          onOpenAssetModal: handleOpenAssetModal,
+          onAddMember: handleOpenAddMemberModal,
+        },
+        draggable: true,
+        nodeOrigin,
+      };
+      setNodes([unionNode]);
+    } else if (currentUnionNode && user?.displayName && currentUnionNode.data.label !== user.displayName) {
+      setNodes((nds) =>
+        nds.map((node) =>
+          node.id === UNION_NODE_ID
+            ? { ...node, data: { ...node.data, label: user.displayName! } }
+            : node
+        )
+      );
     }
-  }, [ nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal, authLoading, user]);
-
+  }, [nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal, authLoading, user]);
 
   const handleAddAssetSubmit = async (data: AssetFormData) => {
     if (!effectiveUser) {
@@ -134,38 +153,29 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingAsset(true);
-    const result = await addAsset(data, effectiveUser.uid); 
-    
+    const result = await addAsset(data, effectiveUser.uid);
+
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
-      
-      const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID);
-      if (!unionNodeInstance) {
-        console.error("Nó da união não encontrado para adicionar o ativo.");
-        setIsSubmittingAsset(false);
-        return;
-      }
 
       let assetNodeExists = false;
-      // Consolidation logic for digital assets
-      if (data.tipo === 'digital' && data.nomeAtivo && data.tipoAtivoDigital && data.quantidadeDigital !== undefined) {
+      // Consolidation for unassigned digital assets
+      if (data.tipo === 'digital' && data.nomeAtivo && data.tipoAtivoDigital && data.quantidadeDigital !== undefined && !data.assignedToMemberId) {
         setNodes((prevNodes) =>
           prevNodes.map((node) => {
             if (
-              node.type === 'assetNode' && // Check for custom asset node type
+              node.type === 'assetNode' &&
               (node.data as AssetNodeData).assetMainType === 'digital' &&
               (node.data as AssetNodeData).name === data.nomeAtivo &&
-              (node.data as AssetNodeData).digitalAssetType === data.tipoAtivoDigital 
+              (node.data as AssetNodeData).digitalAssetType === data.tipoAtivoDigital &&
+              !(node.data as AssetNodeData).assignedToMemberId 
             ) {
               assetNodeExists = true;
               const existingData = node.data as AssetNodeData;
               const newQuantity = (existingData.quantity || 0) + (data.quantidadeDigital || 0);
               return {
                 ...node,
-                data: {
-                  ...existingData,
-                  quantity: newQuantity,
-                },
+                data: { ...existingData, quantity: newQuantity },
               };
             }
             return node;
@@ -174,37 +184,53 @@ export default function AssetManagementDashboard() {
       }
 
       if (!assetNodeExists) {
-        const assetNodesCount = nodes.filter(n => n.type === 'assetNode').length;
-        const angleStep = Math.PI / 4; 
-        const radius = 250 + Math.floor(assetNodesCount / 6) * 100; // Increased radius spread
-        
-        const unionNodeX = unionNodeInstance.position?.x ?? 400;
-        const unionNodeY = unionNodeInstance.position?.y ?? 100;
-        const angle = (assetNodesCount * angleStep) + (Math.PI / 8); 
+        const sourceNodeId = data.assignedToMemberId || UNION_NODE_ID;
+        const sourceNodeInstance = nodes.find(n => n.id === sourceNodeId);
 
-        const newAssetNodeX = unionNodeX + radius * Math.cos(angle);
-        const newAssetNodeY = unionNodeY + (unionNodeInstance.height ?? 150) + 50 + radius * Math.sin(angle);
+        if (!sourceNodeInstance) {
+          console.error("Nó de origem (União ou Membro) não encontrado para adicionar o ativo.");
+          setIsSubmittingAsset(false);
+          setMemberContextForAssetAdd(null);
+          return;
+        }
         
+        const assetNodesLinkedToSource = nodes.filter(n => n.type === 'assetNode' && ((n.data as AssetNodeData).assignedToMemberId === sourceNodeId || (!data.assignedToMemberId && sourceNodeId === UNION_NODE_ID && !(n.data as AssetNodeData).assignedToMemberId))).length;
+
+        const angleStep = sourceNodeId === UNION_NODE_ID ? Math.PI / 4 : Math.PI / 3; 
+        const radius = sourceNodeId === UNION_NODE_ID ? 250 + Math.floor(assetNodesLinkedToSource / 6) * 100 : 180 + Math.floor(assetNodesLinkedToSource / 4) * 70;
+        
+        const sourceNodeX = sourceNodeInstance.position?.x ?? 400;
+        const sourceNodeY = sourceNodeInstance.position?.y ?? 100;
+        const angle = (assetNodesLinkedToSource * angleStep) + (sourceNodeId === UNION_NODE_ID ? (Math.PI / 8) : Math.PI);
+
+
+        const newAssetNodeX = sourceNodeX + radius * Math.cos(angle);
+        const newAssetNodeY = sourceNodeY + (sourceNodeInstance.height ?? 150) + 50 + radius * Math.sin(angle);
+
+
         let nodeDataPayload: AssetNodeData;
-
         if (data.tipo === 'digital') {
           nodeDataPayload = {
             name: data.nomeAtivo,
             assetMainType: 'digital',
             digitalAssetType: data.tipoAtivoDigital,
             quantity: data.quantidadeDigital || 0,
+            assignedToMemberId: data.assignedToMemberId,
+            releaseCondition: data.releaseCondition,
           };
-        } else { // fisico
-           nodeDataPayload = {
+        } else {
+          nodeDataPayload = {
             name: data.nomeAtivo,
             assetMainType: 'fisico',
-            physicalAssetType: data.tipoImovelBemFisico
+            physicalAssetType: data.tipoImovelBemFisico,
+            assignedToMemberId: data.assignedToMemberId,
+            releaseCondition: data.releaseCondition,
           };
         }
 
         const newAssetNode: Node<AssetNodeData> = {
           id: result.assetId,
-          type: 'assetNode', // Use custom asset node type
+          type: 'assetNode',
           data: nodeDataPayload,
           position: { x: newAssetNodeX, y: newAssetNodeY },
           draggable: true,
@@ -213,8 +239,8 @@ export default function AssetManagementDashboard() {
         setNodes((prevNodes) => prevNodes.concat(newAssetNode));
 
         const newEdge: Edge = {
-          id: `e-${UNION_NODE_ID}-${result.assetId}`,
-          source: UNION_NODE_ID,
+          id: `e-${sourceNodeId}-${result.assetId}`,
+          source: sourceNodeId,
           target: result.assetId,
           type: 'smoothstep',
           markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
@@ -223,6 +249,7 @@ export default function AssetManagementDashboard() {
         setEdges((prevEdges) => prevEdges.concat(newEdge));
       }
       setIsAssetModalOpen(false);
+      setMemberContextForAssetAdd(null);
     } else {
       toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar o ativo.', variant: 'destructive' });
     }
@@ -239,6 +266,16 @@ export default function AssetManagementDashboard() {
     if (result.success && result.memberId) {
       toast({ title: 'Sucesso!', description: 'Membro adicionado com sucesso.' });
 
+       const newMember: MemberWithBirthDate = {
+        id: result.memberId,
+        unionId: UNION_NODE_ID,
+        nome: data.nome,
+        tipoRelacao: data.tipoRelacao,
+        dataNascimento: data.dataNascimento, // Armazenar data de nascimento
+      };
+      setAllMembers(prev => [...prev, newMember]);
+
+
       const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID);
       if (!unionNodeInstance) {
         setIsSubmittingMember(false);
@@ -246,30 +283,32 @@ export default function AssetManagementDashboard() {
       }
 
       const memberNodesCount = nodes.filter(n => n.type === 'memberNode').length;
-      const angleStep = Math.PI / 4; 
-      const radius = 250 + Math.floor(memberNodesCount / 6) * 100; // Increased radius spread
-      
+      const angleStep = Math.PI / 4;
+      const radius = 250 + Math.floor(memberNodesCount / 6) * 100;
+
       const unionNodeX = unionNodeInstance.position?.x ?? 400;
       const unionNodeY = unionNodeInstance.position?.y ?? 100;
-      const angle = (memberNodesCount * angleStep) + (Math.PI * 5/8); 
+      const angle = (memberNodesCount * angleStep) + (Math.PI * 5 / 8);
 
       const newMemberNodeX = unionNodeX + radius * Math.cos(angle);
       const newMemberNodeY = unionNodeY + (unionNodeInstance.height ?? 150) + 50 + radius * Math.sin(angle);
 
       const nodeDataPayload: MemberNodeData = {
+        id: result.memberId,
         name: data.nome,
         relationshipType: data.tipoRelacao,
+        onAddAssetClick: handleOpenAssetModalForMember,
       };
 
-      const newMemberNode: Node<MemberNodeData> = {
+      const newMemberNodeReactFlow: Node<MemberNodeData> = { // Renomeado para evitar conflito
         id: result.memberId,
-        type: 'memberNode', // Use custom member node type
+        type: 'memberNode',
         data: nodeDataPayload,
         position: { x: newMemberNodeX, y: newMemberNodeY },
         draggable: true,
         nodeOrigin,
       };
-      setNodes((prevNodes) => prevNodes.concat(newMemberNode));
+      setNodes((prevNodes) => prevNodes.concat(newMemberNodeReactFlow));
 
       const newEdge: Edge = {
         id: `e-${UNION_NODE_ID}-${result.memberId}`,
@@ -288,7 +327,14 @@ export default function AssetManagementDashboard() {
     setIsSubmittingMember(false);
   };
   
-  if (authLoading && nodes.length === 0) { 
+  const availableMembersForAssetForm = allMembers.map(member => ({
+      id: member.id!,
+      name: member.nome,
+      birthDate: member.dataNascimento, 
+    }));
+
+
+  if (authLoading && !nodes.find(n => n.id === UNION_NODE_ID)) {
     return (
       <div className="flex min-h-[calc(100vh-var(--header-height,60px)-2rem)] items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -297,60 +343,90 @@ export default function AssetManagementDashboard() {
   }
 
   return (
-      <div className="flex flex-col h-[calc(100vh-var(--header-height,60px)-2rem)]"> {/* Adjusted height calculation */}
-         <Dialog open={isAssetModalOpen} onOpenChange={setIsAssetModalOpen}>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo</DialogTitle>
-                <DialogDescription>Preencha os detalhes do seu ativo.</DialogDescription>
-              </DialogHeader>
-              <AssetForm onSubmit={handleAddAssetSubmit} isLoading={isSubmittingAsset} onClose={() => setIsAssetModalOpen(false)} />
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={isAddMemberModalOpen} onOpenChange={setIsAddMemberModalOpen}>
-            <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl text-primary">Adicionar Novo Membro</DialogTitle>
-                <DialogDescription>Insira os dados do novo membro da família.</DialogDescription>
-              </DialogHeader>
-              <AddMemberForm onSubmit={handleAddMemberSubmit} isLoading={isSubmittingMember} onClose={() => setIsAddMemberModalOpen(false)} />
-            </DialogContent>
-          </Dialog>
-
-          <ContractSettingsDialog
-            isOpen={isContractSettingsModalOpen}
-            onClose={() => setIsContractSettingsModalOpen(false)}
-            clauses={contractClauses}
-            onAddClause={handleAddContractClause}
-            onRemoveClause={handleRemoveClause}
-            onUpdateClause={handleUpdateContractClause}
+    <div className="flex flex-col h-[calc(100vh-var(--header-height,60px)-1rem)] py-2">
+      <Dialog open={isAssetModalOpen} onOpenChange={(isOpen) => {
+        setIsAssetModalOpen(isOpen);
+        if (!isOpen) setMemberContextForAssetAdd(null); 
+      }}>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo</DialogTitle>
+            <DialogDescription>Preencha os detalhes do seu ativo.</DialogDescription>
+          </DialogHeader>
+          <AssetForm
+            onSubmit={handleAddAssetSubmit}
+            isLoading={isSubmittingAsset}
+            onClose={() => {
+                setIsAssetModalOpen(false);
+                setMemberContextForAssetAdd(null);
+            }}
+            availableMembers={availableMembersForAssetForm}
+            targetMemberId={memberContextForAssetAdd}
           />
-        
-        <div className="flex-grow shadow-lg relative overflow-hidden rounded-md border-2 border-dashed border-border bg-muted/30">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes} 
-            fitView
-            fitViewOptions={{ padding: 0.3 }} // Increased padding slightly
-            attributionPosition="bottom-left"
-            proOptions={{ hideAttribution: true }}
-            nodeOrigin={nodeOrigin}
-            defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
-          >
-            <Controls />
-            <Background gap={16} color="hsl(var(--border))" />
-          </ReactFlow>
-        </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAddMemberModalOpen} onOpenChange={setIsAddMemberModalOpen}>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-primary">Adicionar Novo Membro</DialogTitle>
+            <DialogDescription>Insira os dados do novo membro da família.</DialogDescription>
+          </DialogHeader>
+          <AddMemberForm onSubmit={handleAddMemberSubmit} isLoading={isSubmittingMember} onClose={() => setIsAddMemberModalOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <ContractSettingsDialog
+        isOpen={isContractSettingsModalOpen}
+        onClose={() => setIsContractSettingsModalOpen(false)}
+        clauses={contractClauses}
+        onAddClause={handleAddContractClause}
+        onRemoveClause={handleRemoveClause}
+        onUpdateClause={handleUpdateContractClause}
+      />
+
+      <div className="flex-grow shadow-lg relative overflow-hidden rounded-md border-2 border-dashed border-border bg-muted/30">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.2, duration: 800 }}
+          attributionPosition="bottom-left"
+          proOptions={{ hideAttribution: true }}
+          nodeOrigin={nodeOrigin}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+        >
+          <Controls />
+          <Background gap={16} color="hsl(var(--border))" />
+        </ReactFlow>
       </div>
+    </div>
   );
 }
 
-// Extend NodeData type for ReactFlow
 declare module 'reactflow' {
-    interface NodeData extends Partial<UnionNodeData>, Partial<AssetNodeData>, Partial<MemberNodeData> {}
+  interface NodeData {
+    // From UnionNodeData
+    id?: string;
+    label?: string;
+    onSettingsClick?: () => void;
+    onOpenAssetModal?: () => void;
+    onAddMember?: () => void;
+    // From AssetNodeData
+    name?: string;
+    assetMainType?: 'digital' | 'fisico';
+    digitalAssetType?: string;
+    quantity?: number;
+    physicalAssetType?: string;
+    releaseCondition?: { type: 'age'; targetAge: number };
+    assignedToMemberId?: string;
+    // From MemberNodeData
+    // name?: string; // already there
+    relationshipType?: string;
+    onAddAssetClick?: (memberId: string) => void; 
+  }
 }
