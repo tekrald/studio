@@ -11,6 +11,7 @@ import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Node {
   id: string;
@@ -31,7 +32,7 @@ export default function AssetManagementDashboard() {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmittingAsset, setIsSubmittingAsset] = useState(false);
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -42,7 +43,7 @@ export default function AssetManagementDashboard() {
         id: UNION_NODE_ID,
         type: 'union',
         data: { label: user.displayName || 'Nossa União' },
-        position: { x: (window.innerWidth * 0.8) / 2 , y: 80 },
+        position: { x: (window.innerWidth * 0.8) / 2 , y: 100 }, // Ajustado Y para dar espaço para header interna
       };
       setNodes([unionNode]);
     }
@@ -54,12 +55,12 @@ export default function AssetManagementDashboard() {
       toast({ title: 'Erro!', description: 'Usuário não autenticado.', variant: 'destructive' });
       return;
     }
-    setIsLoading(true);
-    const result = await addAsset(data, user.uid);
+    setIsSubmittingAsset(true);
+    const result = await addAsset(data, user.uid); // Firebase está mockado em assetActions
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
       
-      const unionNodePosition = nodes.find(n => n.id === UNION_NODE_ID)?.position || { x: (typeof window !== 'undefined' ? window.innerWidth * 0.8 : 600) / 2, y: 80 };
+      const unionNodePosition = nodes.find(n => n.id === UNION_NODE_ID)?.position || { x: (typeof window !== 'undefined' ? window.innerWidth * 0.8 : 600) / 2, y: 100 };
       const assetNodesCount = nodes.filter(n => n.type === 'asset').length;
 
       const newAssetNode: Node = {
@@ -71,7 +72,7 @@ export default function AssetManagementDashboard() {
         },
         position: {
           x: unionNodePosition.x + (assetNodesCount % 4 - 1.5) * 180, 
-          y: unionNodePosition.y + 150 + Math.floor(assetNodesCount / 4) * 120 
+          y: unionNodePosition.y + 200 + Math.floor(assetNodesCount / 4) * 120  // Aumentado Y para mais espaço
         },
       };
       setNodes((prevNodes) => [...prevNodes, newAssetNode]);
@@ -87,13 +88,13 @@ export default function AssetManagementDashboard() {
     } else {
       toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar o ativo.', variant: 'destructive' });
     }
-    setIsLoading(false);
+    setIsSubmittingAsset(false);
   };
 
   const handleAddMember = () => {
     toast({ title: 'Em Breve!', description: 'Funcionalidade de adicionar membros será implementada.' });
   };
-
+  
   const handleUnionSettingsClick = () => {
     toast({ title: 'Em Breve!', description: 'Configurações da união/contrato serão implementadas aqui.' });
   };
@@ -109,6 +110,9 @@ export default function AssetManagementDashboard() {
   if (!user) {
     return null; 
   }
+  
+  const baseNodeClasses = "absolute rounded-lg shadow-md border transform -translate-x-1/2 -translate-y-1/2 min-w-[180px] max-w-[220px] cursor-grab";
+
 
   return (
       <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-2rem)]">
@@ -140,7 +144,7 @@ export default function AssetManagementDashboard() {
                   <DialogTitle className="text-2xl font-pacifico text-primary">Adicionar Novo Ativo</DialogTitle>
                   <DialogDescription>Preencha os detalhes do seu ativo.</DialogDescription>
                 </DialogHeader>
-                <AssetForm onSubmit={handleAddAssetSubmit} isLoading={isLoading} onClose={() => setIsAssetModalOpen(false)} />
+                <AssetForm onSubmit={handleAddAssetSubmit} isLoading={isSubmittingAsset} onClose={() => setIsAssetModalOpen(false)} />
               </DialogContent>
             </Dialog>
 
@@ -157,26 +161,40 @@ export default function AssetManagementDashboard() {
               {nodes.map((node) => (
                 <div
                   key={node.id}
-                  className={`absolute p-3 rounded-lg shadow-md border ${
-                    node.type === 'union' ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'
-                  } transform -translate-x-1/2 -translate-y-1/2 min-w-[150px] max-w-[200px] text-center cursor-grab`}
+                  className={cn(
+                    baseNodeClasses,
+                    node.type === 'union' ? 'overflow-hidden' : 'bg-card text-card-foreground p-3 text-center'
+                  )}
                   style={{ left: `${node.position.x}px`, top: `${node.position.y}px` }}
                 >
-                  <div className="font-semibold text-sm flex items-center justify-center">
-                    {node.type === 'union' && <Network className="w-4 h-4 inline-block mr-2 opacity-70" />}
-                    {node.type === 'asset' && <DollarSign className="w-4 h-4 inline-block mr-2 opacity-70" />}
-                    {node.data.label}
-                  </div>
-                  {node.data.details && <div className="text-xs mt-1 opacity-80">{node.data.details}</div>}
-                  
-                  {node.type === 'union' && (
-                    <button
-                      onClick={handleUnionSettingsClick}
-                      className="absolute top-1 right-1 p-1 text-primary-foreground/70 hover:text-primary-foreground focus:outline-none focus:ring-1 focus:ring-primary-foreground rounded"
-                      aria-label="Configurações da União"
-                    >
-                      <Settings size={14} />
-                    </button>
+                  {node.type === 'union' ? (
+                    <div className="flex flex-col h-full">
+                      {/* Header colorida interna */}
+                      <div className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] p-1.5 rounded-t-md flex justify-end items-center">
+                        <button
+                          onClick={handleUnionSettingsClick}
+                          className="p-1 text-white/80 hover:text-white focus:outline-none focus:ring-1 focus:ring-white rounded"
+                          aria-label="Configurações da União"
+                        >
+                          <Settings size={14} />
+                        </button>
+                      </div>
+                      {/* Conteúdo branco interno */}
+                      <div className="bg-card text-card-foreground p-3 rounded-b-md text-center flex-grow">
+                        <div className="font-semibold text-sm flex items-center justify-center">
+                          <Network className="w-4 h-4 inline-block mr-2 text-primary opacity-90" />
+                          {node.data.label}
+                        </div>
+                      </div>
+                    </div>
+                  ) : ( // Nó do tipo asset
+                    <>
+                      <div className="font-semibold text-sm flex items-center justify-center">
+                        <DollarSign className="w-4 h-4 inline-block mr-2 opacity-70" />
+                        {node.data.label}
+                      </div>
+                      {node.data.details && <div className="text-xs mt-1 opacity-80">{node.data.details}</div>}
+                    </>
                   )}
                 </div>
               ))}
@@ -187,10 +205,11 @@ export default function AssetManagementDashboard() {
                   const targetNode = nodes.find((n) => n.id === edge.target);
                   if (!sourceNode || !targetNode) return null;
                   
-                  const sourceX = sourceNode.position.x; 
-                  const sourceY = sourceNode.position.y; 
-                  const targetX = targetNode.position.x; 
-                  const targetY = targetNode.position.y;
+                  // Ajustar para que as linhas saiam da borda inferior do nó união e superior do nó ativo
+                  const sourceX = sourceNode.position.x;
+                  const sourceY = sourceNode.position.y + 35; // Aproximadamente metade da altura do nó união (ajustar se necessário)
+                  const targetX = targetNode.position.x;
+                  const targetY = targetNode.position.y - 25; // Aproximadamente metade da altura do nó ativo
 
                   return (
                     <line
@@ -226,4 +245,4 @@ export default function AssetManagementDashboard() {
       </div>
   );
 }
-
+    
