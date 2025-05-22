@@ -5,28 +5,30 @@ import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Users, Network, DollarSign, LayoutGrid, Settings } from 'lucide-react';
+import { Users, Network, DollarSign, LayoutGrid } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-interface Node {
-  id: string;
-  type: 'union' | 'asset';
-  data: { label: string; details?: string };
-  position: { x: number; y: number };
-}
-
-interface Edge {
-  id: string;
-  source: string;
-  target: string;
-}
+import ReactFlow, {
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  Controls,
+  Background,
+  MarkerType,
+  type Node,
+  type Edge,
+  type OnConnect,
+  type Position,
+} from 'reactflow';
+import 'reactflow/dist/style.css';
 
 const UNION_NODE_ID = 'union-node';
+
+const initialNodes: Node[] = [];
+const initialEdges: Edge[] = [];
 
 export default function AssetManagementDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -34,20 +36,36 @@ export default function AssetManagementDashboard() {
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isSubmittingAsset, setIsSubmittingAsset] = useState(false);
 
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const onConnect: OnConnect = useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
 
   useEffect(() => {
-    if (user && !authLoading && typeof window !== 'undefined' && !nodes.find(node => node.id === UNION_NODE_ID)) {
+    if (user && !authLoading && !nodes.find(node => node.id === UNION_NODE_ID)) {
       const unionNode: Node = {
         id: UNION_NODE_ID,
-        type: 'union',
+        type: 'default', // Using default node type for now
         data: { label: user.displayName || 'Nossa União' },
-        position: { x: (window.innerWidth * 0.8) / 2 , y: 100 }, // Ajustado Y para dar espaço para header interna
+        position: { x: 250, y: 50 },
+        draggable: true,
+        style: {
+          background: 'hsl(var(--card))',
+          color: 'hsl(var(--card-foreground))',
+          border: '1px solid hsl(var(--primary))',
+          width: 180,
+          padding: '10px',
+          borderRadius: 'var(--radius)',
+          textAlign: 'center',
+        },
+
       };
       setNodes([unionNode]);
     }
-  }, [user, authLoading, nodes]);
+  }, [user, authLoading, nodes, setNodes]);
 
 
   const handleAddAssetSubmit = async (data: AssetFormData) => {
@@ -56,33 +74,49 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingAsset(true);
-    const result = await addAsset(data, user.uid); // Firebase está mockado em assetActions
+    // Firebase is currently mocked in assetActions
+    const result = await addAsset(data, user.uid); 
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
       
-      const unionNodePosition = nodes.find(n => n.id === UNION_NODE_ID)?.position || { x: (typeof window !== 'undefined' ? window.innerWidth * 0.8 : 600) / 2, y: 100 };
-      const assetNodesCount = nodes.filter(n => n.type === 'asset').length;
+      const unionNode = nodes.find(n => n.id === UNION_NODE_ID);
+      const existingAssetNodesCount = nodes.filter(n => n.id !== UNION_NODE_ID).length;
+
+      // Simple positioning logic for new asset nodes
+      const newAssetNodeX = (unionNode?.position.x || 250) + (existingAssetNodesCount % 3 -1) * 200;
+      const newAssetNodeY = (unionNode?.position.y || 50) + 150 + Math.floor(existingAssetNodesCount / 3) * 100;
+
 
       const newAssetNode: Node = {
         id: result.assetId,
-        type: 'asset',
+        type: 'default',
         data: {
           label: data.nomeAtivo,
-          details: `Tipo: ${data.tipo === 'digital' ? 'Digital' : 'Físico'}, Valor: R$ ${data.valorAtualEstimado}`
+          // details: `Tipo: ${data.tipo === 'digital' ? 'Digital' : 'Físico'}, Valor: R$ ${data.valorAtualEstimado}`
         },
-        position: {
-          x: unionNodePosition.x + (assetNodesCount % 4 - 1.5) * 180, 
-          y: unionNodePosition.y + 200 + Math.floor(assetNodesCount / 4) * 120  // Aumentado Y para mais espaço
+        position: { x: newAssetNodeX, y: newAssetNodeY },
+        draggable: true,
+        style: {
+          background: 'hsl(var(--card))',
+          color: 'hsl(var(--card-foreground))',
+          border: '1px solid hsl(var(--border))',
+          width: 150,
+          padding: '10px',
+          borderRadius: 'var(--radius)',
+          fontSize: '0.9rem',
+          textAlign: 'center',
         },
       };
-      setNodes((prevNodes) => [...prevNodes, newAssetNode]);
+      setNodes((prevNodes) => prevNodes.concat(newAssetNode));
 
       const newEdge: Edge = {
         id: `e-${UNION_NODE_ID}-${result.assetId}`,
         source: UNION_NODE_ID,
         target: result.assetId,
+        markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
+        style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 },
       };
-      setEdges((prevEdges) => [...prevEdges, newEdge]);
+      setEdges((prevEdges) => prevEdges.concat(newEdge));
 
       setIsAssetModalOpen(false);
     } else {
@@ -95,11 +129,7 @@ export default function AssetManagementDashboard() {
     toast({ title: 'Em Breve!', description: 'Funcionalidade de adicionar membros será implementada.' });
   };
   
-  const handleUnionSettingsClick = () => {
-    toast({ title: 'Em Breve!', description: 'Configurações da união/contrato serão implementadas aqui.' });
-  };
-
-  if (authLoading && !user) {
+  if (authLoading && !user && nodes.length === 0) { // Check nodes.length to avoid flicker if union node already exists
     return (
       <div className="flex min-h-[calc(100vh-var(--header-height,100px)-2rem)] items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -108,14 +138,12 @@ export default function AssetManagementDashboard() {
   }
   
   if (!user) {
+    // This case should ideally be handled by the MainAppLayout redirecting to login
     return null; 
   }
-  
-  const baseNodeClasses = "absolute rounded-lg shadow-md border transform -translate-x-1/2 -translate-y-1/2 min-w-[180px] max-w-[220px] cursor-grab";
-
 
   return (
-      <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-2rem)]">
+      <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-var(--actions-bar-height,76px)-4rem)]"> {/* Adjusted height */}
         <Card className="mb-6 shadow-xl bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
           <CardHeader className="p-6">
             <div className="flex items-center space-x-4">
@@ -132,7 +160,8 @@ export default function AssetManagementDashboard() {
           </CardHeader>
         </Card>
 
-        <div className="mb-4 p-4 rounded-lg shadow-md bg-card flex flex-wrap items-center gap-3">
+        {/* Actions Bar - approx 76px height with padding */}
+        <div style={{ '--actions-bar-height': '76px' } as React.CSSProperties} className="mb-4 p-4 rounded-lg shadow-md bg-card flex flex-wrap items-center gap-3">
             <h3 className="text-xl font-pacifico text-primary mr-auto md:mr-4">Ações:</h3>
             
             <Button onClick={() => setIsAssetModalOpen(true)} className="justify-start">
@@ -153,86 +182,25 @@ export default function AssetManagementDashboard() {
             </Button>
         </div>
 
-        <Card className="flex-grow p-1 shadow-lg relative overflow-hidden">
-            <CardHeader className="absolute top-2 left-3 z-10">
+        <Card className="flex-grow shadow-lg relative overflow-hidden">
+            <CardHeader className="absolute top-2 left-3 z-10 pointer-events-none">
               <CardTitle className="text-lg font-pacifico text-muted-foreground">Canvas de Gestão</CardTitle>
             </CardHeader>
-            <div className="w-full h-full bg-muted/30 rounded-md border-2 border-dashed border-gray-300 relative">
-              {nodes.map((node) => (
-                <div
-                  key={node.id}
-                  className={cn(
-                    baseNodeClasses,
-                    node.type === 'union' ? 'overflow-hidden' : 'bg-card text-card-foreground p-3 text-center'
-                  )}
-                  style={{ left: `${node.position.x}px`, top: `${node.position.y}px` }}
-                >
-                  {node.type === 'union' ? (
-                    <div className="flex flex-col h-full">
-                      {/* Header colorida interna */}
-                      <div className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] p-1.5 rounded-t-md flex justify-end items-center">
-                        <button
-                          onClick={handleUnionSettingsClick}
-                          className="p-1 text-white hover:opacity-75 focus:outline-none focus:ring-1 focus:ring-white rounded"
-                          aria-label="Configurações da União"
-                        >
-                          <Settings size={16} />
-                        </button>
-                      </div>
-                      {/* Conteúdo branco interno */}
-                      <div className="bg-card text-card-foreground p-3 rounded-b-md text-center flex-grow">
-                        <div className="font-semibold text-sm flex items-center justify-center">
-                          <Network className="w-4 h-4 inline-block mr-2 text-primary opacity-90" />
-                          {node.data.label}
-                        </div>
-                      </div>
-                    </div>
-                  ) : ( // Nó do tipo asset
-                    <>
-                      <div className="font-semibold text-sm flex items-center justify-center">
-                        <DollarSign className="w-4 h-4 inline-block mr-2 opacity-70" />
-                        {node.data.label}
-                      </div>
-                      {node.data.details && <div className="text-xs mt-1 opacity-80">{node.data.details}</div>}
-                    </>
-                  )}
-                </div>
-              ))}
-              
-              <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                {edges.map((edge) => {
-                  const sourceNode = nodes.find((n) => n.id === edge.source);
-                  const targetNode = nodes.find((n) => n.id === edge.target);
-                  if (!sourceNode || !targetNode) return null;
-                  
-                  // Ajustar para que as linhas saiam da borda inferior do nó união e superior do nó ativo
-                  const sourceX = sourceNode.position.x;
-                  const sourceY = sourceNode.position.y + 35; // Aproximadamente metade da altura do nó união (ajustar se necessário)
-                  const targetX = targetNode.position.x;
-                  const targetY = targetNode.position.y - 25; // Aproximadamente metade da altura do nó ativo
-
-                  return (
-                    <line
-                      key={edge.id}
-                      x1={sourceX}
-                      y1={sourceY}
-                      x2={targetX}
-                      y2={targetY}
-                      stroke="hsl(var(--border))"
-                      strokeWidth="2"
-                      markerEnd="url(#arrowhead)"
-                    />
-                  );
-                })}
-                <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto" markerUnits="strokeWidth">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="hsl(var(--border))" />
-                  </marker>
-                </defs>
-              </svg>
-
-              {nodes.length === 0 && !authLoading && (
-                 <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground">
+            <div className="w-full h-full bg-muted/30 rounded-md border-2 border-dashed border-gray-300">
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                fitView
+                attributionPosition="bottom-left"
+              >
+                <Controls />
+                <Background gap={16} />
+              </ReactFlow>
+              {nodes.length === 0 && !authLoading && ( // Show only if no nodes and not loading auth
+                 <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground pointer-events-none">
                     <div>
                         <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
                         <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
@@ -245,4 +213,3 @@ export default function AssetManagementDashboard() {
       </div>
   );
 }
-    
