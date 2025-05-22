@@ -5,7 +5,7 @@ import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Users, Network, DollarSign, LayoutGrid, Settings } from 'lucide-react'; // Removido FileText, Adicionado Settings
+import { Users, Network, DollarSign, LayoutGrid, Settings } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -37,12 +37,12 @@ export default function AssetManagementDashboard() {
   const [edges, setEdges] = useState<Edge[]>([]);
 
   useEffect(() => {
-    if (user && !authLoading && !nodes.find(node => node.id === UNION_NODE_ID)) {
+    if (user && !authLoading && typeof window !== 'undefined' && !nodes.find(node => node.id === UNION_NODE_ID)) {
       const unionNode: Node = {
         id: UNION_NODE_ID,
         type: 'union',
         data: { label: user.displayName || 'Nossa União' },
-        position: { x: (window.innerWidth * 0.8) / 2 , y: 80 }, // Ajustado para o centro do canvas
+        position: { x: (window.innerWidth * 0.8) / 2 , y: 80 },
       };
       setNodes([unionNode]);
     }
@@ -59,7 +59,7 @@ export default function AssetManagementDashboard() {
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
       
-      const unionNodePosition = nodes.find(n => n.id === UNION_NODE_ID)?.position || { x: (window.innerWidth * 0.8) / 2, y: 80 };
+      const unionNodePosition = nodes.find(n => n.id === UNION_NODE_ID)?.position || { x: (typeof window !== 'undefined' ? window.innerWidth * 0.8 : 600) / 2, y: 80 };
       const assetNodesCount = nodes.filter(n => n.type === 'asset').length;
 
       const newAssetNode: Node = {
@@ -70,8 +70,8 @@ export default function AssetManagementDashboard() {
           details: `Tipo: ${data.tipo === 'digital' ? 'Digital' : 'Físico'}, Valor: R$ ${data.valorAtualEstimado}`
         },
         position: {
-          x: unionNodePosition.x + (assetNodesCount % 4 - 1.5) * 180, // Espaçamento horizontal
-          y: unionNodePosition.y + 150 + Math.floor(assetNodesCount / 4) * 120 // Espaçamento vertical
+          x: unionNodePosition.x + (assetNodesCount % 4 - 1.5) * 180, 
+          y: unionNodePosition.y + 150 + Math.floor(assetNodesCount / 4) * 120 
         },
       };
       setNodes((prevNodes) => [...prevNodes, newAssetNode]);
@@ -147,7 +147,6 @@ export default function AssetManagementDashboard() {
             <Button onClick={handleAddMember} variant="outline" className="justify-start">
               <Users className="mr-2 h-5 w-5" /> Adicionar Membro
             </Button>
-            {/* Botão "Configurar Contrato" removido daqui */}
         </div>
 
         <Card className="flex-grow p-1 shadow-lg relative overflow-hidden">
@@ -227,3 +226,4 @@ export default function AssetManagementDashboard() {
       </div>
   );
 }
+
