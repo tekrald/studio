@@ -4,9 +4,7 @@
 
 @layer base {
   :root {
-    /* Removida a definição manual de --font-lato, pois next/font cuida disso */
-    /* --font-lato: 'Lato', sans-serif; */ /* ESTA LINHA FOI REMOVIDA */
-    /* Removido --font-pacifico */
+    /* Removida a definição de --font-lato daqui */
 
     --background: 60 56% 91%; /* Light Beige #F5F5DC */
     --foreground: 40 50% 15%; /* Dark Warm Brown */
@@ -112,10 +110,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans; /* Alterado para usar font-sans do Tailwind */
+    @apply bg-background text-foreground font-sans; /* Garante que Tailwind aplique sua font-sans padrão (que agora é Lato) */
+    /* font-family: 'Lato', sans-serif; */ /* Esta linha pode ser redundante se @apply font-sans funcionar bem */
   }
-  /* Removida a regra para h1-h6 usar Pacifico. Eles herdarão Lato do body. */
-  /* h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-pacifico);
-  } */
 }

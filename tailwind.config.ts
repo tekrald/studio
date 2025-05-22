@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 import defaultTheme from 'tailwindcss/defaultTheme';
 
@@ -12,7 +13,7 @@ export default {
   	extend: {
       fontFamily: {
         // Lato será a fonte sans padrão
-        sans: ['var(--font-lato)', ...defaultTheme.fontFamily.sans],
+        sans: ['Lato', ...defaultTheme.fontFamily.sans],
       },
   		colors: {
   			background: 'hsl(var(--background))',
