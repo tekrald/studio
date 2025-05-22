@@ -2,9 +2,15 @@
 // @ts-nocheck
 // TODO: Corrigir erros de tipagem e remover o ts-nocheck
 // Ignorar erros de TypeScript para este arquivo por enquanto
-import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
-import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getAuth, type Auth } from 'firebase/auth';
+import type { FirebaseApp } from 'firebase/app';
+import type { Firestore } from 'firebase/firestore';
+import type { Auth } from 'firebase/auth';
+
+// Comentado para evitar erro de API key inválida
+/*
+import { initializeApp, getApps } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -27,5 +33,12 @@ if (getApps().length === 0) {
 
 auth = getAuth(app);
 db = getFirestore(app);
+*/
+
+// Mock/Placeholder para evitar quebras em importações
+// A funcionalidade real do Firebase está desabilitada.
+const app: FirebaseApp | null = null;
+const auth: Auth | null = null;
+const db: Firestore | null = null;
 
 export { app, auth, db };
