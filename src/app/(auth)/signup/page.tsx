@@ -245,7 +245,7 @@ export default function SignupPage() {
                 <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => setHoldingType(value)} className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="digital" id="holding-digital" />
-                    <Label htmlFor="holding-digital" className="font-normal">Maximalista Digital</Label>
+                    <Label htmlFor="holding-digital" className="font-normal">Maximalismo</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="physical" id="holding-physical" />
@@ -256,7 +256,7 @@ export default function SignupPage() {
                 {holdingType === 'digital' && (
                   <Card className="p-4 bg-muted/30 space-y-3">
                     <p className="text-sm text-foreground">
-                      Para holdings digitais, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
+                      Para holdings com maximalismo digital, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
                     </p>
                     <Button 
                       type="button" 
