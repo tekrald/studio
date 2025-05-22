@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
     darkMode: ["class"],
@@ -10,8 +11,8 @@ export default {
   theme: {
   	extend: {
       fontFamily: {
-        // pacifico: ['var(--font-pacifico)'], // Removido pacifico
-        lato: ['var(--font-lato)'],
+        // Lato será a fonte sans padrão
+        sans: ['var(--font-lato)', ...defaultTheme.fontFamily.sans],
       },
   		colors: {
   			background: 'hsl(var(--background))',

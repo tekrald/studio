@@ -9,7 +9,7 @@ import { ArrowRight, Lock, Users, Briefcase, BarChart3, Network, GitFork, Shield
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background font-lato"> {/* Added font-lato here */}
+    <div className="flex flex-col min-h-screen bg-background"> {/* Removido font-lato daqui */}
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
@@ -18,7 +18,7 @@ export default function HomePage() {
              {/* Decorative background image or pattern can go here */}
           </div>
           <div className="container mx-auto px-6 text-center relative z-10">
-            <h1 className="text-4xl md:text-5xl font-lato font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
               Crie seu contrato de casamento personalizado
             </h1>
             <p className="text-lg md:text-xl text-foreground/80 mb-10 max-w-3xl mx-auto">
