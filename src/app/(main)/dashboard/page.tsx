@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { LayoutGrid, Plus } from 'lucide-react'; // Removed unused icons, kept Plus for actions bar example if re-added
+import { LayoutGrid, Plus, Network, DollarSign, Settings, PlusCircle, Users as UsersIcon } from 'lucide-react'; // Added Plus, Network, DollarSign, Settings, PlusCircle, UsersIcon
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData, DigitalAsset, PhysicalAsset } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -65,7 +65,7 @@ interface MemberNodeData {
 
 
 export default function AssetManagementDashboard() {
-  const { user, loading: authLoading } = useAuth(); // AuthProvider now desactivated
+  const { user, loading: authLoading } = useAuth(); 
   const { toast } = useToast();
   
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
@@ -101,7 +101,7 @@ export default function AssetManagementDashboard() {
     toast({ title: 'Cláusula Adicionada', description: 'Nova cláusula salva no contrato.' });
   };
 
-  const handleRemoveContractClause = (id: string) => {
+  const handleRemoveClause = (id: string) => {
     setContractClauses(prev => prev.filter(clause => clause.id !== id));
     toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida do contrato.' });
   };
@@ -123,13 +123,12 @@ export default function AssetManagementDashboard() {
 
 
   useEffect(() => {
-    // With AuthProvider desactivated, user might be null. Fallback to a mock user or skip.
     const currentUnionNode = nodes.find(node => node.id === UNION_NODE_ID);
-    if (!currentUnionNode && !authLoading) { // Only add if not already present
+    if (!currentUnionNode && !authLoading) { 
         const unionNode: Node<UnionNodeData> = {
             id: UNION_NODE_ID,
             type: 'unionNode', 
-            position: { x: 400, y: 100 }, // Centered a bit more
+            position: { x: 400, y: 100 },
             data: { 
             label: effectiveUser.displayName || 'Nossa União',
             onSettingsClick: handleOpenContractSettings,
@@ -163,7 +162,7 @@ export default function AssetManagementDashboard() {
       }
 
       let assetNodeExists = false;
-      if (data.tipo === 'digital' && data.nomeAtivo && data.quantidadeDigital !== undefined) {
+      if (data.tipo === 'digital' && data.nomeAtivo && data.tipoAtivoDigital && data.quantidadeDigital !== undefined) {
         setNodes((prevNodes) =>
           prevNodes.map((node) => {
             if (
@@ -173,7 +172,7 @@ export default function AssetManagementDashboard() {
               node.data.digitalAssetType === data.tipoAtivoDigital 
             ) {
               assetNodeExists = true;
-              const existingData = node.data as Extract<AssetNodeData, { assetType: 'digital' }>;
+              const existingData = node.data as AssetNodeData & { digitalAssetType: DigitalAsset['tipoAtivoDigital'], quantity: number };
               const newQuantity = (existingData.quantity || 0) + (data.quantidadeDigital || 0);
               return {
                 ...node,
@@ -191,12 +190,11 @@ export default function AssetManagementDashboard() {
 
       if (!assetNodeExists) {
         const assetNodesCount = nodes.filter(n => n.data.type === 'asset').length;
-        const angleStep = Math.PI / 4; // Distribute nodes more sparsely
+        const angleStep = Math.PI / 4; 
         const radius = 250 + Math.floor(assetNodesCount / 6) * 70;
         
         const unionNodeX = unionNodeInstance.position?.x ?? 400;
         const unionNodeY = unionNodeInstance.position?.y ?? 100;
-        // Stagger angle start to avoid direct bottom for the first few nodes
         const angle = (assetNodesCount * angleStep) + (Math.PI / 8); 
 
 
@@ -207,7 +205,7 @@ export default function AssetManagementDashboard() {
         let nodeDataPayload: AssetNodeData;
 
         if (data.tipo === 'digital') {
-          nodeLabel = `${data.nomeAtivo} (${data.tipoAtivoDigital}) (Qtd: ${(data.quantidadeDigital || 0).toFixed(2)})`;
+          nodeLabel = `${data.nomeAtivo} (${data.tipoAtivoDigital || 'Digital'}) (Qtd: ${(data.quantidadeDigital || 0).toFixed(2)})`;
           nodeDataPayload = {
             label: nodeLabel,
             assetId: result.assetId,
@@ -239,16 +237,16 @@ export default function AssetManagementDashboard() {
             background: 'hsl(var(--card))',
             color: 'hsl(var(--card-foreground))',
             border: '1px solid hsl(var(--border))',
-            width: 'auto', // Auto width
-            minWidth: 150, // Min width
-            maxWidth: 220, // Max width for long names
+            width: 'auto', 
+            minWidth: 150, 
+            maxWidth: 220, 
             padding: '10px',
             borderRadius: 'var(--radius)',
-            fontSize: '0.85rem', // Slightly smaller font
+            fontSize: '0.85rem', 
             textAlign: 'center',
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            whiteSpace: 'normal', // Allow text wrapping
-            wordBreak: 'break-word', // Break long words
+            whiteSpace: 'normal', 
+            wordBreak: 'break-word', 
           },
           sourcePosition: Position.Top,
           targetPosition: Position.Bottom,
@@ -295,7 +293,6 @@ export default function AssetManagementDashboard() {
       
       const unionNodeX = unionNodeInstance.position?.x ?? 400;
       const unionNodeY = unionNodeInstance.position?.y ?? 100;
-      // Stagger angle start for members, potentially on the opposite side or different arc
       const angle = (memberNodesCount * angleStep) + (Math.PI * 5/8); 
 
 
@@ -412,12 +409,12 @@ export default function AssetManagementDashboard() {
             <Controls />
             <Background gap={16} />
           </ReactFlow>
-          {nodes.length <= 1 && !authLoading && ( // Show if only union node or no nodes
+          {nodes.length <= 1 && !authLoading && ( 
               <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground pointer-events-none">
                 <div>
                     <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
                     <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
-                    <p className="text-sm">Use o <Plus size={14} className="inline text-primary"/> no nó da União para adicionar ativos ou membros.</p>
+                    <p className="text-sm">Use o <PlusCircle size={14} className="inline text-primary"/> no nó da União para adicionar ativos ou membros.</p>
                 </div>
             </div>
           )}
@@ -439,5 +436,3 @@ interface BaseNodeData {
 declare module 'reactflow' {
     interface NodeData extends Partial<UnionNodeData>, Partial<AssetNodeData>, Partial<MemberNodeData>, Partial<BaseNodeData> {}
 }
-
-    
