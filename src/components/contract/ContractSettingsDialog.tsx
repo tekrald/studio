@@ -85,16 +85,22 @@ export function ContractSettingsDialog({
 
   useEffect(() => {
     if (isOpen) {
+      // Reset state when dialog opens, if not editing
+      if (!editingClauseId) {
+        setNewClauseText('');
+      }
+    } else {
+      // Always reset when dialog closes
       setNewClauseText('');
       setEditingClauseId(null);
     }
-  }, [isOpen]);
+  }, [isOpen, editingClauseId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-primary">Configurações do Contrato da União</DialogTitle> {/* Removido font-pacifico */}
+          <DialogTitle className="text-2xl text-primary">Configurações do Contrato da União</DialogTitle>
           <DialogDescription>
             Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Estas cláusulas são flexíveis e podem ser adaptadas a qualquer configuração familiar e crença.
           </DialogDescription>
@@ -107,7 +113,7 @@ export function ContractSettingsDialog({
             {clauses.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-10">Nenhuma cláusula adicionada ainda. Comece adicionando uma nova ou usando uma sugestão.</p>
             ) : (
-              <ScrollArea className="flex-grow border rounded-md p-4 bg-muted/30 max-h-[calc(90vh-350px)] md:max-h-[calc(100vh-300px)]">
+              <ScrollArea className="flex-grow border rounded-md p-4 bg-muted/30 max-h-[calc(90vh-350px)] md:max-h-none"> {/* md:max-h-none para permitir que cresça com o dialogo */}
                 <ul className="space-y-3">
                   {clauses.map((clause) => (
                     <li key={clause.id} className="p-3 bg-card shadow rounded-md text-sm text-card-foreground">
@@ -157,7 +163,7 @@ export function ContractSettingsDialog({
 
             <div>
               <h3 className="text-lg font-semibold mb-3 text-foreground">Sugestões de Cláusulas</h3>
-              <ScrollArea className="max-h-[calc(90vh-500px)] md:max-h-[calc(100vh-480px)] pr-2">
+              <ScrollArea className="max-h-[calc(90vh-500px)] md:max-h-none pr-2"> {/* md:max-h-none para permitir que cresça com o dialogo */}
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><FileText size={18} className="mr-2"/>Partilha de Bens</h4>
