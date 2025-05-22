@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, Trash2, Edit3, FileText, Users } from 'lucide-react';
+import { PlusCircle, Trash2, Edit3, FileText, Users, Save } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
@@ -29,7 +29,7 @@ interface ContractSettingsDialogProps {
   clauses: ContractClause[];
   onAddClause: (text: string) => void;
   onRemoveClause: (id: string) => void;
-  // onUpdateClause: (id: string, newText: string) => void; // For future editing
+  onUpdateClause: (id: string, newText: string) => void;
 }
 
 const suggestedClausesTemplates = {
@@ -42,8 +42,10 @@ const suggestedClausesTemplates = {
     { id: 'sug_rc_1', text: "As despesas domésticas mensais (ex: contas de água, luz, internet) serão divididas da seguinte forma: [Descrever a divisão]." },
     { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de R$ [VALOR]) deverão ser discutidas e aprovadas por todas as partes envolvidas no contrato." },
     { id: 'sug_rc_3', text: "Viagens individuais: [Definir regras, ex: permitidas com comunicação prévia de X dias/semanas]." },
-    { id: 'sug_rc_4', text: "Acordo personalizado sobre [TEMA ESPECÍFICO]: [Descrever o acordo aqui]." },
   ],
+  personalizado: [
+     { id: 'sug_cust_1', text: "Defina aqui seu acordo personalizado sobre [TEMA ESPECÍFICO]: [Descrever o acordo aqui]." }
+  ]
 };
 
 export function ContractSettingsDialog({
@@ -52,25 +54,42 @@ export function ContractSettingsDialog({
   clauses,
   onAddClause,
   onRemoveClause,
+  onUpdateClause,
 }: ContractSettingsDialogProps) {
   const [newClauseText, setNewClauseText] = useState('');
-  // const [editingClause, setEditingClause] = useState<ContractClause | null>(null); // For future editing
+  const [editingClauseId, setEditingClauseId] = useState<string | null>(null);
 
-  const handleSaveNewClause = () => {
+  const handleEditClick = (clause: ContractClause) => {
+    setEditingClauseId(clause.id);
+    setNewClauseText(clause.text);
+  };
+
+  const handleSaveOrAddClause = () => {
     if (newClauseText.trim()) {
-      onAddClause(newClauseText.trim());
+      if (editingClauseId) {
+        onUpdateClause(editingClauseId, newClauseText.trim());
+      } else {
+        onAddClause(newClauseText.trim());
+      }
       setNewClauseText('');
+      setEditingClauseId(null);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setNewClauseText('');
+    setEditingClauseId(null);
   };
   
   const handleAddSuggestion = (text: string) => {
     setNewClauseText(prev => prev ? `${prev}\n${text}` : text);
+    setEditingClauseId(null); // Se estava editando, e adiciona sugestão, sai do modo de edição
   };
 
   useEffect(() => {
     if (isOpen) {
       setNewClauseText('');
-      // setEditingClause(null);
+      setEditingClauseId(null);
     }
   }, [isOpen]);
 
@@ -80,7 +99,7 @@ export function ContractSettingsDialog({
         <DialogHeader>
           <DialogTitle className="text-2xl font-pacifico text-primary">Configurações do Contrato da União</DialogTitle>
           <DialogDescription>
-            Adicione, visualize e gerencie as cláusulas do seu contrato. Estas cláusulas são flexíveis e podem ser adaptadas a qualquer configuração familiar e crença.
+            Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Estas cláusulas são flexíveis e podem ser adaptadas a qualquer configuração familiar e crença.
           </DialogDescription>
         </DialogHeader>
 
@@ -97,9 +116,9 @@ export function ContractSettingsDialog({
                     <li key={clause.id} className="p-3 bg-card shadow rounded-md text-sm text-card-foreground">
                       <p className="whitespace-pre-wrap flex-grow mb-2">{clause.text}</p>
                       <div className="flex justify-end space-x-2">
-                        {/* <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700" onClick={() => {}}>
+                        <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => handleEditClick(clause)}>
                           <Edit3 size={16} className="mr-1" /> Editar
-                        </Button> */}
+                        </Button>
                         <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive/80" onClick={() => onRemoveClause(clause.id)}>
                           <Trash2 size={16} className="mr-1" /> Remover
                         </Button>
@@ -111,21 +130,30 @@ export function ContractSettingsDialog({
             )}
           </div>
 
-          {/* Coluna de Adicionar Cláusula e Sugestões */}
+          {/* Coluna de Adicionar/Editar Cláusula e Sugestões */}
           <div className="flex flex-col space-y-6 min-h-0">
             <div>
-              <Label htmlFor="new-clause" className="text-lg font-semibold mb-2 text-foreground block">Adicionar Nova Cláusula</Label>
+              <Label htmlFor="clause-text-area" className="text-lg font-semibold mb-2 text-foreground block">
+                {editingClauseId ? 'Editar Cláusula' : 'Adicionar Nova Cláusula'}
+              </Label>
               <Textarea
-                id="new-clause"
+                id="clause-text-area"
                 value={newClauseText}
                 onChange={(e) => setNewClauseText(e.target.value)}
-                placeholder="Digite o texto da nova cláusula aqui..."
+                placeholder="Digite o texto da cláusula aqui..."
                 className="min-h-[100px]"
                 rows={5}
               />
-              <Button onClick={handleSaveNewClause} className="mt-3 w-full" disabled={!newClauseText.trim()}>
-                <PlusCircle size={18} className="mr-2" /> Adicionar Cláusula
-              </Button>
+              <div className="mt-3 flex flex-col sm:flex-row gap-2">
+                <Button onClick={handleSaveOrAddClause} className="w-full sm:flex-1" disabled={!newClauseText.trim()}>
+                  {editingClauseId ? <><Save size={18} className="mr-2" /> Salvar Alterações</> : <><PlusCircle size={18} className="mr-2" /> Adicionar Cláusula</>}
+                </Button>
+                {editingClauseId && (
+                  <Button variant="outline" onClick={handleCancelEdit} className="w-full sm:w-auto">
+                    Cancelar Edição
+                  </Button>
+                )}
+              </div>
             </div>
             
             <Separator />
@@ -150,6 +178,14 @@ export function ContractSettingsDialog({
                         </Button>
                     ))}
                   </div>
+                  <div>
+                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Edit3 size={18} className="mr-2"/>Acordo Personalizado</h4>
+                     {suggestedClausesTemplates.personalizado.map(sug => (
+                        <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5" onClick={() => handleAddSuggestion(sug.text)}>
+                         {sug.text}
+                        </Button>
+                    ))}
+                  </div>
                 </div>
               </ScrollArea>
             </div>
@@ -167,3 +203,4 @@ export function ContractSettingsDialog({
     </Dialog>
   );
 }
+

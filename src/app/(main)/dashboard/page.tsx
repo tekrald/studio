@@ -5,7 +5,7 @@ import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Network, DollarSign, Users, LayoutGrid, Settings, Plus } from 'lucide-react'; // Removido FileText
+import { Network, DollarSign, Users, LayoutGrid, Settings, Plus, FileText, Edit3 as Edit3Icon } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -75,6 +75,11 @@ export default function AssetManagementDashboard() {
     toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida do contrato.' });
   };
 
+  const handleUpdateContractClause = (id: string, newText: string) => {
+    setContractClauses(prev => prev.map(clause => clause.id === id ? { ...clause, text: newText } : clause));
+    toast({ title: 'Cláusula Atualizada', description: 'A cláusula foi modificada com sucesso.' });
+  };
+
   const handleOpenAssetModal = useCallback(() => {
     setIsAssetModalOpen(true);
   }, []);
@@ -89,7 +94,7 @@ export default function AssetManagementDashboard() {
       const unionNode: Node<UnionNodeData> = {
         id: UNION_NODE_ID,
         type: 'unionNode', 
-        position: { x: 250, y: 50 }, // Ajuste a posição inicial conforme necessário
+        position: { x: 250, y: 50 },
         data: { 
           label: user.displayName || 'Nossa União',
           onSettingsClick: handleOpenContractSettings,
@@ -109,7 +114,6 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingAsset(true);
-    // Simulação da chamada, pois o Firebase foi desabilitado temporariamente
     const result = await addAsset(data, user.uid); 
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
@@ -225,6 +229,7 @@ export default function AssetManagementDashboard() {
             clauses={contractClauses}
             onAddClause={handleAddContractClause}
             onRemoveClause={handleRemoveContractClause}
+            onUpdateClause={handleUpdateContractClause}
           />
 
         <Card className="flex-grow shadow-lg relative overflow-hidden">
@@ -260,3 +265,4 @@ export default function AssetManagementDashboard() {
       </div>
   );
 }
+
