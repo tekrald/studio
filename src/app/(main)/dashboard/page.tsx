@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Loader2 } from 'lucide-react';
+import { Loader2, PlusCircle, Users, Settings, Network, DollarSign, Trash2, Edit3 } from 'lucide-react'; // Removido LayoutGrid, Home, Brain, FileText
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -57,7 +57,7 @@ interface MemberWithBirthDate extends Member {
 }
 
 export default function AssetManagementDashboard() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth(); // AuthProvider foi desabilitado, user será null ou mock
   const { toast } = useToast();
 
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
@@ -133,7 +133,8 @@ export default function AssetManagementDashboard() {
     setSelectedAssetForDetails(null);
   }, []);
 
-
+  // Como o AuthProvider foi desabilitado, user pode ser null.
+  // Fornecer um mock para evitar erros, mas as funcionalidades dependentes do usuário estarão limitadas.
   const effectiveUser = user || { 
     uid: 'mock-uid-default', 
     displayName: 'Nossa União (Mock)',
@@ -172,6 +173,13 @@ export default function AssetManagementDashboard() {
     }
   }, [nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal, authLoading, effectiveUser]);
 
+
+  const memberHasBirthDate = (memberId?: string): boolean => {
+    if (!memberId) return false;
+    const member = allMembers.find(m => m.id === memberId);
+    return !!member?.dataNascimento;
+  };
+
   const handleAddAssetSubmit = async (formData: AssetFormData) => {
     if (!effectiveUser) {
       toast({ title: 'Erro!', description: 'Usuário não autenticado.', variant: 'destructive' });
@@ -183,26 +191,28 @@ export default function AssetManagementDashboard() {
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
 
-      let assetNodeExistsAndUpdated = false;
       const processedAssignedToMemberId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" ? undefined : formData.assignedToMemberId);
+      let nodeToUpdate: Node<AssetNodeData> | undefined = undefined;
 
       if (formData.tipo === 'digital' && formData.nomeAtivo && formData.quantidadeDigital !== undefined) {
-        setNodes((prevNodes) =>
-          prevNodes.map((node) => {
-            if (
-              node.type === 'assetNode' &&
-              (node.data as AssetNodeData).assetMainType === 'digital' &&
-              (node.data as AssetNodeData).name === formData.nomeAtivo &&
-              // (node.data as AssetNodeData).digitalAssetType === formData.tipoAtivoDigital && // Comparação de tipo digital removida
-              (node.data as AssetNodeData).assignedToMemberId === processedAssignedToMemberId
-            ) {
-              assetNodeExistsAndUpdated = true;
-              const existingData = node.data as AssetNodeData;
+        nodeToUpdate = nodes.find(node =>
+          node.type === 'assetNode' &&
+          (node.data as AssetNodeData).assetMainType === 'digital' &&
+          (node.data as AssetNodeData).name === formData.nomeAtivo &&
+          (node.data as AssetNodeData).assignedToMemberId === processedAssignedToMemberId
+        );
+      }
+
+      if (nodeToUpdate) {
+        setNodes(prevNodes =>
+          prevNodes.map(n => {
+            if (n.id === nodeToUpdate!.id) {
+              const existingData = n.data as AssetNodeData;
               const newQuantity = (existingData.quantity || 0) + (formData.quantidadeDigital || 0);
               const updatedData: AssetNodeData = {
                 ...existingData,
-                id: existingData.id,
-                name: existingData.name,
+                id: existingData.id, // Manter o ID existente
+                name: existingData.name, // Manter o nome existente
                 quantity: newQuantity,
                 dataAquisicao: formData.dataAquisicao, 
                 observacoes: formData.observacoes,
@@ -210,21 +220,17 @@ export default function AssetManagementDashboard() {
                 contribuicaoParceiro1: formData.contribuicaoParceiro1,
                 contribuicaoParceiro2: formData.contribuicaoParceiro2,
                 valorPagoEpocaDigital: formData.valorPagoEpocaDigital,
-                releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge ? { type: 'age', targetAge: formData.releaseTargetAge } : existingData.releaseCondition,
-                onOpenDetails: () => {} 
+                releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId)
+                  ? { type: 'age', targetAge: formData.releaseTargetAge }
+                  : existingData.releaseCondition,
               };
               updatedData.onOpenDetails = () => handleOpenAssetDetailsModal(updatedData);
-              return {
-                ...node,
-                data: updatedData,
-              };
+              return { ...n, data: updatedData };
             }
-            return node;
+            return n;
           })
         );
-      }
-
-      if (!assetNodeExistsAndUpdated) {
+      } else { // Se o nó não existe, crie um novo
         const sourceNodeId = processedAssignedToMemberId || UNION_NODE_ID;
         const sourceNodeInstance = nodes.find(n => n.id === sourceNodeId);
 
@@ -264,13 +270,12 @@ export default function AssetManagementDashboard() {
         let nodeDataPayload: AssetNodeData;
         if (formData.tipo === 'digital') {
           nodeDataPayload = {
-            id: result.assetId,
+            id: result.assetId!,
             name: formData.nomeAtivo,
             assetMainType: 'digital',
-            // digitalAssetType: formData.tipoAtivoDigital, // Removido
             quantity: formData.quantidadeDigital || 0,
             assignedToMemberId: processedAssignedToMemberId,
-            releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
+            releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
             dataAquisicao: formData.dataAquisicao,
             observacoes: formData.observacoes,
             quemComprou: formData.quemComprou,
@@ -281,12 +286,12 @@ export default function AssetManagementDashboard() {
           };
         } else { 
           nodeDataPayload = {
-            id: result.assetId,
+            id: result.assetId!,
             name: formData.nomeAtivo,
             assetMainType: 'fisico',
             physicalAssetType: formData.tipoImovelBemFisico,
             assignedToMemberId: processedAssignedToMemberId,
-            releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
+            releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
             dataAquisicao: formData.dataAquisicao,
             observacoes: formData.observacoes,
             quemComprou: formData.quemComprou,
@@ -296,10 +301,10 @@ export default function AssetManagementDashboard() {
             onOpenDetails: () => {} 
           };
         }
-         nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
+        nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
 
         const newAssetNodeReactFlow: Node<AssetNodeData> = {
-          id: result.assetId,
+          id: result.assetId!,
           type: 'assetNode',
           data: nodeDataPayload,
           position: { x: newAssetNodeX, y: newAssetNodeY },
@@ -309,9 +314,9 @@ export default function AssetManagementDashboard() {
         setNodes((prevNodes) => prevNodes.concat(newAssetNodeReactFlow));
 
         const newEdge: Edge = {
-          id: `e-${sourceNodeId}-${result.assetId}`,
+          id: `e-${sourceNodeId}-${result.assetId!}`,
           source: sourceNodeId,
-          target: result.assetId,
+          target: result.assetId!,
           type: 'smoothstep',
           markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
           style: { stroke: 'hsl(var(--primary))', strokeWidth: 1.5 },
@@ -461,7 +466,7 @@ export default function AssetManagementDashboard() {
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl text-primary">Detalhes do Ativo</DialogTitle>
-            <DialogDescription>Informações sobre o ativo selecionado.</DialogDescription>
+            <DialogDescription>Informações sobre o ativo selecionado. O histórico detalhado de transações (para ativos com múltiplas aquisições) será implementado em breve.</DialogDescription>
           </DialogHeader>
           {selectedAssetForDetails && (
             <div className="space-y-3 py-4 text-sm">
@@ -475,14 +480,13 @@ export default function AssetManagementDashboard() {
               </div>
               {selectedAssetForDetails.assetMainType === 'digital' && (
                 <>
-                  {/* Tipo de Ativo Digital não é mais exibido aqui */}
                   <div>
-                    <Label className="text-xs font-medium text-muted-foreground">Quantidade</Label>
+                    <Label className="text-xs font-medium text-muted-foreground">Quantidade Total</Label>
                     <p className="text-foreground">{selectedAssetForDetails.quantity?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) || 'N/A'}</p>
                   </div>
                    {selectedAssetForDetails.valorPagoEpocaDigital !== undefined && (
                     <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Valor Pago na Época</Label>
+                        <Label className="text-xs font-medium text-muted-foreground">Valor Pago (Última Aquisição)</Label>
                         <p className="text-foreground">{selectedAssetForDetails.valorPagoEpocaDigital.toLocaleString(undefined, { style: 'currency', currency: 'BRL', minimumFractionDigits:2, maximumFractionDigits: 2 })}</p>
                     </div>
                    )}
@@ -504,13 +508,13 @@ export default function AssetManagementDashboard() {
               )}
               {selectedAssetForDetails.dataAquisicao && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Data de Aquisição</Label>
+                  <Label className="text-xs font-medium text-muted-foreground">Data de Aquisição (Última)</Label>
                   <p className="text-foreground">{format(new Date(selectedAssetForDetails.dataAquisicao), "dd/MM/yyyy", { locale: ptBR })}</p>
                 </div>
               )}
               {selectedAssetForDetails.quemComprou && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Adquirido por</Label>
+                  <Label className="text-xs font-medium text-muted-foreground">Adquirido por (Última Aquisição)</Label>
                   <p className="text-foreground">{effectiveUser?.displayName?.includes(selectedAssetForDetails.quemComprou) ? selectedAssetForDetails.quemComprou : getMemberNameById(selectedAssetForDetails.quemComprou)}</p>
                 </div>
               )}
@@ -518,13 +522,13 @@ export default function AssetManagementDashboard() {
                 <div className='pl-4 border-l-2 border-muted space-y-2 py-1'>
                   {selectedAssetForDetails.contribuicaoParceiro1 !== undefined && (
                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground">Contribuição ({user?.displayName?.split('&')[0]?.trim() || 'Parceiro 1'})</Label>
+                      <Label className="text-xs font-medium text-muted-foreground">Contribuição ({user?.displayName?.split('&')[0]?.trim() || 'Parceiro 1'}) (Última Aquisição)</Label>
                       <p className="text-foreground">{selectedAssetForDetails.contribuicaoParceiro1.toLocaleString(undefined, { style: 'currency', currency: 'BRL', minimumFractionDigits:2, maximumFractionDigits: 2 })}</p>
                     </div>
                   )}
                   {selectedAssetForDetails.contribuicaoParceiro2 !== undefined && (
                      <div>
-                      <Label className="text-xs font-medium text-muted-foreground">Contribuição ({user?.displayName?.split('&')[1]?.trim() || 'Parceiro 2'})</Label>
+                      <Label className="text-xs font-medium text-muted-foreground">Contribuição ({user?.displayName?.split('&')[1]?.trim() || 'Parceiro 2'}) (Última Aquisição)</Label>
                       <p className="text-foreground">{selectedAssetForDetails.contribuicaoParceiro2.toLocaleString(undefined, { style: 'currency', currency: 'BRL', minimumFractionDigits:2, maximumFractionDigits: 2 })}</p>
                     </div>
                   )}
@@ -544,7 +548,7 @@ export default function AssetManagementDashboard() {
               )}
                {selectedAssetForDetails.observacoes && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Observações</Label>
+                  <Label className="text-xs font-medium text-muted-foreground">Observações (Última Aquisição)</Label>
                   <p className="text-foreground whitespace-pre-wrap">{selectedAssetForDetails.observacoes}</p>
                 </div>
               )}
@@ -600,7 +604,6 @@ declare module 'reactflow' {
     // From AssetNodeData
     name?: string; 
     assetMainType?: 'digital' | 'fisico';
-    // digitalAssetType?: string; // Removido
     quantity?: number;
     physicalAssetType?: string;
     releaseCondition?: { type: 'age'; targetAge: number };
@@ -620,3 +623,6 @@ declare module 'reactflow' {
     onAddAssetClick?: (memberId: string) => void; 
   }
 }
+
+
+    
