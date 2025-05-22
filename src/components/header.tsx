@@ -18,13 +18,13 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="bg-card shadow-md sticky top-0 z-50">
+    <header className="bg-[#A09DF3] shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
             src="/domedome-logo.svg" 
             alt="domedome Logo"
-            width={150} 
+            width={250} 
             height={83}  
             className="h-auto" 
             priority 
@@ -38,8 +38,8 @@ export function Header() {
               return (
                 <Button key={link.href} variant="ghost" asChild
                   className={cn(
-                    "text-sm",
-                    pathname === link.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                    "text-sm text-white hover:bg-white/10 hover:text-white",
+                    pathname === link.href ? "bg-white/20 text-white" : ""
                   )}
                 >
                   <Link href={link.href}>
@@ -54,25 +54,24 @@ export function Header() {
 
         <div className="flex items-center space-x-2">
           {loading ? (
-            <div className="h-8 w-20 bg-muted rounded-md animate-pulse"></div>
+            <div className="h-8 w-20 bg-muted/50 rounded-md animate-pulse"></div>
           ) : user ? (
             <>
-              {/* Removido: <span className="text-sm hidden sm:inline text-muted-foreground">Olá, {user.displayName || user.email?.split('@')[0]}</span> */}
-              <Button variant="outline" size="sm" onClick={logout}>
+              <Button variant="outline" size="sm" onClick={logout} className="text-white border-white/70 hover:bg-white/10 hover:text-white hover:border-white">
                 <LogOut className="mr-2 h-4 w-4" /> Sair
               </Button>
             </>
           ) : (
             <>
               {!pathname.includes('/login') && !pathname.includes('/signup') && (
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10 hover:text-white">
                   <Link href="/login">
                     <LogIn className="mr-2 h-4 w-4" /> Entrar
                   </Link>
                 </Button>
               )}
               {!pathname.includes('/signup') && !pathname.includes('/login') &&(
-                 <Button size="sm" asChild className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white">
+                 <Button size="sm" asChild className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white hover:opacity-90">
                   <Link href="/signup">
                     Cadastrar
                   </Link>
@@ -84,14 +83,14 @@ export function Header() {
       </div>
       {/* Mobile Nav */}
       {user && (
-        <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
+        <div className="md:hidden bg-[#A09DF3] border-t border-white/30 p-2 flex justify-around">
            {navLinks.map((link) => {
               const label = link.href === '/profile' ? (user?.displayName || link.label) : link.label;
               return (
                 <Button key={link.href} variant="ghost" size="sm" asChild
                   className={cn(
-                    "flex-col h-auto p-1",
-                    pathname === link.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                    "flex-col h-auto p-1 text-white hover:bg-white/10 hover:text-white",
+                    pathname === link.href ? "bg-white/20 text-white" : ""
                   )}
                 >
                   <Link href={link.href}>
