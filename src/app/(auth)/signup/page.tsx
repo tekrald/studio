@@ -7,11 +7,13 @@ import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink } from 'lucide-react';
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5; // Aumentado para 5 etapas
 
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -25,6 +27,12 @@ export default function SignupPage() {
   const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
   const [photo2, setPhoto2] = useState<File | null>(null);
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
+
+  // Novos estados para a etapa de formalização da holding
+  const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
+  const [companyType, setCompanyType] = useState('');
+  const [jurisdiction, setJurisdiction] = useState('');
+  const [notesForAccountant, setNotesForAccountant] = useState('');
   
   const [acceptedContract, setAcceptedContract] = useState(false);
   
@@ -42,7 +50,7 @@ export default function SignupPage() {
         setPhoto2(file);
         setPhoto2Preview(URL.createObjectURL(file));
       }
-      setError(null); // Clear previous error if user selects a file
+      setError(null);
     }
   };
 
@@ -71,13 +79,13 @@ export default function SignupPage() {
         return false;
       }
     } else if (currentStep === 3) {
-      // Photo upload is optional for now, so no specific validation here
-      // If photos were mandatory, add validation:
-      // if (!photo1) {
-      //   setError("Por favor, adicione a primeira foto do casal.");
-      //   return false;
-      // }
-    } else if (currentStep === 4) {
+      // Upload de fotos é opcional
+    } else if (currentStep === 4) { // Nova etapa de Formalização da Holding
+      if (!holdingType) {
+        setError("Por favor, selecione como vocês pretendem estruturar a holding.");
+        return false;
+      }
+    } else if (currentStep === 5) { // Antiga etapa 4 (Termos)
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos e Condições para continuar.');
         return false;
@@ -97,7 +105,7 @@ export default function SignupPage() {
   const handlePreviousStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
-      setError(null); // Clear error when going back
+      setError(null); 
     }
   };
 
@@ -111,10 +119,8 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      // Note: Photos (photo1, photo2) and acceptedContract are not sent to the backend by the current mock signup function.
-      // In a real app, you would handle file uploads and pass necessary data.
+      // Nota: holdingType, companyType, etc., não são enviados para o mock signup atual.
       signup(email, name);
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
@@ -231,16 +237,95 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 4 && (
+            {currentStep === 4 && ( // Nova etapa de Formalização da Holding
               <div className="space-y-4">
-                <Label className="text-lg font-semibold">Termos e Condições</Label>
+                <Label className="text-lg font-semibold flex items-center"><Briefcase size={20} className="mr-2 text-primary" />Formalização da Holding Familiar</Label>
+                <CardDescription>Como vocês pretendem estruturar a holding para seus ativos?</CardDescription>
+                
+                <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => setHoldingType(value)} className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="digital" id="holding-digital" />
+                    <Label htmlFor="holding-digital" className="font-normal">Principalmente Digital (ex: foco em criptoativos, NFTs)</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="physical" id="holding-physical" />
+                    <Label htmlFor="holding-physical" className="font-normal">Física ou Mista (incluindo imóveis, veículos, etc.)</Label>
+                  </div>
+                </RadioGroup>
+
+                {holdingType === 'digital' && (
+                  <Card className="p-4 bg-muted/30 space-y-3">
+                    <p className="text-sm text-foreground">
+                      Para holdings digitais, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
+                    </p>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => window.open('https://toolsforthecommons.org/', '_blank')}
+                      className="w-full sm:w-auto"
+                    >
+                      Consultar Tools for The Commons <ExternalLink size={16} className="ml-2" />
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      A formalização de holdings digitais pode ocorrer via empresas em países específicos ou através de estruturas digitais vinculadas a carteiras/empresas em zonas econômicas digitais. Pesquise as opções que melhor se adequam ao seu perfil.
+                    </p>
+                  </Card>
+                )}
+
+                {holdingType === 'physical' && (
+                  <Card className="p-4 bg-muted/30 space-y-4">
+                    <p className="text-sm text-foreground">
+                      A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
+                    </p>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyType">Tipo de Empresa (Opcional)</Label>
+                      <Input 
+                        id="companyType" 
+                        placeholder="Ex: LLC, Ltda, S.A." 
+                        value={companyType} 
+                        onChange={(e) => setCompanyType(e.target.value)} 
+                        disabled={isLoading} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="jurisdiction">Jurisdição/País (Opcional)</Label>
+                      <Input 
+                        id="jurisdiction" 
+                        placeholder="Ex: Brasil, Panamá, EUA (Delaware)" 
+                        value={jurisdiction} 
+                        onChange={(e) => setJurisdiction(e.target.value)} 
+                        disabled={isLoading} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="notesForAccountant">Observações para o Contador (Opcional)</Label>
+                      <Textarea 
+                        id="notesForAccountant" 
+                        placeholder="Dúvidas, detalhes específicos para discutir com um profissional..." 
+                        value={notesForAccountant} 
+                        onChange={(e) => setNotesForAccountant(e.target.value)} 
+                        disabled={isLoading}
+                        rows={3}
+                      />
+                    </div>
+                  </Card>
+                )}
+                 <CardDescription className="text-xs pt-2">
+                  Lembre-se: domedome oferece uma gestão visual para o seu planejamento. A formalização legal da sua holding e questões tributárias devem ser tratadas com profissionais qualificados (contadores, advogados).
+                </CardDescription>
+              </div>
+            )}
+
+            {currentStep === 5 && ( // Antiga etapa 4 (Termos)
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold">Termos e Condições do Aplicativo</Label>
                 <div className="p-4 border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm">
                   <p className="mb-2">Ao criar uma conta no domedome, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
-                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o domedome apenas para fins legais e de acordo com estes termos. O serviço é fornecido para planejamento pessoal de casamentos.</p>
-                  <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia (fotos, textos). Você concede ao domedome uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
-                  <p className="mb-2"><strong>3. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade. Coletamos informações para fornecer e melhorar o serviço.</p>
-                  <p><strong>4. Limitação de Responsabilidade:</strong> O domedome não se responsabiliza por perdas ou danos resultantes do uso do serviço, na máxima extensão permitida por lei.</p>
-                  {/* Adicionar mais texto conforme necessário */}
+                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o domedome apenas para fins legais e de acordo com estes termos. O serviço é fornecido para planejamento pessoal e gestão visual de patrimônio.</p>
+                  <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia (fotos, textos, dados de ativos). Você concede ao domedome uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
+                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> domedome é uma ferramenta de planejamento e visualização. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de holdings ou empresas.</p>
+                  <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade. Coletamos informações para fornecer e melhorar o serviço.</p>
+                  <p><strong>5. Limitação de Responsabilidade:</strong> O domedome não se responsabiliza por perdas ou danos resultantes do uso do serviço, nem por decisões tomadas com base nas informações aqui apresentadas, na máxima extensão permitida por lei.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" checked={acceptedContract} onCheckedChange={(checked) => setAcceptedContract(Boolean(checked))} disabled={isLoading} />
@@ -259,7 +344,7 @@ export default function SignupPage() {
                   <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                 </Button>
               ) : (
-                <div /> // Placeholder to keep "Next" button to the right
+                <div /> 
               )}
 
               {currentStep < TOTAL_STEPS ? (
@@ -291,5 +376,6 @@ export default function SignupPage() {
     </div>
   );
 }
+    
 
     
