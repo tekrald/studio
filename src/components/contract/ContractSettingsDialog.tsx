@@ -34,14 +34,15 @@ interface ContractSettingsDialogProps {
 
 const suggestedClausesTemplates = {
   partilhaBens: [
-    { id: 'sug_pb_1', text: "Partilha de bens em caso de separação: 50/50 dos bens adquiridos em conjunto durante a união." },
-    { id: 'sug_pb_2', text: "Bens adquiridos antes da união permanecerão como propriedade individual de cada parte." },
-    { id: 'sug_pb_3', text: "Em caso de aquisição de imóvel X, a propriedade será dividida em Y% para Parte A e Z% para Parte B." },
+    { id: 'sug_pb_1', text: "Partilha de bens em caso de término da união: divisão de 50/50 dos bens adquiridos em conjunto durante a união." },
+    { id: 'sug_pb_2', text: "Bens adquiridos individualmente antes da união permanecerão como propriedade individual de cada parte." },
+    { id: 'sug_pb_3', text: "Em caso de aquisição do bem [NOME DO BEM ESPECÍFICO], a propriedade será dividida em X% para Parte A e Z% para Parte B." },
   ],
   regrasConvivencia: [
-    { id: 'sug_rc_1', text: "As despesas domésticas mensais (contas de água, luz, internet, etc.) serão divididas igualmente entre as partes." },
-    { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de R$ X.XXX,XX) deverão ser discutidas e aprovadas por ambas as partes." },
-    { id: 'sug_rc_3', text: "Viagens individuais são permitidas, desde que comunicadas com antecedência mínima de X dias/semanas." },
+    { id: 'sug_rc_1', text: "As despesas domésticas mensais (ex: contas de água, luz, internet) serão divididas da seguinte forma: [Descrever a divisão]." },
+    { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de R$ [VALOR]) deverão ser discutidas e aprovadas por todas as partes envolvidas no contrato." },
+    { id: 'sug_rc_3', text: "Viagens individuais: [Definir regras, ex: permitidas com comunicação prévia de X dias/semanas]." },
+    { id: 'sug_rc_4', text: "Acordo personalizado sobre [TEMA ESPECÍFICO]: [Descrever o acordo aqui]." },
   ],
 };
 
@@ -79,7 +80,7 @@ export function ContractSettingsDialog({
         <DialogHeader>
           <DialogTitle className="text-2xl font-pacifico text-primary">Configurações do Contrato da União</DialogTitle>
           <DialogDescription>
-            Adicione, visualize e gerencie as cláusulas do seu contrato.
+            Adicione, visualize e gerencie as cláusulas do seu contrato. Estas cláusulas são flexíveis e podem ser adaptadas a qualquer configuração familiar e crença.
           </DialogDescription>
         </DialogHeader>
 
@@ -142,7 +143,7 @@ export function ContractSettingsDialog({
                     ))}
                   </div>
                   <div>
-                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras de Convivência</h4>
+                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras de Acordo Comum</h4>
                      {suggestedClausesTemplates.regrasConvivencia.map(sug => (
                         <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}
