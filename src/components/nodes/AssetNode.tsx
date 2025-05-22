@@ -30,27 +30,36 @@ const getIconForAsset = (data: AssetNodeData) => {
   }
   if (data.assetMainType === 'fisico') {
     if (data.physicalAssetType?.toLowerCase().includes('casa') || data.physicalAssetType?.toLowerCase().includes('apartamento') || data.physicalAssetType?.toLowerCase().includes('imóvel')) return <Landmark size={18} className="text-primary mr-2" />;
-    if (data.physicalAssetType?.toLowerCase().includes('veículo') || data.physicalAssetType?.toLowerCase().includes('carro')) return <Building size={18} className="text-primary mr-2" />;
+    if (data.physicalAssetType?.toLowerCase().includes('veículo') || data.physicalAssetType?.toLowerCase().includes('carro')) return <Building size={18} className="text-primary mr-2" />; // Corrected icon for vehicle
     return <Landmark size={18} className="text-primary mr-2" />;
   }
   return <DollarSign size={18} className="text-primary mr-2" />;
 };
 
-export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeData>) { // Renomeado id para nodeId
+export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeData>) {
   const icon = getIconForAsset(data);
   const { toast } = useToast();
 
-  const handleClockClick = () => {
+  const handleClockClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click if clock is clicked
     toast({
       title: 'Configurar Liberação',
       description: `Em breve: configurar liberação do ativo "${data.name}" ${data.releaseCondition?.targetAge ? `aos ${data.releaseCondition.targetAge} anos` : ''}.`,
     });
   };
 
+  const handleCardClick = () => {
+    toast({
+      title: 'Histórico do Ativo',
+      description: `Em breve: visualizar histórico de adições para "${data.name}".`,
+    });
+  };
+
   return (
     <Card
-      className={`w-60 shadow-lg border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-border'} bg-card relative rounded-lg`}
+      className={`w-60 shadow-lg border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-border'} bg-card relative rounded-lg cursor-pointer hover:shadow-md transition-shadow`}
       style={{ overflow: 'visible' }}
+      onClick={handleCardClick}
     >
       <Handle type="target" position={Position.Top} id={`t-${nodeId}-top`} className="!opacity-50 !bg-ring" />
       <Handle type="source" position={Position.Top} id={`s-${nodeId}-top`} className="!opacity-50 !bg-ring !top-[-4px]" />
@@ -107,3 +116,5 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
     </Card>
   );
 }
+
+    
