@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email, 
       uid: `mock-${email}`, 
       displayName: name || email.split('@')[0],
-      holdingType: '', // Inicializa campos da holding
+      holdingType: '', 
       companyType: '',
       jurisdiction: '',
       notesForAccountant: '',
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email, 
       uid: `mock-${email}-signup`, 
       displayName: name,
-      holdingType: '', // Inicializa campos da holding
+      holdingType: '', 
       companyType: '',
       jurisdiction: '',
       notesForAccountant: '',
@@ -110,6 +110,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Protected routes logic
   useEffect(() => {
+    // Permite acesso a '/', '/login', '/signup' mesmo se não estiver logado.
+    // Redireciona para '/login' se tentar acessar outras rotas sem estar logado.
     if (!loading && !user && !['/login', '/signup', '/'].includes(pathname)) {
       router.push('/login');
     }
