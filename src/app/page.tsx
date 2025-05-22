@@ -9,7 +9,7 @@ import { ArrowRight, Lock, Users, Briefcase, BarChart3, Network, GitFork, Shield
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background font-lato">
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
@@ -32,13 +32,13 @@ export default function HomePage() {
                   </Link>
                 </Button>
               </div>
-              <div className="flex justify-center items-center bg-transparent"> {/* Adicionado bg-transparent */}
+              <div className="flex justify-center items-center bg-transparent">
                 <Image
                   src="/hero-contract-illustration.png"
                   alt="Ilustração de um contrato de casamento domedome"
                   width={500}
                   height={400}
-                  className="rounded-lg shadow-2xl" /* Removido object-cover para teste */
+                  className="" /* Removido rounded-lg shadow-2xl */
                   data-ai-hint="contract illustration"
                   priority
                 />
