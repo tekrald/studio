@@ -10,27 +10,33 @@ import { DollarSign, Coins, Landmark, Building, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export type AssetNodeData = {
+  id: string; 
   name: string;
   assetMainType: 'digital' | 'fisico';
-  // Digital asset specific
   digitalAssetType?: string;
   quantity?: number;
-  // Physical asset specific
   physicalAssetType?: string;
-  // Release condition
   releaseCondition?: { type: 'age'; targetAge: number };
-  assignedToMemberId?: string; // Para saber a quem está designado
+  assignedToMemberId?: string; 
+  onOpenDetails?: () => void; 
+  dataAquisicao?: Date | string;
+  observacoes?: string;
+  quemComprou?: string;
+  contribuicaoParceiro1?: number;
+  contribuicaoParceiro2?: number;
+  valorPagoEpocaDigital?: number;
+  enderecoLocalizacaoFisico?: string;
 };
 
 const getIconForAsset = (data: AssetNodeData) => {
   if (data.assetMainType === 'digital') {
     if (data.digitalAssetType?.toLowerCase().includes('cripto')) return <Coins size={18} className="text-primary mr-2" />;
-    if (data.digitalAssetType?.toLowerCase().includes('nft')) return <DollarSign size={18} className="text-primary mr-2" />;
+    if (data.digitalAssetType?.toLowerCase().includes('nft')) return <DollarSign size={18} className="text-primary mr-2" />; 
     return <Coins size={18} className="text-primary mr-2" />;
   }
   if (data.assetMainType === 'fisico') {
     if (data.physicalAssetType?.toLowerCase().includes('casa') || data.physicalAssetType?.toLowerCase().includes('apartamento') || data.physicalAssetType?.toLowerCase().includes('imóvel')) return <Landmark size={18} className="text-primary mr-2" />;
-    if (data.physicalAssetType?.toLowerCase().includes('veículo') || data.physicalAssetType?.toLowerCase().includes('carro')) return <Building size={18} className="text-primary mr-2" />; // Corrected icon for vehicle
+    if (data.physicalAssetType?.toLowerCase().includes('veículo') || data.physicalAssetType?.toLowerCase().includes('carro')) return <Building size={18} className="text-primary mr-2" />;
     return <Landmark size={18} className="text-primary mr-2" />;
   }
   return <DollarSign size={18} className="text-primary mr-2" />;
@@ -41,7 +47,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
   const { toast } = useToast();
 
   const handleClockClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click if clock is clicked
+    e.stopPropagation(); 
     toast({
       title: 'Configurar Liberação',
       description: `Em breve: configurar liberação do ativo "${data.name}" ${data.releaseCondition?.targetAge ? `aos ${data.releaseCondition.targetAge} anos` : ''}.`,
@@ -49,10 +55,14 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
   };
 
   const handleCardClick = () => {
-    toast({
-      title: 'Histórico do Ativo',
-      description: `Em breve: visualizar histórico de adições para "${data.name}".`,
-    });
+    if (data.onOpenDetails) {
+      data.onOpenDetails();
+    } else {
+      toast({
+        title: 'Detalhes do Ativo',
+        description: `Visualizando detalhes de "${data.name}". (onOpenDetails não configurado)`,
+      });
+    }
   };
 
   return (
