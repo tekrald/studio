@@ -8,10 +8,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { UserCircle, Save, Loader2, Briefcase, ExternalLink } from 'lucide-react';
+import { UserCircle, Save, Loader2, Briefcase, ExternalLink, Users, BookOpen } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-// import { Textarea } from '@/components/ui/textarea'; // Removido pois não é mais usado aqui
-import { Checkbox } from '@/components/ui/checkbox'; // Adicionado
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+
+const religionOptions = [
+    { value: "cristianismo", label: "Cristianismo" },
+    { value: "islamismo", label: "Islamismo" },
+    { value: "hinduismo", label: "Hinduísmo" },
+    { value: "budismo", label: "Budismo" },
+    { value: "judaismo", label: "Judaísmo" },
+    { value: "espiritismo", label: "Espiritismo" },
+    { value: "ateismo", label: "Ateísmo" },
+    { value: "agnosticismo", label: "Agnosticismo" },
+    { value: "outra", label: "Outra" },
+    { value: "nao_dizer", label: "Prefiro não dizer" },
+  ];
 
 export default function ProfilePage() {
   const { user, updateProfile, loading: authLoading } = useAuth();
@@ -21,10 +35,10 @@ export default function ProfilePage() {
   const [avatarText, setAvatarText] = useState('');
   
   const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
-  // const [companyType, setCompanyType] = useState(''); // Removido
-  // const [jurisdiction, setJurisdiction] = useState(''); // Removido
-  // const [notesForAccountant, setNotesForAccountant] = useState(''); // Removido
-  const [acknowledgedPhysicalInfoProfile, setAcknowledgedPhysicalInfoProfile] = useState(false); // Novo
+  const [acknowledgedPhysicalInfoProfile, setAcknowledgedPhysicalInfoProfile] = useState(false);
+
+  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | 'other' | ''>('');
+  const [religion, setReligion] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,13 +46,11 @@ export default function ProfilePage() {
     if (user) {
       setDisplayName(user.displayName || '');
       setHoldingType(user.holdingType || '');
-      // setCompanyType(user.companyType || ''); // Removido
-      // setJurisdiction(user.jurisdiction || ''); // Removido
-      // setNotesForAccountant(user.notesForAccountant || ''); // Removido
-      // Se 'physical', e o usuário já tem esse tipo, podemos assumir que ele já tomou ciência.
-      // Para simplificar, vamos requerer a ciência a cada salvamento se physical for escolhido.
+      setRelationshipStructure(user.relationshipStructure || '');
+      setReligion(user.religion || '');
+      
       if (user.holdingType === 'physical') {
-        // setAcknowledgedPhysicalInfoProfile(true); // Ou deixar false para requerer a cada edição
+        // setAcknowledgedPhysicalInfoProfile(true); // Default to false to re-confirm
       } else {
         setAcknowledgedPhysicalInfoProfile(false);
       }
@@ -53,7 +65,7 @@ export default function ProfilePage() {
       } else if (names.length === 1 && names[0]) {
         setAvatarText(names[0].substring(0, 2).toUpperCase());
       } else {
-        setAvatarText(displayName.substring(0,2).toUpperCase() || '??');
+         setAvatarText(displayName.substring(0,2).toUpperCase() || '??');
       }
     } else if (user?.email) {
       setAvatarText(user.email.substring(0,2).toUpperCase());
@@ -74,6 +86,15 @@ export default function ProfilePage() {
       });
       return;
     }
+    if (!relationshipStructure) {
+        toast({
+        title: 'Campo Obrigatório',
+        description: 'Por favor, selecione a estrutura da relação.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
 
     setIsLoading(true);
     try {
@@ -81,13 +102,12 @@ export default function ProfilePage() {
       updateProfile({
         displayName,
         holdingType,
-        // companyType, // Removido
-        // jurisdiction, // Removido
-        // notesForAccountant, // Removido
+        relationshipStructure,
+        religion,
       });
       toast({
         title: 'Perfil Atualizado',
-        description: 'Suas informações de perfil e holding foram salvas.',
+        description: 'Suas informações de perfil foram salvas.',
       });
     } catch (error) {
       toast({
@@ -122,9 +142,9 @@ export default function ProfilePage() {
         <Card className="shadow-xl mb-8">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl font-lato">Nosso Perfil</CardTitle> 
-            <CardDescription className="font-lato">
-              Gerencie suas informações compartilhadas do casal aqui.
+            <CardTitle className="text-3xl">Nosso Perfil</CardTitle> 
+            <CardDescription>
+              Gerencie suas informações compartilhadas aqui.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -147,7 +167,6 @@ export default function ProfilePage() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 disabled={isLoading}
-                className="font-lato"
               />
             </div>
             <div className="space-y-2">
@@ -157,17 +176,59 @@ export default function ProfilePage() {
                 type="email"
                 value={user?.email || ''}
                 disabled 
-                className="cursor-not-allowed bg-muted/50 font-lato"
+                className="cursor-not-allowed bg-muted/50"
               />
               <p className="text-xs text-muted-foreground">O endereço de email não pode ser alterado aqui.</p>
             </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="relationshipStructure" className="flex items-center"><Users size={18} className="mr-2 text-primary" />Estrutura da Relação</Label>
+                <RadioGroup 
+                    value={relationshipStructure} 
+                    onValueChange={(value: 'monogamous' | 'polygamous' | 'other' | '') => setRelationshipStructure(value)} 
+                    className="space-y-2 pt-1"
+                    disabled={isLoading}
+                >
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="monogamous" id="profile-rel-monogamous" />
+                        <Label htmlFor="profile-rel-monogamous" className="font-normal">Monogâmica</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="polygamous" id="profile-rel-polygamous" />
+                        <Label htmlFor="profile-rel-polygamous" className="font-normal">Poligâmica</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="other" id="profile-rel-other" />
+                        <Label htmlFor="profile-rel-other" className="font-normal">Outra</Label>
+                    </div>
+                     <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="" id="profile-rel-undefined" />
+                        <Label htmlFor="profile-rel-undefined" className="font-normal">Não especificado</Label>
+                    </div>
+                </RadioGroup>
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="religion" className="flex items-center"><BookOpen size={18} className="mr-2 text-primary" />Religião / Crença Espiritual (Opcional)</Label>
+                <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
+                    <SelectTrigger id="religion">
+                        <SelectValue placeholder="Selecione uma opção" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {religionOptions.map(opt => (
+                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
           </CardContent>
         </Card>
 
         <Card className="shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center font-lato"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle> 
-            <CardDescription className="font-lato">
+            <CardTitle className="text-2xl flex items-center"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle> 
+            <CardDescription>
               Indique como vocês pretendem ou já formalizaram a holding para seus ativos.
             </CardDescription>
           </CardHeader>
@@ -179,7 +240,7 @@ export default function ProfilePage() {
                 onValueChange={(value: 'digital' | 'physical' | '') => {
                   setHoldingType(value);
                   if (value !== 'physical') {
-                    setAcknowledgedPhysicalInfoProfile(false); // Reseta se não for físico
+                    setAcknowledgedPhysicalInfoProfile(false); 
                   }
                 }} 
                 className="space-y-2 pt-1" 
@@ -255,5 +316,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-    
-

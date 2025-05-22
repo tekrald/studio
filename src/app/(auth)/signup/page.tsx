@@ -15,6 +15,19 @@ import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLi
 
 const TOTAL_STEPS = 6; 
 
+const religionOptions = [
+    { value: "cristianismo", label: "Cristianismo" },
+    { value: "islamismo", label: "Islamismo" },
+    { value: "hinduismo", label: "Hinduísmo" },
+    { value: "budismo", label: "Budismo" },
+    { value: "judaismo", label: "Judaísmo" },
+    { value: "espiritismo", label: "Espiritismo" },
+    { value: "ateismo", label: "Ateísmo" },
+    { value: "agnosticismo", label: "Agnosticismo" },
+    { value: "outra", label: "Outra" },
+    { value: "nao_dizer", label: "Prefiro não dizer" },
+  ];
+
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
   
@@ -61,7 +74,6 @@ export default function SignupPage() {
         setError("Por favor, selecione a estrutura da relação.");
         return false;
       }
-      // Religião é opcional
     } else if (currentStep === 2) { // Nome do Casal
       if (!name.trim()) {
         setError("Por favor, insira o nome do casal.");
@@ -129,11 +141,8 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      // Simulação de envio para o backend
       await new Promise(resolve => setTimeout(resolve, 1000)); 
-      // A função signup atualmente não aceita religion ou relationshipStructure.
-      // Estes dados precisariam ser passados e tratados no AuthProvider e/ou backend.
-      signup(email, name, holdingType); 
+      signup(email, name, holdingType, relationshipStructure, religion); 
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
     } finally {
@@ -141,18 +150,6 @@ export default function SignupPage() {
     }
   };
   
-  const religionOptions = [
-    { value: "cristianismo", label: "Cristianismo" },
-    { value: "islamismo", label: "Islamismo" },
-    { value: "hinduismo", label: "Hinduísmo" },
-    { value: "budismo", label: "Budismo" },
-    { value: "judaismo", label: "Judaísmo" },
-    { value: "espiritismo", label: "Espiritismo" },
-    { value: "ateismo", label: "Ateísmo" },
-    { value: "agnosticismo", label: "Agnosticismo" },
-    { value: "outra", label: "Outra" },
-    { value: "nao_dizer", label: "Prefiro não dizer" },
-  ];
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-gray-100 to-[#f0f0f0] p-4">
@@ -165,7 +162,7 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
-            {currentStep === 1 && ( // Detalhes da União
+            {currentStep === 1 && ( 
               <div className="space-y-4">
                 <div>
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2"><Users size={20} className="mr-2 text-primary" />Estrutura da Relação</Label>
@@ -205,7 +202,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 2 && ( // Nome do Casal
+            {currentStep === 2 && ( 
               <div className="space-y-2">
                 <Label htmlFor="name">Nome do Casal (ex: Alex & Jamie)</Label>
                 <Input
@@ -220,7 +217,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 3 && ( // Detalhes da Conta
+            {currentStep === 3 && ( 
               <>
                 <div className="space-y-2">
                   <Label htmlFor="email">Endereço de Email Compartilhado</Label>
@@ -258,7 +255,7 @@ export default function SignupPage() {
               </>
             )}
 
-            {currentStep === 4 && ( // Fotos do Casal
+            {currentStep === 4 && ( 
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">Adicione fotos que representem vocês como união (opcional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -300,7 +297,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 5 && ( // Formalização da Holding
+            {currentStep === 5 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center"><Briefcase size={20} className="mr-2 text-primary" />Formalização da Holding Familiar</Label>
                 <CardDescription>Como vocês pretendem estruturar a holding para seus ativos?</CardDescription>
@@ -359,7 +356,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 6 && ( // Termos e Condições
+            {currentStep === 6 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold">Termos e Condições do Aplicativo</Label>
                 <div className="p-4 border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm">
@@ -419,17 +416,3 @@ export default function SignupPage() {
     </div>
   );
 }
-    
-    
-
-    
-    
-
-    
-
-
-
-    
-
-
-

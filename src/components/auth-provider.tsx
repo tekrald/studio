@@ -10,23 +10,28 @@ interface User {
   displayName?: string;
   // Campos da Holding
   holdingType?: 'digital' | 'physical' | '';
-  companyType?: string; // Mantido no tipo, mas não mais editável pelo perfil
-  jurisdiction?: string; // Mantido no tipo, mas não mais editável pelo perfil
-  notesForAccountant?: string; // Mantido no tipo, mas não mais editável pelo perfil
+  // Campos da União
+  relationshipStructure?: 'monogamous' | 'polygamous' | 'other' | '';
+  religion?: string;
 }
 
 interface UpdateProfileData {
   displayName?: string;
   holdingType?: 'digital' | 'physical' | '';
-  // companyType?: string; // Removido dos dados atualizáveis pelo perfil
-  // jurisdiction?: string; // Removido dos dados atualizáveis pelo perfil
-  // notesForAccountant?: string; // Removido dos dados atualizáveis pelo perfil
+  relationshipStructure?: 'monogamous' | 'polygamous' | 'other' | '';
+  religion?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, name?: string) => void; 
-  signup: (email: string, name: string, holdingType?: 'digital' | 'physical' | '') => void; // Adicionado holdingType
+  signup: (
+    email: string, 
+    name: string, 
+    holdingTypeParam?: 'digital' | 'physical' | '',
+    relationshipStructureParam?: 'monogamous' | 'polygamous' | 'other' | '',
+    religionParam?: string
+  ) => void;
   logout: () => void;
   loading: boolean;
   updateProfile: (data: UpdateProfileData) => void;
@@ -34,15 +39,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// const MOCK_USER_STORAGE_KEY = 'domedomeMockUser'; // Comentado
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Começa como true para mostrar loading inicial
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => { // Reativado para carregar usuário do localStorage
+  useEffect(() => {
     try {
       const storedUser = localStorage.getItem('domedomeMockUser');
       if (storedUser) {
@@ -57,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const handleAuthChange = useCallback((newUser: User | null) => {
     setUser(newUser);
-    if (newUser) { // Reativado para salvar usuário no localStorage
+    if (newUser) {
       localStorage.setItem('domedomeMockUser', JSON.stringify(newUser));
     } else {
       localStorage.removeItem('domedomeMockUser');
@@ -65,30 +68,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   
   const login = useCallback((email: string, name?: string) => {
+    // Try to load existing user data to preserve holding/union details if they re-login
+    let existingUser: Partial<User> = {};
+    try {
+      const storedUser = localStorage.getItem('domedomeMockUser');
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser) as User;
+        if (parsedUser.email === email) { // only load if it's the same email
+            existingUser = parsedUser;
+        }
+      }
+    } catch (error) {
+        // ignore
+    }
+
     const mockUser: User = { 
+      ...existingUser, // spread existing data first
       email, 
       uid: `mock-${email}`, 
-      displayName: name || email.split('@')[0],
-      // Inicializa campos da holding (ou carrega se já existirem)
-      holdingType: '', 
-      companyType: '',
-      jurisdiction: '',
-      notesForAccountant: '',
+      displayName: name || existingUser.displayName || email.split('@')[0],
+      holdingType: existingUser.holdingType || '', 
+      relationshipStructure: existingUser.relationshipStructure || '',
+      religion: existingUser.religion || '',
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
   }, [handleAuthChange, router]);
 
-  const signup = useCallback((email: string, name: string, holdingTypeParam?: 'digital' | 'physical' | '') => {
+  const signup = useCallback((
+    email: string, 
+    name: string, 
+    holdingTypeParam?: 'digital' | 'physical' | '',
+    relationshipStructureParam?: 'monogamous' | 'polygamous' | 'other' | '',
+    religionParam?: string
+  ) => {
     const mockUser: User = { 
       email, 
       uid: `mock-${email}-signup`, 
       displayName: name,
-      holdingType: holdingTypeParam || '', 
-      // companyType, jurisdiction, notesForAccountant não são mais passados aqui
-      companyType: '',
-      jurisdiction: '',
-      notesForAccountant: '',
+      holdingType: holdingTypeParam || '',
+      relationshipStructure: relationshipStructureParam || '',
+      religion: religionParam || '',
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
@@ -96,7 +116,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     handleAuthChange(null);
-    router.push('/'); // Redireciona para a landing page
+    router.push('/'); 
   }, [handleAuthChange, router]);
 
   const updateProfile = useCallback((data: UpdateProfileData) => {
@@ -110,7 +130,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [user, handleAuthChange]);
 
 
-  useEffect(() => { // Reativado para proteção de rotas
+  useEffect(() => {
     if (loading) {
       return;
     }
@@ -140,4 +160,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
