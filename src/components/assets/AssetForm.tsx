@@ -98,7 +98,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
       valorAtualEstimado: 0,
       observacoesInvestimento: '',
       dataAquisicao: new Date(),
-      quemComprou: '',
+      quemComprou: '', // Default to empty string, placeholder will handle "Não especificado" display
     },
     mode: "onChange", 
   });
@@ -117,7 +117,12 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
 
 
   const handleFormSubmit = async (values: AssetFormData) => {
-    await onSubmit(values);
+    // If 'quemComprou' is our special "UNSPECIFIED_BUYER" value, convert it to empty string or undefined for backend
+    const processedValues = {
+      ...values,
+      quemComprou: values.quemComprou === "UNSPECIFIED_BUYER" ? "" : values.quemComprou,
+    };
+    await onSubmit(processedValues);
   };
 
   const validateStep = async (step: number): Promise<boolean> => {
@@ -129,9 +134,8 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     } else if (step === 2) {
       fieldsToValidate = ['nomeAtivo', 'dataAquisicao'];
     } else if (step === 3) {
-      // 'quemComprou' é opcional, então não precisa de validação forte aqui,
-      // mas podemos adicionar se quisermos garantir que uma opção seja selecionada.
-      // Por ora, não validaremos estritamente para permitir "Não especificado" implícito.
+      // 'quemComprou' is optional, but if a value is selected it should be valid.
+      // The Select component handles this internally.
     } else if (step === 4) {
       fieldsToValidate = ['valorAtualEstimado', 'descricaoDetalhada'];
     } else if (step === 5) {
@@ -262,12 +266,16 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
             name="quemComprou"
             control={form.control}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+              <Select 
+                onValueChange={(value) => field.onChange(value === "UNSPECIFIED_BUYER" ? "" : value)} 
+                value={field.value === "" ? "UNSPECIFIED_BUYER" : field.value}
+                disabled={isLoading}
+              >
                 <SelectTrigger id="quemComprou">
                   <SelectValue placeholder="Selecione quem adquiriu (opcional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Não especificado</SelectItem>
+                  <SelectItem value="UNSPECIFIED_BUYER">Não especificado</SelectItem>
                   {partnerNames.length === 1 && (
                     <SelectItem value={partnerNames[0]}>{partnerNames[0]}</SelectItem>
                   )}
@@ -385,3 +393,6 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     </form>
   );
 }
+
+
+    
