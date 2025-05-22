@@ -2,12 +2,11 @@
 "use client";
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // CardContent e CardHeader não são mais usados diretamente aqui, mas podem ser por ReactFlow
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { PlusCircle, Users, LayoutGrid, Settings, DollarSign } from 'lucide-react';
+import { LayoutGrid, Plus } from 'lucide-react'; // Removed unused icons, kept Plus for actions bar example if re-added
 import { AssetForm } from '@/components/assets/AssetForm';
-import type { AssetFormData } from '@/types/asset';
+import type { AssetFormData, DigitalAsset, PhysicalAsset } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
 import { AddMemberForm } from '@/components/members/AddMemberForm';
 import type { MemberFormData } from '@/types/member';
@@ -43,8 +42,30 @@ const nodeTypes = {
   unionNode: UnionNode,
 };
 
+interface AssetNodeData {
+  label: string;
+  assetId: string;
+  type: 'asset';
+  assetType: 'digital' | 'fisico';
+  originalName: string; // To find and consolidate digital assets
+  // Digital asset specific
+  digitalAssetType?: DigitalAsset['tipoAtivoDigital'];
+  quantity?: number;
+  // Physical asset specific
+  physicalAssetType?: PhysicalAsset['tipoImovelBemFisico'];
+}
+
+interface MemberNodeData {
+  label: string;
+  memberId: string;
+  type: 'member';
+  originalName: string;
+  relationshipType: MemberFormData['tipoRelacao'];
+}
+
+
 export default function AssetManagementDashboard() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth(); // AuthProvider now desactivated
   const { toast } = useToast();
   
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
@@ -53,7 +74,7 @@ export default function AssetManagementDashboard() {
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<UnionNodeData | { label: string; tipoRelacao?: string }>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<UnionNodeData | AssetNodeData | MemberNodeData>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
@@ -98,93 +119,153 @@ export default function AssetManagementDashboard() {
     setIsAddMemberModalOpen(true);
   }, []);
   
+  const effectiveUser = user || { uid: 'mock-uid-default', displayName: 'Nossa União (Mock)'};
+
 
   useEffect(() => {
-    if (user && !authLoading && !nodes.find(node => node.id === UNION_NODE_ID)) {
-      const unionNode: Node<UnionNodeData> = {
-        id: UNION_NODE_ID,
-        type: 'unionNode', 
-        position: { x: 250, y: 50 },
-        data: { 
-          label: user.displayName || 'Nossa União',
-          onSettingsClick: handleOpenContractSettings,
-          onOpenAssetModal: handleOpenAssetModal,
-          onAddMember: handleOpenAddMemberModal,
-        },
-        draggable: true,
-        nodeOrigin,
-      };
-      setNodes([unionNode]);
+    // With AuthProvider desactivated, user might be null. Fallback to a mock user or skip.
+    const currentUnionNode = nodes.find(node => node.id === UNION_NODE_ID);
+    if (!currentUnionNode && !authLoading) { // Only add if not already present
+        const unionNode: Node<UnionNodeData> = {
+            id: UNION_NODE_ID,
+            type: 'unionNode', 
+            position: { x: 400, y: 100 }, // Centered a bit more
+            data: { 
+            label: effectiveUser.displayName || 'Nossa União',
+            onSettingsClick: handleOpenContractSettings,
+            onOpenAssetModal: handleOpenAssetModal,
+            onAddMember: handleOpenAddMemberModal,
+            },
+            draggable: true,
+            nodeOrigin,
+        };
+        setNodes([unionNode]);
     }
-  }, [user, authLoading, nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal]);
+  }, [ nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal, authLoading, effectiveUser.displayName]);
 
 
   const handleAddAssetSubmit = async (data: AssetFormData) => {
-    if (!user) {
+    if (!effectiveUser) {
       toast({ title: 'Erro!', description: 'Usuário não autenticado.', variant: 'destructive' });
       return;
     }
     setIsSubmittingAsset(true);
-    const result = await addAsset(data, user.uid); 
+    const result = await addAsset(data, effectiveUser.uid); 
+    
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
       
       const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID);
       if (!unionNodeInstance) {
         console.error("Nó da união não encontrado para adicionar o ativo.");
-        toast({ title: 'Erro Interno', description: 'Nó da união não encontrado.', variant: 'destructive' });
         setIsSubmittingAsset(false);
         return;
       }
-      
-      const assetNodes = nodes.filter(n => n.type !== 'unionNode' && !n.data?.tipoRelacao); 
-      const existingAssetNodesCount = assetNodes.length;
 
-      const angle = (existingAssetNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3); 
-      const radius = 200 + Math.floor(existingAssetNodesCount / (nodes.length > 5 ? 8 : 6)) * 60;
-      
-      const unionNodeX = unionNodeInstance.position?.x ?? 250;
-      const unionNodeY = unionNodeInstance.position?.y ?? 50;
+      let assetNodeExists = false;
+      if (data.tipo === 'digital' && data.nomeAtivo && data.quantidadeDigital !== undefined) {
+        setNodes((prevNodes) =>
+          prevNodes.map((node) => {
+            if (
+              node.data.type === 'asset' &&
+              node.data.assetType === 'digital' &&
+              node.data.originalName === data.nomeAtivo &&
+              node.data.digitalAssetType === data.tipoAtivoDigital 
+            ) {
+              assetNodeExists = true;
+              const existingData = node.data as Extract<AssetNodeData, { assetType: 'digital' }>;
+              const newQuantity = (existingData.quantity || 0) + (data.quantidadeDigital || 0);
+              return {
+                ...node,
+                data: {
+                  ...existingData,
+                  quantity: newQuantity,
+                  label: `${existingData.originalName} (${data.tipoAtivoDigital}) (Qtd: ${newQuantity.toFixed(2)})`,
+                },
+              };
+            }
+            return node;
+          })
+        );
+      }
 
-      const newAssetNodeX = unionNodeX + radius * Math.cos(angle);
-      const newAssetNodeY = unionNodeY + (unionNodeInstance.height ?? 100) / 2 + 50 + radius * Math.sin(angle);
+      if (!assetNodeExists) {
+        const assetNodesCount = nodes.filter(n => n.data.type === 'asset').length;
+        const angleStep = Math.PI / 4; // Distribute nodes more sparsely
+        const radius = 250 + Math.floor(assetNodesCount / 6) * 70;
+        
+        const unionNodeX = unionNodeInstance.position?.x ?? 400;
+        const unionNodeY = unionNodeInstance.position?.y ?? 100;
+        // Stagger angle start to avoid direct bottom for the first few nodes
+        const angle = (assetNodesCount * angleStep) + (Math.PI / 8); 
 
 
-      const newAssetNode: Node = {
-        id: result.assetId,
-        type: 'default', 
-        data: {
-          label: data.nomeAtivo,
-        },
-        position: { x: newAssetNodeX, y: newAssetNodeY },
-        draggable: true,
-        style: {
-          background: 'hsl(var(--card))',
-          color: 'hsl(var(--card-foreground))',
-          border: '1px solid hsl(var(--border))',
-          width: 150,
-          padding: '10px',
-          borderRadius: 'var(--radius)',
-          fontSize: '0.9rem',
-          textAlign: 'center',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        },
-        sourcePosition: Position.Top,
-        targetPosition: Position.Bottom,
-        nodeOrigin,
-      };
-      setNodes((prevNodes) => prevNodes.concat(newAssetNode));
+        const newAssetNodeX = unionNodeX + radius * Math.cos(angle);
+        const newAssetNodeY = unionNodeY + (unionNodeInstance.height ?? 100) / 2 + 50 + radius * Math.sin(angle);
+        
+        let nodeLabel = data.nomeAtivo;
+        let nodeDataPayload: AssetNodeData;
 
-      const newEdge: Edge = {
-        id: `e-${UNION_NODE_ID}-${result.assetId}`,
-        source: UNION_NODE_ID,
-        target: result.assetId,
-        type: 'smoothstep',
-        markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
-        style: { stroke: 'hsl(var(--primary))', strokeWidth: 2 },
-      };
-      setEdges((prevEdges) => prevEdges.concat(newEdge));
+        if (data.tipo === 'digital') {
+          nodeLabel = `${data.nomeAtivo} (${data.tipoAtivoDigital}) (Qtd: ${(data.quantidadeDigital || 0).toFixed(2)})`;
+          nodeDataPayload = {
+            label: nodeLabel,
+            assetId: result.assetId,
+            type: 'asset',
+            assetType: 'digital',
+            originalName: data.nomeAtivo,
+            digitalAssetType: data.tipoAtivoDigital,
+            quantity: data.quantidadeDigital || 0,
+          };
+        } else { // fisico
+          nodeLabel = `${data.nomeAtivo} (${data.tipoImovelBemFisico || 'Físico'})`;
+           nodeDataPayload = {
+            label: nodeLabel,
+            assetId: result.assetId,
+            type: 'asset',
+            assetType: 'fisico',
+            originalName: data.nomeAtivo,
+            physicalAssetType: data.tipoImovelBemFisico
+          };
+        }
 
+        const newAssetNode: Node<AssetNodeData> = {
+          id: result.assetId,
+          type: 'default', 
+          data: nodeDataPayload,
+          position: { x: newAssetNodeX, y: newAssetNodeY },
+          draggable: true,
+          style: {
+            background: 'hsl(var(--card))',
+            color: 'hsl(var(--card-foreground))',
+            border: '1px solid hsl(var(--border))',
+            width: 'auto', // Auto width
+            minWidth: 150, // Min width
+            maxWidth: 220, // Max width for long names
+            padding: '10px',
+            borderRadius: 'var(--radius)',
+            fontSize: '0.85rem', // Slightly smaller font
+            textAlign: 'center',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            whiteSpace: 'normal', // Allow text wrapping
+            wordBreak: 'break-word', // Break long words
+          },
+          sourcePosition: Position.Top,
+          targetPosition: Position.Bottom,
+          nodeOrigin,
+        };
+        setNodes((prevNodes) => prevNodes.concat(newAssetNode));
+
+        const newEdge: Edge = {
+          id: `e-${UNION_NODE_ID}-${result.assetId}`,
+          source: UNION_NODE_ID,
+          target: result.assetId,
+          type: 'smoothstep',
+          markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
+          style: { stroke: 'hsl(var(--primary))', strokeWidth: 1.5 },
+        };
+        setEdges((prevEdges) => prevEdges.concat(newEdge));
+      }
       setIsAssetModalOpen(false);
     } else {
       toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar o ativo.', variant: 'destructive' });
@@ -193,7 +274,7 @@ export default function AssetManagementDashboard() {
   };
 
   const handleAddMemberSubmit = async (data: MemberFormData) => {
-    if (!user) {
+    if (!effectiveUser) {
       toast({ title: 'Erro!', description: 'Usuário não autenticado.', variant: 'destructive' });
       return;
     }
@@ -204,43 +285,52 @@ export default function AssetManagementDashboard() {
 
       const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID);
       if (!unionNodeInstance) {
-        console.error("Nó da união não encontrado para adicionar o membro.");
-        toast({ title: 'Erro Interno', description: 'Nó da união não encontrado.', variant: 'destructive' });
         setIsSubmittingMember(false);
         return;
       }
 
-      const memberNodes = nodes.filter(n => n.data?.tipoRelacao); 
-      const existingMemberNodesCount = memberNodes.length;
+      const memberNodesCount = nodes.filter(n => n.data.type === 'member').length;
+      const angleStep = Math.PI / 4; 
+      const radius = 220 + Math.floor(memberNodesCount / 6) * 60;
       
-      const angle = (existingMemberNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3) + Math.PI; 
-      const radius = 180 + Math.floor(existingMemberNodesCount / (nodes.length > 5 ? 8 : 6)) * 50;
-      
-      const unionNodeX = unionNodeInstance.position?.x ?? 250;
-      const unionNodeY = unionNodeInstance.position?.y ?? 50;
+      const unionNodeX = unionNodeInstance.position?.x ?? 400;
+      const unionNodeY = unionNodeInstance.position?.y ?? 100;
+      // Stagger angle start for members, potentially on the opposite side or different arc
+      const angle = (memberNodesCount * angleStep) + (Math.PI * 5/8); 
+
 
       const newMemberNodeX = unionNodeX + radius * Math.cos(angle);
       const newMemberNodeY = unionNodeY + (unionNodeInstance.height ?? 100) / 2 + 50 + radius * Math.sin(angle);
 
-      const newMemberNode: Node = {
+      const nodeLabel = `${data.tipoRelacao}: ${data.nome}`;
+      const nodeDataPayload: MemberNodeData = {
+        label: nodeLabel,
+        memberId: result.memberId,
+        type: 'member',
+        originalName: data.nome,
+        relationshipType: data.tipoRelacao,
+      };
+
+      const newMemberNode: Node<MemberNodeData> = {
         id: result.memberId,
         type: 'default',
-        data: {
-          label: `${data.nome} (${data.tipoRelacao})`, 
-          tipoRelacao: data.tipoRelacao, 
-        },
+        data: nodeDataPayload,
         position: { x: newMemberNodeX, y: newMemberNodeY },
         draggable: true,
         style: {
           background: 'hsl(var(--accent))', 
           color: 'hsl(var(--accent-foreground))',
           border: '1px solid hsl(var(--ring))',
-          width: 160,
+          width: 'auto',
+          minWidth: 160,
+          maxWidth: 220,
           padding: '10px',
           borderRadius: 'var(--radius)',
-          fontSize: '0.9rem',
+          fontSize: '0.85rem',
           textAlign: 'center',
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
         },
         sourcePosition: Position.Top,
         targetPosition: Position.Bottom,
@@ -254,7 +344,7 @@ export default function AssetManagementDashboard() {
         target: result.memberId,
         type: 'smoothstep',
         markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--accent))' },
-        style: { stroke: 'hsl(var(--accent))', strokeWidth: 2 },
+        style: { stroke: 'hsl(var(--accent))', strokeWidth: 1.5 },
       };
       setEdges((prevEdges) => prevEdges.concat(newEdge));
 
@@ -265,16 +355,16 @@ export default function AssetManagementDashboard() {
     setIsSubmittingMember(false);
   };
   
-  if (authLoading && !user && nodes.length === 0) { // Condição original mantida, pode ajustar se user for sempre null
+  if (authLoading && nodes.length === 0) { 
     return (
-      <div className="flex min-h-[calc(100vh-var(--header-height,100px)-2rem)] items-center justify-center">
+      <div className="flex min-h-[calc(100vh-var(--header-height,60px)-2rem)] items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-      <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-2rem)]"> {/* Ajustar padding-top se necessário */}
+      <div className="flex flex-col h-[calc(100vh-var(--header-height,60px)-2rem)]">
          <Dialog open={isAssetModalOpen} onOpenChange={setIsAssetModalOpen}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
@@ -300,40 +390,54 @@ export default function AssetManagementDashboard() {
             onClose={() => setIsContractSettingsModalOpen(false)}
             clauses={contractClauses}
             onAddClause={handleAddContractClause}
-            onRemoveClause={handleRemoveContractClause}
+            onRemoveClause={handleRemoveClause}
             onUpdateClause={handleUpdateContractClause}
           />
-
-        <Card className="flex-grow shadow-lg relative overflow-hidden">
-            {/* CardHeader para "Canvas de Gestão" foi removido para dar mais espaço ao canvas */}
-            <div className="w-full h-full bg-muted/30 rounded-md border-2 border-dashed border-gray-300">
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                nodeTypes={nodeTypes} 
-                fitView
-                attributionPosition="bottom-left"
-                proOptions={{ hideAttribution: true }}
-                nodeOrigin={nodeOrigin}
-              >
-                <Controls />
-                <Background gap={16} />
-              </ReactFlow>
-              {nodes.length === 0 && !authLoading && (
-                 <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground pointer-events-none">
-                    <div>
-                        <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
-                        <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
-                        <p className="text-sm">O nó da sua Holding será criado automaticamente.</p>
-                    </div>
+        
+        <div className="flex-grow shadow-lg relative overflow-hidden rounded-md border-2 border-dashed border-gray-300 bg-muted/30">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes} 
+            fitView
+            fitViewOptions={{ padding: 0.2 }}
+            attributionPosition="bottom-left"
+            proOptions={{ hideAttribution: true }}
+            nodeOrigin={nodeOrigin}
+            defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+          >
+            <Controls />
+            <Background gap={16} />
+          </ReactFlow>
+          {nodes.length <= 1 && !authLoading && ( // Show if only union node or no nodes
+              <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground pointer-events-none">
+                <div>
+                    <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
+                    <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
+                    <p className="text-sm">Use o <Plus size={14} className="inline text-primary"/> no nó da União para adicionar ativos ou membros.</p>
                 </div>
-              )}
             </div>
-          </Card>
+          )}
+        </div>
       </div>
   );
 }
 
+interface ExtendedUnionNodeData extends UnionNodeData {
+    type: 'union';
+}
+
+interface BaseNodeData {
+    label: string;
+    type: 'asset' | 'member' | 'union';
+    originalName: string; // For identification
+}
+
+declare module 'reactflow' {
+    interface NodeData extends Partial<UnionNodeData>, Partial<AssetNodeData>, Partial<MemberNodeData>, Partial<BaseNodeData> {}
+}
+
+    
