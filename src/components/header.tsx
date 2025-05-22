@@ -24,11 +24,11 @@ export function Header() {
           <Image
             src="/domedome-logo.svg" 
             alt="domedome Logo"
-            width={150} 
+            width={250} 
             height={83}  
             className="h-auto" 
             priority
-            style={{ filter: 'brightness(0) invert(1)' }}
+            // Filtro removido para reverter à cor original do SVG
           />
         </Link>
         
