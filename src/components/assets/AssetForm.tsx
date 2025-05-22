@@ -37,7 +37,7 @@ const formSchema = z.object({
     z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
   ),
 
-  tipoAtivoDigital: z.enum(['cripto', 'nft', 'outro'], { errorMap: () => ({ message: "Selecione um tipo de ativo digital válido." }) }).optional(),
+  // tipoAtivoDigital: z.enum(['cripto', 'nft', 'outro'], { errorMap: () => ({ message: "Selecione um tipo de ativo digital válido." }) }).optional(), // Removido
   quantidadeDigital: z.preprocess(
     (val) => String(val) === '' ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'A quantidade deve ser positiva.').optional()
@@ -51,7 +51,7 @@ const formSchema = z.object({
   enderecoLocalizacaoFisico: z.string().optional(),
   documentacaoFisicoFile: z.any().optional(),
 
-  assignedToMemberId: z.string().optional().nullable(), // Pode ser null ou undefined
+  assignedToMemberId: z.string().optional().nullable(),
   setReleaseCondition: z.boolean().optional(),
   releaseTargetAge: z.preprocess(
     (val) => String(val) === '' || val === undefined ? undefined : parseInt(String(val), 10),
@@ -62,9 +62,9 @@ const formSchema = z.object({
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
   }
   if (data.tipo === 'digital') {
-    if (!data.tipoAtivoDigital || data.tipoAtivoDigital.trim() === '') {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de ativo digital é obrigatório.", path: ['tipoAtivoDigital'] });
-    }
+    // if (!data.tipoAtivoDigital || data.tipoAtivoDigital.trim() === '') { // Validação removida
+    //   ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de ativo digital é obrigatório.", path: ['tipoAtivoDigital'] });
+    // }
     if (data.quantidadeDigital === undefined || data.quantidadeDigital === null) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade é obrigatória para ativo digital.", path: ['quantidadeDigital'] });
     }
@@ -78,8 +78,7 @@ const formSchema = z.object({
     }
   }
   if (data.setReleaseCondition && (data.releaseTargetAge === undefined || data.releaseTargetAge === null)) {
-    // Apenas adiciona erro se um membro com data de nascimento estiver selecionado
-    // Esta lógica é complexa para Zod, melhor tratar na UI ou no validateStep
+    // Esta validação é melhor tratada na UI ou no validateStep, considerando se um membro com data de nascimento está selecionado
   }
 });
 
@@ -88,8 +87,8 @@ interface AssetFormProps {
   isLoading: boolean;
   initialData?: Partial<AssetFormData>;
   onClose: () => void;
-  availableMembers: { id: string; name: string; birthDate?: Date | string }[]; // birthDate can be string from JSON
-  targetMemberId?: string | null; // Para pré-selecionar o membro
+  availableMembers: { id: string; name: string; birthDate?: Date | string }[];
+  targetMemberId?: string | null;
 }
 
 const TOTAL_STEPS = 4; 
@@ -108,12 +107,12 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
       quemComprou: initialData?.quemComprou || '',
       contribuicaoParceiro1: initialData?.contribuicaoParceiro1 || undefined,
       contribuicaoParceiro2: initialData?.contribuicaoParceiro2 || undefined,
-      tipoAtivoDigital: initialData?.tipoAtivoDigital || undefined,
+      // tipoAtivoDigital: initialData?.tipoAtivoDigital || undefined, // Removido
       quantidadeDigital: initialData?.quantidadeDigital || undefined,
       valorPagoEpocaDigital: initialData?.valorPagoEpocaDigital || undefined,
       tipoImovelBemFisico: initialData?.tipoImovelBemFisico || '',
       enderecoLocalizacaoFisico: initialData?.enderecoLocalizacaoFisico || '',
-      assignedToMemberId: targetMemberId || initialData?.assignedToMemberId || "UNASSIGNED", // Default to UNASSIGNED
+      assignedToMemberId: targetMemberId || initialData?.assignedToMemberId || "UNASSIGNED",
       setReleaseCondition: initialData?.releaseCondition?.type === 'age',
       releaseTargetAge: initialData?.releaseCondition?.targetAge || undefined,
     },
@@ -128,7 +127,6 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
   const selectedMemberForRelease = availableMembers.find(m => m.id === assignedToMemberIdWatch);
   const memberHasBirthDate = !!selectedMemberForRelease?.birthDate;
 
-
   const [formError, setFormError] = useState<string | null>(null);
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
@@ -137,10 +135,9 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
     if (targetMemberId) {
       form.setValue('assignedToMemberId', targetMemberId);
     } else {
-      form.setValue('assignedToMemberId', "UNASSIGNED"); // Default se não houver target
+      form.setValue('assignedToMemberId', "UNASSIGNED");
     }
   }, [targetMemberId, form]);
-
 
   useEffect(() => {
     if (user?.displayName) {
@@ -174,20 +171,19 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
 
     if (step === 1) {
       fieldsToValidate = ['tipo'];
-    } else if (step === 2) {
+    } else if (step === 2) { // Detalhes Principais
       fieldsToValidate = ['nomeAtivo', 'dataAquisicao', 'observacoes'];
-    } else if (step === 3) {
+    } else if (step === 3) { // Propriedade e Contribuições
       fieldsToValidate = ['quemComprou'];
       if (form.getValues('quemComprou') === 'Ambos') {
         fieldsToValidate.push('contribuicaoParceiro1', 'contribuicaoParceiro2');
       }
-    } else if (step === 4) {
+    } else if (step === 4) { // Detalhes Específicos do Ativo
       if (assetType === 'digital') {
-        fieldsToValidate = ['tipoAtivoDigital', 'quantidadeDigital', 'valorPagoEpocaDigital'];
+        fieldsToValidate = ['quantidadeDigital', 'valorPagoEpocaDigital']; // tipoAtivoDigital removido
       } else if (assetType === 'fisico') {
         fieldsToValidate = ['tipoImovelBemFisico', 'enderecoLocalizacaoFisico', 'documentacaoFisicoFile'];
       }
-      // 'assignedToMemberId' é sempre válido com "UNASSIGNED"
       if (form.getValues('setReleaseCondition')) {
         fieldsToValidate.push('releaseTargetAge');
       }
@@ -218,7 +214,6 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
         return false;
     }
 
-
     return true;
   };
 
@@ -241,7 +236,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <p className="text-sm text-center text-muted-foreground">Etapa {currentStep} de {TOTAL_STEPS}</p>
 
-      {currentStep === 1 && (
+      {currentStep === 1 && ( // Tipo de Ativo
         <div className="space-y-1.5">
           <Label htmlFor="tipo">Tipo de Ativo</Label>
           <Controller
@@ -263,7 +258,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
         </div>
       )}
 
-      {currentStep === 2 && (
+      {currentStep === 2 && ( // Detalhes Principais
         <>
           <div className="space-y-1.5">
             <Label htmlFor="nomeAtivo">Nome do Ativo</Label>
@@ -310,7 +305,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
         </>
       )}
 
-      {currentStep === 3 && (
+      {currentStep === 3 && ( // Propriedade e Contribuições
         <>
           <div className="space-y-1.5">
             <Label htmlFor="quemComprou">Quem Adquiriu o Ativo? (Opcional)</Label>
@@ -377,31 +372,12 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
         </>
       )}
 
-      {currentStep === 4 && (
+      {currentStep === 4 && ( // Detalhes Específicos do Ativo
         <>
           {assetType === 'digital' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30 mb-4">
               <h4 className="text-md font-semibold text-primary">Detalhes do Ativo Digital</h4>
-              <div className="space-y-1.5">
-                <Label htmlFor="tipoAtivoDigital">Tipo de Ativo Digital</Label>
-                <Controller
-                  name="tipoAtivoDigital"
-                  control={form.control}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
-                      <SelectTrigger id="tipoAtivoDigital">
-                        <SelectValue placeholder="Selecione o tipo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cripto">Criptomoeda</SelectItem>
-                        <SelectItem value="nft">NFT (Token Não Fungível)</SelectItem>
-                        <SelectItem value="outro">Outro Ativo Digital</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {form.formState.errors.tipoAtivoDigital && <p className="text-sm text-destructive">{form.formState.errors.tipoAtivoDigital.message}</p>}
-              </div>
+              {/* Campo Tipo de Ativo Digital foi removido */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="quantidadeDigital">Quantidade</Label>
@@ -451,9 +427,9 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose, available
                 control={form.control}
                 render={({ field }) => (
                   <Select
-                    onValueChange={(value) => field.onChange(value === "UNASSIGNED" ? null : value)} // Mapear UNASSIGNED para null
+                    onValueChange={(value) => field.onChange(value === "UNASSIGNED" ? null : value)} 
                     value={field.value === null || field.value === undefined ? "UNASSIGNED" : field.value}
-                    disabled={isLoading || !!targetMemberId} // Desabilitar se targetMemberId for fornecido
+                    disabled={isLoading || !!targetMemberId} 
                   >
                     <SelectTrigger id="assignedToMemberId">
                       <SelectValue placeholder="Selecione um membro" />

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { PlusCircle, Users, Briefcase, Settings, LayoutGrid, Plus, Network, Loader2, UserCircle as UserIcon } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -183,26 +183,26 @@ export default function AssetManagementDashboard() {
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
 
-      let assetNodeExists = false;
+      let assetNodeExistsAndUpdated = false;
       const processedAssignedToMemberId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" ? undefined : formData.assignedToMemberId);
 
-      if (formData.tipo === 'digital' && formData.nomeAtivo && formData.tipoAtivoDigital && formData.quantidadeDigital !== undefined) {
+      if (formData.tipo === 'digital' && formData.nomeAtivo && formData.quantidadeDigital !== undefined) {
         setNodes((prevNodes) =>
           prevNodes.map((node) => {
             if (
               node.type === 'assetNode' &&
               (node.data as AssetNodeData).assetMainType === 'digital' &&
               (node.data as AssetNodeData).name === formData.nomeAtivo &&
-              (node.data as AssetNodeData).digitalAssetType === formData.tipoAtivoDigital &&
+              // (node.data as AssetNodeData).digitalAssetType === formData.tipoAtivoDigital && // Comparação de tipo digital removida
               (node.data as AssetNodeData).assignedToMemberId === processedAssignedToMemberId
             ) {
-              assetNodeExists = true;
+              assetNodeExistsAndUpdated = true;
               const existingData = node.data as AssetNodeData;
               const newQuantity = (existingData.quantity || 0) + (formData.quantidadeDigital || 0);
               const updatedData: AssetNodeData = {
                 ...existingData,
-                id: existingData.id, // Manter o ID original do nó
-                name: existingData.name, // Manter o nome original
+                id: existingData.id,
+                name: existingData.name,
                 quantity: newQuantity,
                 dataAquisicao: formData.dataAquisicao, 
                 observacoes: formData.observacoes,
@@ -211,7 +211,7 @@ export default function AssetManagementDashboard() {
                 contribuicaoParceiro2: formData.contribuicaoParceiro2,
                 valorPagoEpocaDigital: formData.valorPagoEpocaDigital,
                 releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge ? { type: 'age', targetAge: formData.releaseTargetAge } : existingData.releaseCondition,
-                onOpenDetails: () => {} // Será preenchido novamente
+                onOpenDetails: () => {} 
               };
               updatedData.onOpenDetails = () => handleOpenAssetDetailsModal(updatedData);
               return {
@@ -224,7 +224,7 @@ export default function AssetManagementDashboard() {
         );
       }
 
-      if (!assetNodeExists) {
+      if (!assetNodeExistsAndUpdated) {
         const sourceNodeId = processedAssignedToMemberId || UNION_NODE_ID;
         const sourceNodeInstance = nodes.find(n => n.id === sourceNodeId);
 
@@ -267,7 +267,7 @@ export default function AssetManagementDashboard() {
             id: result.assetId,
             name: formData.nomeAtivo,
             assetMainType: 'digital',
-            digitalAssetType: formData.tipoAtivoDigital,
+            // digitalAssetType: formData.tipoAtivoDigital, // Removido
             quantity: formData.quantidadeDigital || 0,
             assignedToMemberId: processedAssignedToMemberId,
             releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
@@ -277,9 +277,9 @@ export default function AssetManagementDashboard() {
             contribuicaoParceiro1: formData.contribuicaoParceiro1,
             contribuicaoParceiro2: formData.contribuicaoParceiro2,
             valorPagoEpocaDigital: formData.valorPagoEpocaDigital,
-            onOpenDetails: () => {} // Placeholder, será preenchido abaixo
+            onOpenDetails: () => {} 
           };
-        } else { // fisico
+        } else { 
           nodeDataPayload = {
             id: result.assetId,
             name: formData.nomeAtivo,
@@ -293,7 +293,7 @@ export default function AssetManagementDashboard() {
             contribuicaoParceiro1: formData.contribuicaoParceiro1,
             contribuicaoParceiro2: formData.contribuicaoParceiro2,
             enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
-            onOpenDetails: () => {} // Placeholder
+            onOpenDetails: () => {} 
           };
         }
          nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
@@ -475,10 +475,7 @@ export default function AssetManagementDashboard() {
               </div>
               {selectedAssetForDetails.assetMainType === 'digital' && (
                 <>
-                  <div>
-                    <Label className="text-xs font-medium text-muted-foreground">Tipo de Ativo Digital</Label>
-                    <p className="text-foreground capitalize">{selectedAssetForDetails.digitalAssetType || 'Não especificado'}</p>
-                  </div>
+                  {/* Tipo de Ativo Digital não é mais exibido aqui */}
                   <div>
                     <Label className="text-xs font-medium text-muted-foreground">Quantidade</Label>
                     <p className="text-foreground">{selectedAssetForDetails.quantity?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) || 'N/A'}</p>
@@ -603,7 +600,7 @@ declare module 'reactflow' {
     // From AssetNodeData
     name?: string; 
     assetMainType?: 'digital' | 'fisico';
-    digitalAssetType?: string;
+    // digitalAssetType?: string; // Removido
     quantity?: number;
     physicalAssetType?: string;
     releaseCondition?: { type: 'age'; targetAge: number };
@@ -617,11 +614,9 @@ declare module 'reactflow' {
     valorPagoEpocaDigital?: number;
     enderecoLocalizacaoFisico?: string;
     // From MemberNodeData
-    // name?: string; 
+    // name?: string; // Já existe acima
     relationshipType?: string;
     dataNascimento?: Date | string;
     onAddAssetClick?: (memberId: string) => void; 
   }
 }
-
-    

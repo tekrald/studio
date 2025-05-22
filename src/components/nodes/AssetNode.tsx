@@ -13,7 +13,7 @@ export type AssetNodeData = {
   id: string; 
   name: string;
   assetMainType: 'digital' | 'fisico';
-  digitalAssetType?: string;
+  // digitalAssetType?: string; // Removido
   quantity?: number;
   physicalAssetType?: string;
   releaseCondition?: { type: 'age'; targetAge: number };
@@ -30,8 +30,7 @@ export type AssetNodeData = {
 
 const getIconForAsset = (data: AssetNodeData) => {
   if (data.assetMainType === 'digital') {
-    if (data.digitalAssetType?.toLowerCase().includes('cripto')) return <Coins size={18} className="text-primary mr-2" />;
-    if (data.digitalAssetType?.toLowerCase().includes('nft')) return <DollarSign size={18} className="text-primary mr-2" />; 
+    // Como tipo específico foi removido, usamos um ícone genérico para digital
     return <Coins size={18} className="text-primary mr-2" />;
   }
   if (data.assetMainType === 'fisico') {
@@ -101,7 +100,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
         {data.assetMainType === 'digital' && (
           <>
             <Badge variant="secondary" className="text-xs">
-              {data.digitalAssetType || 'Digital'}
+              Digital
             </Badge>
             {data.quantity !== undefined && (
               <Badge variant="outline" className="ml-1 text-xs">
@@ -126,5 +125,3 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<AssetNodeDat
     </Card>
   );
 }
-
-    
