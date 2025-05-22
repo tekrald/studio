@@ -159,7 +159,7 @@ export default function ProfilePage() {
               <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => setHoldingType(value)} className="space-y-2 pt-1" disabled={isLoading}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="digital" id="holding-digital" />
-                  <Label htmlFor="holding-digital" className="font-normal">Principalmente Digital (foco em criptoativos, NFTs, etc.)</Label>
+                  <Label htmlFor="holding-digital" className="font-normal">Maximalista Digital</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="holding-physical" />
@@ -247,3 +247,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

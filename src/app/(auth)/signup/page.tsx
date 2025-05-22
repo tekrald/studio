@@ -245,7 +245,7 @@ export default function SignupPage() {
                 <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => setHoldingType(value)} className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="digital" id="holding-digital" />
-                    <Label htmlFor="holding-digital" className="font-normal">Principalmente Digital (ex: foco em criptoativos, NFTs)</Label>
+                    <Label htmlFor="holding-digital" className="font-normal">Maximalista Digital</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="physical" id="holding-physical" />
@@ -376,6 +376,8 @@ export default function SignupPage() {
     </div>
   );
 }
+    
+
     
 
     
