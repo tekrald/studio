@@ -48,39 +48,57 @@ export default function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 lg:py-24 bg-background">
+        <section className="py-16 lg:py-24 bg-[#A09DF3]">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-primary">Construa Seu Legado Familiar</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-white">Construa Seu Legado Familiar</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
               <FeatureCard
-                icon={<Network className="h-12 w-12 text-primary" />}
+                icon={<Network className="h-12 w-12 text-primary-foreground" />}
                 title="Holding Familiar Visual"
                 description="Visualize e gerencie sua estrutura familiar e ativos em um canvas interativo e intuitivo."
+                titleColor="text-white"
+                descriptionColor="text-white/80"
+                iconBg="bg-white/20"
               />
               <FeatureCard
-                icon={<Briefcase className="h-12 w-12 text-primary" />}
+                icon={<Briefcase className="h-12 w-12 text-primary-foreground" />}
                 title="Gestão Completa de Ativos"
                 description="Cadastre e acompanhe ativos digitais (cripto, NFTs) e físicos (imóveis, veículos) detalhadamente."
+                titleColor="text-white"
+                descriptionColor="text-white/80"
+                iconBg="bg-white/20"
               />
               <FeatureCard
-                icon={<GitFork className="h-12 w-12 text-primary" />}
+                icon={<GitFork className="h-12 w-12 text-primary-foreground" />}
                 title="Contrato da União Flexível"
                 description="Defina cláusulas personalizadas para acordos de partilha, convivência e outros, adaptáveis à sua realidade."
+                titleColor="text-white"
+                descriptionColor="text-white/80"
+                iconBg="bg-white/20"
               />
               <FeatureCard
-                icon={<ShieldCheck className="h-12 w-12 text-primary" />}
+                icon={<ShieldCheck className="h-12 w-12 text-primary-foreground" />}
                 title="Privacidade e Segurança"
                 description="Uma conta segura para o casal gerenciar seu patrimônio com a privacidade que sua família merece."
+                titleColor="text-white"
+                descriptionColor="text-white/80"
+                iconBg="bg-white/20"
               />
               <FeatureCard
-                icon={<Users className="h-12 w-12 text-primary" />}
+                icon={<Users className="h-12 w-12 text-primary-foreground" />}
                 title="Planejamento Colaborativo"
                 description="Perfis colaborativos para que o casal trabalhe junto na organização e planejamento do futuro financeiro."
+                titleColor="text-white"
+                descriptionColor="text-white/80"
+                iconBg="bg-white/20"
               />
               <FeatureCard
-                icon={<Feather className="h-12 w-12 text-primary" />}
+                icon={<Feather className="h-12 w-12 text-primary-foreground" />}
                 title="Formalização Orientada"
                 description="Receba orientações e registre suas intenções sobre a formalização legal da sua holding familiar."
+                titleColor="text-white"
+                descriptionColor="text-white/80"
+                iconBg="bg-white/20"
               />
             </div>
           </div>
@@ -110,14 +128,17 @@ interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
+  titleColor?: string;
+  descriptionColor?: string;
+  iconBg?: string;
 }
 
-function FeatureCard({ icon, title, description }: FeatureCardProps) {
+function FeatureCard({ icon, title, description, titleColor = "text-card-foreground", descriptionColor = "text-foreground/70", iconBg = "bg-primary/10" }: FeatureCardProps) {
   return (
     <div className="bg-card p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-start text-left">
-      <div className="mb-5 p-3 rounded-full bg-primary/10">{icon}</div>
-      <h3 className="text-3xl font-bold mb-3 text-card-foreground">{title}</h3>
-      <p className="text-foreground/70 text-base leading-relaxed">{description}</p>
+      <div className={`mb-5 p-3 rounded-full ${iconBg}`}>{icon}</div>
+      <h3 className={`text-3xl font-bold mb-3 ${titleColor}`}>{title}</h3>
+      <p className={`${descriptionColor} text-base leading-relaxed`}>{description}</p>
     </div>
   );
 }
