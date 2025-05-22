@@ -2,12 +2,12 @@
 "use client";
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // CardContent e CardHeader não são mais usados diretamente aqui, mas podem ser por ReactFlow
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Network, DollarSign, Users, LayoutGrid, Settings, PlusCircle, UserPlus as UserPlusIcon } from 'lucide-react'; // Plus removido, PlusCircle adicionado
+import { PlusCircle, Users, LayoutGrid, Settings, DollarSign } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
-import type { AssetFormData } from '@/types/asset'; // Asset removido pois não era usado
+import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
 import { AddMemberForm } from '@/components/members/AddMemberForm';
 import type { MemberFormData } from '@/types/member';
@@ -53,7 +53,7 @@ export default function AssetManagementDashboard() {
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<UnionNodeData | { label: string }>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<UnionNodeData | { label: string; tipoRelacao?: string }>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
@@ -137,10 +137,10 @@ export default function AssetManagementDashboard() {
         return;
       }
       
-      const assetNodes = nodes.filter(n => n.type !== 'unionNode' && !n.data?.tipoRelacao); // Exclui nós de união e nós de membro
+      const assetNodes = nodes.filter(n => n.type !== 'unionNode' && !n.data?.tipoRelacao); 
       const existingAssetNodesCount = assetNodes.length;
 
-      const angle = (existingAssetNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3); // Ajusta o divisor para espalhar mais
+      const angle = (existingAssetNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3); 
       const radius = 200 + Math.floor(existingAssetNodesCount / (nodes.length > 5 ? 8 : 6)) * 60;
       
       const unionNodeX = unionNodeInstance.position?.x ?? 250;
@@ -198,7 +198,7 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingMember(true);
-    const result = await addMember(data, UNION_NODE_ID); // Usando UNION_NODE_ID como referência da união
+    const result = await addMember(data, UNION_NODE_ID); 
     if (result.success && result.memberId) {
       toast({ title: 'Sucesso!', description: 'Membro adicionado com sucesso.' });
 
@@ -210,10 +210,10 @@ export default function AssetManagementDashboard() {
         return;
       }
 
-      const memberNodes = nodes.filter(n => n.data?.tipoRelacao); // Nós que são membros
+      const memberNodes = nodes.filter(n => n.data?.tipoRelacao); 
       const existingMemberNodesCount = memberNodes.length;
       
-      const angle = (existingMemberNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3) + Math.PI; // Adiciona PI para colocar em lado oposto aos ativos
+      const angle = (existingMemberNodesCount * Math.PI) / (nodes.length > 5 ? 4 : 3) + Math.PI; 
       const radius = 180 + Math.floor(existingMemberNodesCount / (nodes.length > 5 ? 8 : 6)) * 50;
       
       const unionNodeX = unionNodeInstance.position?.x ?? 250;
@@ -226,13 +226,13 @@ export default function AssetManagementDashboard() {
         id: result.memberId,
         type: 'default',
         data: {
-          label: `${data.nome} (${data.tipoRelacao})`, // Inclui tipo de relação no label
-          tipoRelacao: data.tipoRelacao, // Para identificar que é um membro
+          label: `${data.nome} (${data.tipoRelacao})`, 
+          tipoRelacao: data.tipoRelacao, 
         },
         position: { x: newMemberNodeX, y: newMemberNodeY },
         draggable: true,
         style: {
-          background: 'hsl(var(--accent))', // Cor diferente para membros
+          background: 'hsl(var(--accent))', 
           color: 'hsl(var(--accent-foreground))',
           border: '1px solid hsl(var(--ring))',
           width: 160,
@@ -265,41 +265,16 @@ export default function AssetManagementDashboard() {
     setIsSubmittingMember(false);
   };
   
-  if (authLoading && !user && nodes.length === 0) {
+  if (authLoading && !user && nodes.length === 0) { // Condição original mantida, pode ajustar se user for sempre null
     return (
       <div className="flex min-h-[calc(100vh-var(--header-height,100px)-2rem)] items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
-  
-  // if (!user) { // Removido para não redirecionar e permitir visualização se authProvider estiver desabilitado
-  //   return null; 
-  // }
 
   return (
-      <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-var(--actions-bar-height,76px)-4rem)]">
-        <Card className="mb-6 shadow-xl bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
-          <CardHeader className="p-6">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-white/20 rounded-full">
-                <Network className="h-10 w-10 text-white" />
-              </div>
-              <div>
-                <CardTitle className="text-4xl text-white">Holding Familiar</CardTitle>
-                <CardDescription className="text-white/90 text-lg mt-1">
-                  Visualize e gerencie os membros e ativos da sua família.
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
-
-        <div style={{ '--actions-bar-height': '76px' } as React.CSSProperties} className="mb-4 p-4 rounded-lg shadow-md bg-card flex flex-wrap items-center gap-3">
-            <h3 className="text-xl text-primary mr-auto md:mr-4">Ações do Canvas:</h3>
-             <p className="text-sm text-muted-foreground">Use o <PlusCircle size={16} className="inline text-primary"/> no nó da Holding para adicionar itens.</p>
-        </div>
-
+      <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-2rem)]"> {/* Ajustar padding-top se necessário */}
          <Dialog open={isAssetModalOpen} onOpenChange={setIsAssetModalOpen}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
@@ -330,9 +305,7 @@ export default function AssetManagementDashboard() {
           />
 
         <Card className="flex-grow shadow-lg relative overflow-hidden">
-            <CardHeader className="absolute top-2 left-3 z-10 pointer-events-none">
-              <CardTitle className="text-lg text-muted-foreground">Canvas de Gestão</CardTitle>
-            </CardHeader>
+            {/* CardHeader para "Canvas de Gestão" foi removido para dar mais espaço ao canvas */}
             <div className="w-full h-full bg-muted/30 rounded-md border-2 border-dashed border-gray-300">
               <ReactFlow
                 nodes={nodes}
@@ -349,12 +322,12 @@ export default function AssetManagementDashboard() {
                 <Controls />
                 <Background gap={16} />
               </ReactFlow>
-              {nodes.length === 0 && !authLoading && ( // Condição ajustada para quando user pode ser null
+              {nodes.length === 0 && !authLoading && (
                  <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground pointer-events-none">
                     <div>
                         <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
                         <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
-                        <p className="text-sm">O nó da sua Holding Familiar será criado automaticamente ao logar.</p>
+                        <p className="text-sm">O nó da sua Holding será criado automaticamente.</p>
                     </div>
                 </div>
               )}
@@ -363,3 +336,4 @@ export default function AssetManagementDashboard() {
       </div>
   );
 }
+
