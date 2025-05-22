@@ -37,16 +37,16 @@ export default function AssetManagementDashboard() {
   const [edges, setEdges] = useState<Edge[]>([]);
 
   useEffect(() => {
-    if (user && !nodes.find(node => node.id === UNION_NODE_ID)) {
+    if (user && !authLoading && !nodes.find(node => node.id === UNION_NODE_ID)) {
       const unionNode: Node = {
         id: UNION_NODE_ID,
         type: 'union',
         data: { label: user.displayName || 'Nossa União' },
-        position: { x: 350, y: 50 }, // Posição inicial do nó União
+        position: { x: window.innerWidth / 2 - 100, y: 100 }, // Posição inicial do nó União (ajustar conforme necessário)
       };
       setNodes([unionNode]);
     }
-  }, [user, nodes]);
+  }, [user, authLoading, nodes]);
 
 
   const handleAddAssetSubmit = async (data: AssetFormData) => {
@@ -55,21 +55,21 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsLoading(true);
-    const result = await addAsset(data, user.uid); 
+    const result = await addAsset(data, user.uid);
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
       
       const newAssetNode: Node = {
         id: result.assetId,
         type: 'asset',
-        data: { 
+        data: {
           label: data.nomeAtivo,
           details: `Tipo: ${data.tipo === 'digital' ? 'Digital' : 'Físico'}, Valor: R$ ${data.valorAtualEstimado}`
         },
-        // Lógica simples para posicionar novos nós de ativos
-        position: { 
-          x: 100 + (nodes.filter(n => n.type === 'asset').length % 4) * 200, 
-          y: 200 + Math.floor(nodes.filter(n => n.type === 'asset').length / 4) * 120
+        // Lógica simples para posicionar novos nós de ativos abaixo do nó de união
+        position: {
+          x: (nodes.find(n => n.id === UNION_NODE_ID)?.position.x || window.innerWidth / 2 - 100) + (nodes.filter(n => n.type === 'asset').length % 4 - 1.5) * 150,
+          y: (nodes.find(n => n.id === UNION_NODE_ID)?.position.y || 100) + 150 + Math.floor(nodes.filter(n => n.type === 'asset').length / 4) * 100
         },
       };
       setNodes((prevNodes) => [...prevNodes, newAssetNode]);
@@ -96,7 +96,7 @@ export default function AssetManagementDashboard() {
     toast({ title: 'Em Breve!', description: 'Funcionalidade de configurar contrato será implementada.' });
   };
 
-  if (authLoading && !user) { 
+  if (authLoading && !user) {
     return (
       <div className="flex min-h-[calc(100vh-var(--header-height,100px)-2rem)] items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -105,12 +105,14 @@ export default function AssetManagementDashboard() {
   }
   
   if (!user) {
+    // Não renderiza nada se o usuário não estiver carregado, layout principal cuida do redirecionamento/loading
     return null; 
   }
 
 
   return (
       <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-2rem)]">
+        {/* Card do Título da Holding */}
         <Card className="mb-6 shadow-xl bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
           <CardHeader className="p-6">
             <div className="flex items-center space-x-4">
@@ -127,11 +129,11 @@ export default function AssetManagementDashboard() {
           </CardHeader>
         </Card>
 
-        <div className="flex flex-grow gap-4">
-          <Card className="w-64 p-4 space-y-3 flex-shrink-0 shadow-lg">
-            <CardTitle className="text-xl font-pacifico text-primary mb-3">Ações</CardTitle>
+        {/* Barra de Ações */}
+        <div className="mb-4 p-4 rounded-lg shadow-md bg-card flex flex-wrap items-center gap-3">
+            <h3 className="text-xl font-pacifico text-primary mr-auto md:mr-4">Ações:</h3>
             
-            <Button onClick={() => setIsAssetModalOpen(true)} className="w-full justify-start">
+            <Button onClick={() => setIsAssetModalOpen(true)} className="justify-start">
               <DollarSign className="mr-2 h-5 w-5" /> Adicionar Ativo
             </Button>
             <Dialog open={isAssetModalOpen} onOpenChange={setIsAssetModalOpen}>
@@ -144,15 +146,16 @@ export default function AssetManagementDashboard() {
               </DialogContent>
             </Dialog>
 
-            <Button onClick={handleAddMember} variant="outline" className="w-full justify-start">
+            <Button onClick={handleAddMember} variant="outline" className="justify-start">
               <Users className="mr-2 h-5 w-5" /> Adicionar Membro
             </Button>
-            <Button onClick={handleConfigureContract} variant="outline" className="w-full justify-start">
+            <Button onClick={handleConfigureContract} variant="outline" className="justify-start">
               <FileText className="mr-2 h-5 w-5" /> Configurar Contrato
             </Button>
-          </Card>
+        </div>
 
-          <Card className="flex-grow p-1 shadow-lg relative overflow-hidden">
+        {/* Card do Canvas de Gestão */}
+        <Card className="flex-grow p-1 shadow-lg relative overflow-hidden">
             <CardHeader className="absolute top-2 left-3 z-10">
               <CardTitle className="text-lg font-pacifico text-muted-foreground">Canvas de Gestão</CardTitle>
             </CardHeader>
@@ -163,7 +166,7 @@ export default function AssetManagementDashboard() {
                   key={node.id}
                   className={`absolute p-3 rounded-lg shadow-md border ${
                     node.type === 'union' ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'
-                  } transform -translate-x-1/2 -translate-y-1/2 min-w-[150px] max-w-[200px] text-center`}
+                  } transform -translate-x-1/2 -translate-y-1/2 min-w-[150px] max-w-[200px] text-center cursor-grab`}
                   style={{ left: `${node.position.x}px`, top: `${node.position.y}px` }}
                 >
                   <div className="font-semibold text-sm">{node.data.label}</div>
@@ -180,6 +183,7 @@ export default function AssetManagementDashboard() {
                   const targetNode = nodes.find((n) => n.id === edge.target);
                   if (!sourceNode || !targetNode) return null;
                   
+                  // Ajustar para conectar às bordas dos nós em vez do centro, se for uma biblioteca de fluxo real
                   const sourceX = sourceNode.position.x; 
                   const sourceY = sourceNode.position.y; 
                   const targetX = targetNode.position.x; 
@@ -194,9 +198,16 @@ export default function AssetManagementDashboard() {
                       y2={targetY}
                       stroke="hsl(var(--border))"
                       strokeWidth="2"
+                      markerEnd="url(#arrowhead)" // Se definir uma ponta de seta
                     />
                   );
                 })}
+                {/* Definição de ponta de seta (opcional) */}
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="hsl(var(--border))" />
+                  </marker>
+                </defs>
               </svg>
 
               {nodes.length === 0 && !authLoading && (
@@ -204,13 +215,12 @@ export default function AssetManagementDashboard() {
                     <div>
                         <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
                         <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
-                        <p className="text-sm">Use as ações ao lado para adicionar membros e ativos.</p>
+                        <p className="text-sm">Use as ações acima para adicionar membros e ativos.</p>
                     </div>
                 </div>
               )}
             </div>
           </Card>
-        </div>
       </div>
   );
 }
