@@ -2,15 +2,15 @@
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
-import { Briefcase, UserCircle, LogIn, LogOut, Sparkles } from 'lucide-react';
+import { Briefcase, UserCircle, LogIn, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth-provider';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Patrimônio', icon: Briefcase },
-  { href: '/profile', label: 'Perfil Casal', icon: UserCircle },
+  { href: '/dashboard', label: 'Holding', icon: Briefcase },
+  { href: '/profile', label: 'Perfil', icon: UserCircle }, // Fallback label
 ];
 
 export function Header() {
@@ -33,19 +33,22 @@ export function Header() {
         
         {user && (
           <nav className="hidden md:flex items-center space-x-2">
-            {navLinks.map((link) => (
-              <Button key={link.href} variant="ghost" asChild
-                className={cn(
-                  "text-sm",
-                  pathname === link.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-                )}
-              >
-                <Link href={link.href}>
-                  <link.icon className="mr-2 h-4 w-4" />
-                  {link.label}
-                </Link>
-              </Button>
-            ))}
+            {navLinks.map((link) => {
+              const label = link.href === '/profile' ? (user?.displayName || link.label) : link.label;
+              return (
+                <Button key={link.href} variant="ghost" asChild
+                  className={cn(
+                    "text-sm",
+                    pathname === link.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                  )}
+                >
+                  <Link href={link.href}>
+                    <link.icon className="mr-2 h-4 w-4" />
+                    {label}
+                  </Link>
+                </Button>
+              );
+            })}
           </nav>
         )}
 
@@ -84,19 +87,22 @@ export function Header() {
       {/* Mobile Nav */}
       {user && (
         <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
-           {navLinks.map((link) => (
-              <Button key={link.href} variant="ghost" size="sm" asChild
-                className={cn(
-                  "flex-col h-auto p-1",
-                  pathname === link.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-                )}
-              >
-                <Link href={link.href}>
-                  <link.icon className="h-5 w-5 mb-1" />
-                  <span className="text-xs">{link.label}</span>
-                </Link>
-              </Button>
-            ))}
+           {navLinks.map((link) => {
+              const label = link.href === '/profile' ? (user?.displayName || link.label) : link.label;
+              return (
+                <Button key={link.href} variant="ghost" size="sm" asChild
+                  className={cn(
+                    "flex-col h-auto p-1",
+                    pathname === link.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                  )}
+                >
+                  <Link href={link.href}>
+                    <link.icon className="h-5 w-5 mb-1" />
+                    <span className="text-xs">{label}</span>
+                  </Link>
+                </Button>
+              );
+            })}
         </div>
       )}
     </header>
