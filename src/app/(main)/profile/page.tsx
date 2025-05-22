@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { UserCircle, Save, Loader2, Briefcase, ExternalLink } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from '@/components/ui/textarea';
+// import { Textarea } from '@/components/ui/textarea'; // Removido pois não é mais usado aqui
+import { Checkbox } from '@/components/ui/checkbox'; // Adicionado
 
 export default function ProfilePage() {
   const { user, updateProfile, loading: authLoading } = useAuth();
@@ -20,19 +21,27 @@ export default function ProfilePage() {
   const [avatarText, setAvatarText] = useState('');
   
   const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
-  const [companyType, setCompanyType] = useState('');
-  const [jurisdiction, setJurisdiction] = useState('');
-  const [notesForAccountant, setNotesForAccountant] = useState('');
-  
+  // const [companyType, setCompanyType] = useState(''); // Removido
+  // const [jurisdiction, setJurisdiction] = useState(''); // Removido
+  // const [notesForAccountant, setNotesForAccountant] = useState(''); // Removido
+  const [acknowledgedPhysicalInfoProfile, setAcknowledgedPhysicalInfoProfile] = useState(false); // Novo
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName || '');
       setHoldingType(user.holdingType || '');
-      setCompanyType(user.companyType || '');
-      setJurisdiction(user.jurisdiction || '');
-      setNotesForAccountant(user.notesForAccountant || '');
+      // setCompanyType(user.companyType || ''); // Removido
+      // setJurisdiction(user.jurisdiction || ''); // Removido
+      // setNotesForAccountant(user.notesForAccountant || ''); // Removido
+      // Se 'physical', e o usuário já tem esse tipo, podemos assumir que ele já tomou ciência.
+      // Para simplificar, vamos requerer a ciência a cada salvamento se physical for escolhido.
+      if (user.holdingType === 'physical') {
+        // setAcknowledgedPhysicalInfoProfile(true); // Ou deixar false para requerer a cada edição
+      } else {
+        setAcknowledgedPhysicalInfoProfile(false);
+      }
     }
   }, [user]);
 
@@ -56,15 +65,25 @@ export default function ProfilePage() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    
+    if (holdingType === 'physical' && !acknowledgedPhysicalInfoProfile) {
+      toast({
+        title: 'Confirmação Necessária',
+        description: 'Você deve confirmar que está ciente sobre a necessidade de consulta profissional para holding física/mista.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000)); 
       updateProfile({
         displayName,
         holdingType,
-        companyType,
-        jurisdiction,
-        notesForAccountant,
+        // companyType, // Removido
+        // jurisdiction, // Removido
+        // notesForAccountant, // Removido
       });
       toast({
         title: 'Perfil Atualizado',
@@ -103,8 +122,8 @@ export default function ProfilePage() {
         <Card className="shadow-xl mb-8">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl">Nosso Perfil</CardTitle> 
-            <CardDescription>
+            <CardTitle className="text-3xl font-lato">Nosso Perfil</CardTitle> 
+            <CardDescription className="font-lato">
               Gerencie suas informações compartilhadas do casal aqui.
             </CardDescription>
           </CardHeader>
@@ -128,6 +147,7 @@ export default function ProfilePage() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 disabled={isLoading}
+                className="font-lato"
               />
             </div>
             <div className="space-y-2">
@@ -137,7 +157,7 @@ export default function ProfilePage() {
                 type="email"
                 value={user?.email || ''}
                 disabled 
-                className="cursor-not-allowed bg-muted/50"
+                className="cursor-not-allowed bg-muted/50 font-lato"
               />
               <p className="text-xs text-muted-foreground">O endereço de email não pode ser alterado aqui.</p>
             </div>
@@ -146,26 +166,36 @@ export default function ProfilePage() {
 
         <Card className="shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle> 
-            <CardDescription>
+            <CardTitle className="text-2xl flex items-center font-lato"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle> 
+            <CardDescription className="font-lato">
               Indique como vocês pretendem ou já formalizaram a holding para seus ativos.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label className="text-base">Como vocês pretendem estruturar/formalizar a holding?</Label>
-              <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => setHoldingType(value)} className="space-y-2 pt-1" disabled={isLoading}>
+              <RadioGroup 
+                value={holdingType} 
+                onValueChange={(value: 'digital' | 'physical' | '') => {
+                  setHoldingType(value);
+                  if (value !== 'physical') {
+                    setAcknowledgedPhysicalInfoProfile(false); // Reseta se não for físico
+                  }
+                }} 
+                className="space-y-2 pt-1" 
+                disabled={isLoading}
+              >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="digital" id="holding-digital" />
-                  <Label htmlFor="holding-digital" className="font-normal">Digital</Label>
+                  <RadioGroupItem value="digital" id="profile-holding-digital" />
+                  <Label htmlFor="profile-holding-digital" className="font-normal">Digital</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="physical" id="holding-physical" />
-                  <Label htmlFor="holding-physical" className="font-normal">Física ou Mista (incluindo imóveis, veículos, empresas tradicionais)</Label>
+                  <RadioGroupItem value="physical" id="profile-holding-physical" />
+                  <Label htmlFor="profile-holding-physical" className="font-normal">Física ou Mista (incluindo imóveis, veículos, empresas tradicionais)</Label>
                 </div>
                  <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="" id="holding-undefined" />
-                  <Label htmlFor="holding-undefined" className="font-normal">Ainda não definido / Não formalizado</Label>
+                  <RadioGroupItem value="" id="profile-holding-undefined" />
+                  <Label htmlFor="profile-holding-undefined" className="font-normal">Ainda não definido / Não formalizado</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -191,39 +221,19 @@ export default function ProfilePage() {
 
             {holdingType === 'physical' && (
               <Card className="p-4 bg-muted/30 space-y-4">
-                <p className="text-sm text-foreground">
-                  A formalização de holdings com ativos físicos ou mistas geralmente requer a consulta a um contador ou advogado.
+                <p className="text-sm text-foreground font-medium">
+                  Atenção: A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
                 </p>
-                <div className="space-y-2">
-                  <Label htmlFor="companyType">Tipo de Empresa (Opcional)</Label>
-                  <Input 
-                    id="companyType" 
-                    placeholder="Ex: LLC, Ltda, S.A." 
-                    value={companyType} 
-                    onChange={(e) => setCompanyType(e.target.value)} 
-                    disabled={isLoading} 
+                <div className="flex items-start space-x-2 pt-2">
+                  <Checkbox 
+                      id="acknowledgedPhysicalInfoProfile" 
+                      checked={acknowledgedPhysicalInfoProfile} 
+                      onCheckedChange={(checked) => setAcknowledgedPhysicalInfoProfile(Boolean(checked))}
+                      disabled={isLoading}
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="jurisdiction">Jurisdição/País (Opcional)</Label>
-                  <Input 
-                    id="jurisdiction" 
-                    placeholder="Ex: Brasil, Panamá, EUA (Delaware)" 
-                    value={jurisdiction} 
-                    onChange={(e) => setJurisdiction(e.target.value)} 
-                    disabled={isLoading} 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="notesForAccountant">Observações para o Profissional (Contador/Advogado - Opcional)</Label>
-                  <Textarea 
-                    id="notesForAccountant" 
-                    placeholder="Dúvidas, detalhes específicos para discutir..." 
-                    value={notesForAccountant} 
-                    onChange={(e) => setNotesForAccountant(e.target.value)} 
-                    disabled={isLoading}
-                    rows={3}
-                  />
+                  <Label htmlFor="acknowledgedPhysicalInfoProfile" className="text-sm font-normal text-foreground leading-snug">
+                      Estou ciente de que a formalização de uma holding física ou mista requer consulta profissional e que domedome não fornece aconselhamento legal ou contábil.
+                  </Label>
                 </div>
               </Card>
             )}
@@ -245,6 +255,5 @@ export default function ProfilePage() {
     </div>
   );
 }
-
     
 

@@ -7,7 +7,7 @@ import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+// import { Textarea } from '@/components/ui/textarea'; // Removido pois não é mais usado aqui
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -29,9 +29,7 @@ export default function SignupPage() {
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
 
   const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
-  const [companyType, setCompanyType] = useState('');
-  const [jurisdiction, setJurisdiction] = useState('');
-  const [notesForAccountant, setNotesForAccountant] = useState('');
+  const [acknowledgedPhysicalInfo, setAcknowledgedPhysicalInfo] = useState(false); // Novo estado
   
   const [acceptedContract, setAcceptedContract] = useState(false);
   
@@ -84,6 +82,10 @@ export default function SignupPage() {
         setError("Por favor, selecione como vocês pretendem estruturar a holding.");
         return false;
       }
+      if (holdingType === 'physical' && !acknowledgedPhysicalInfo) {
+        setError("Você deve confirmar que está ciente sobre a necessidade de consulta profissional para holding física/mista.");
+        return false;
+      }
     } else if (currentStep === 5) { 
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos e Condições para continuar.');
@@ -118,11 +120,8 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      // Simulação de chamada de API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Em uma aplicação real, você passaria mais dados aqui.
-      // Por enquanto, o AuthProvider só usa email e name.
-      signup(email, name); 
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      signup(email, name, holdingType); // Passando holdingType
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
     } finally {
@@ -137,6 +136,7 @@ export default function SignupPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
             <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority data-ai-hint="logo domedome" />
           </Link>
+          {/* CardTitle removido */}
           <CardDescription className="text-lg">Siga as etapas para começar a planejar seu dia especial. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
@@ -152,6 +152,7 @@ export default function SignupPage() {
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
                   autoFocus
+                  className="font-lato"
                 />
               </div>
             )}
@@ -168,6 +169,7 @@ export default function SignupPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
                     autoFocus
+                    className="font-lato"
                   />
                 </div>
                 <div className="space-y-2">
@@ -178,6 +180,7 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
+                    className="font-lato"
                   />
                    <p className="text-xs text-muted-foreground">Mínimo 6 caracteres.</p>
                 </div>
@@ -189,6 +192,7 @@ export default function SignupPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
+                    className="font-lato"
                   />
                 </div>
               </>
@@ -241,7 +245,7 @@ export default function SignupPage() {
                 <Label className="text-lg font-semibold flex items-center"><Briefcase size={20} className="mr-2 text-primary" />Formalização da Holding Familiar</Label>
                 <CardDescription>Como vocês pretendem estruturar a holding para seus ativos?</CardDescription>
                 
-                <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => setHoldingType(value)} className="space-y-2">
+                <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => { setHoldingType(value); setAcknowledgedPhysicalInfo(false); }} className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="digital" id="holding-digital" />
                     <Label htmlFor="holding-digital" className="font-normal">Digital</Label>
@@ -273,39 +277,19 @@ export default function SignupPage() {
 
                 {holdingType === 'physical' && (
                   <Card className="p-4 bg-muted/30 space-y-4">
-                    <p className="text-sm text-foreground">
-                      A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
+                    <p className="text-sm text-foreground font-medium">
+                      Atenção: A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
                     </p>
-                    <div className="space-y-2">
-                      <Label htmlFor="companyType">Tipo de Empresa (Opcional)</Label>
-                      <Input 
-                        id="companyType" 
-                        placeholder="Ex: LLC, Ltda, S.A." 
-                        value={companyType} 
-                        onChange={(e) => setCompanyType(e.target.value)} 
-                        disabled={isLoading} 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="jurisdiction">Jurisdição/País (Opcional)</Label>
-                      <Input 
-                        id="jurisdiction" 
-                        placeholder="Ex: Brasil, Panamá, EUA (Delaware)" 
-                        value={jurisdiction} 
-                        onChange={(e) => setJurisdiction(e.target.value)} 
-                        disabled={isLoading} 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="notesForAccountant">Observações para o Contador (Opcional)</Label>
-                      <Textarea 
-                        id="notesForAccountant" 
-                        placeholder="Dúvidas, detalhes específicos para discutir com um profissional..." 
-                        value={notesForAccountant} 
-                        onChange={(e) => setNotesForAccountant(e.target.value)} 
-                        disabled={isLoading}
-                        rows={3}
-                      />
+                     <div className="flex items-start space-x-2 pt-2">
+                        <Checkbox 
+                            id="acknowledgedPhysicalInfo" 
+                            checked={acknowledgedPhysicalInfo} 
+                            onCheckedChange={(checked) => setAcknowledgedPhysicalInfo(Boolean(checked))}
+                            disabled={isLoading}
+                        />
+                        <Label htmlFor="acknowledgedPhysicalInfo" className="text-sm font-normal text-foreground leading-snug">
+                            Estou ciente de que a formalização de uma holding física ou mista requer consulta profissional e que domedome não fornece aconselhamento legal ou contábil.
+                        </Label>
                     </div>
                   </Card>
                 )}
@@ -322,7 +306,7 @@ export default function SignupPage() {
                   <p className="mb-2">Ao criar uma conta no domedome, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
                   <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o domedome apenas para fins legais e de acordo com estes termos. O serviço é fornecido para planejamento pessoal e gestão visual de patrimônio.</p>
                   <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia (fotos, textos, dados de ativos). Você concede ao domedome uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
-                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> domedome é uma ferramenta de planejamento e visualização. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de holdings ou empresas.</p>
+                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> domedome é uma ferramenta de planejamento e visualização. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de holdings ou empresas. A responsabilidade pela formalização e aconselhamento profissional é inteiramente sua.</p>
                   <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade. Coletamos informações para fornecer e melhorar o serviço.</p>
                   <p><strong>5. Limitação de Responsabilidade:</strong> O domedome não se responsabiliza por perdas ou danos resultantes do uso do serviço, nem por decisões tomadas com base nas informações aqui apresentadas, na máxima extensão permitida por lei.</p>
                 </div>
@@ -376,7 +360,9 @@ export default function SignupPage() {
   );
 }
     
+    
 
+    
     
 
     
@@ -384,4 +370,5 @@ export default function SignupPage() {
 
 
     
+
 

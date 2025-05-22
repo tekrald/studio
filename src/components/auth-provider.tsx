@@ -10,23 +10,23 @@ interface User {
   displayName?: string;
   // Campos da Holding
   holdingType?: 'digital' | 'physical' | '';
-  companyType?: string;
-  jurisdiction?: string;
-  notesForAccountant?: string;
+  companyType?: string; // Mantido no tipo, mas não mais editável pelo perfil
+  jurisdiction?: string; // Mantido no tipo, mas não mais editável pelo perfil
+  notesForAccountant?: string; // Mantido no tipo, mas não mais editável pelo perfil
 }
 
 interface UpdateProfileData {
   displayName?: string;
   holdingType?: 'digital' | 'physical' | '';
-  companyType?: string;
-  jurisdiction?: string;
-  notesForAccountant?: string;
+  // companyType?: string; // Removido dos dados atualizáveis pelo perfil
+  // jurisdiction?: string; // Removido dos dados atualizáveis pelo perfil
+  // notesForAccountant?: string; // Removido dos dados atualizáveis pelo perfil
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, name?: string) => void; // name for signup
-  signup: (email: string, name: string) => void;
+  login: (email: string, name?: string) => void; 
+  signup: (email: string, name: string, holdingType?: 'digital' | 'physical' | '') => void; // Adicionado holdingType
   logout: () => void;
   loading: boolean;
   updateProfile: (data: UpdateProfileData) => void;
@@ -37,55 +37,39 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // const MOCK_USER_STORAGE_KEY = 'domedomeMockUser'; // Comentado
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null); // Inicializa user como null
-  const [loading, setLoading] = useState(false); // Inicializa loading como false
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true); // Começa como true para mostrar loading inicial
   const router = useRouter();
   const pathname = usePathname();
 
-  // useEffect(() => { // Comentado - Leitura do localStorage
-  //   try {
-  //     const storedUser = localStorage.getItem(MOCK_USER_STORAGE_KEY);
-  //     if (storedUser) {
-  //       setUser(JSON.parse(storedUser) as User);
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to parse user from localStorage", error);
-  //     localStorage.removeItem(MOCK_USER_STORAGE_KEY);
-  //   }
-  //   setLoading(false);
-  // }, []);
+  useEffect(() => { // Reativado para carregar usuário do localStorage
+    try {
+      const storedUser = localStorage.getItem('domedomeMockUser');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser) as User);
+      }
+    } catch (error) {
+      console.error("Failed to parse user from localStorage", error);
+      localStorage.removeItem('domedomeMockUser');
+    }
+    setLoading(false);
+  }, []);
 
   const handleAuthChange = useCallback((newUser: User | null) => {
     setUser(newUser);
-    // if (newUser) { // Comentado - Escrita no localStorage
-    //   localStorage.setItem(MOCK_USER_STORAGE_KEY, JSON.stringify(newUser));
-    // } else {
-    //   localStorage.removeItem(MOCK_USER_STORAGE_KEY);
-    // }
+    if (newUser) { // Reativado para salvar usuário no localStorage
+      localStorage.setItem('domedomeMockUser', JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem('domedomeMockUser');
+    }
   }, []);
   
   const login = useCallback((email: string, name?: string) => {
-    console.log("AuthProvider: Mock login chamado com", email, name);
-    // Não define usuário real, apenas simula para evitar quebrar chamadas
     const mockUser: User = { 
       email, 
       uid: `mock-${email}`, 
       displayName: name || email.split('@')[0],
-      holdingType: '', 
-      companyType: '',
-      jurisdiction: '',
-      notesForAccountant: '',
-    };
-    handleAuthChange(mockUser); // Pode definir um mock user se quiser testar partes que dependem dele
-    router.push('/dashboard'); // Ou para onde quiser após um "login" mock
-  }, [handleAuthChange, router]);
-
-  const signup = useCallback((email: string, name: string) => {
-    console.log("AuthProvider: Mock signup chamado com", email, name);
-    const mockUser: User = { 
-      email, 
-      uid: `mock-${email}-signup`, 
-      displayName: name,
+      // Inicializa campos da holding (ou carrega se já existirem)
       holdingType: '', 
       companyType: '',
       jurisdiction: '',
@@ -95,10 +79,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push('/dashboard');
   }, [handleAuthChange, router]);
 
+  const signup = useCallback((email: string, name: string, holdingTypeParam?: 'digital' | 'physical' | '') => {
+    const mockUser: User = { 
+      email, 
+      uid: `mock-${email}-signup`, 
+      displayName: name,
+      holdingType: holdingTypeParam || '', 
+      // companyType, jurisdiction, notesForAccountant não são mais passados aqui
+      companyType: '',
+      jurisdiction: '',
+      notesForAccountant: '',
+    };
+    handleAuthChange(mockUser);
+    router.push('/dashboard');
+  }, [handleAuthChange, router]);
+
   const logout = useCallback(() => {
-    console.log("AuthProvider: Logout chamado");
     handleAuthChange(null);
-    router.push('/'); // Garante redirecionamento para a landing page
+    router.push('/'); // Redireciona para a landing page
   }, [handleAuthChange, router]);
 
   const updateProfile = useCallback((data: UpdateProfileData) => {
@@ -108,27 +106,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         ...data, 
       };
       handleAuthChange(updatedUser);
-      console.log("AuthProvider: Mock updateProfile chamado com", data);
-    } else {
-      console.log("AuthProvider: Mock updateProfile chamado, mas não há usuário para atualizar.");
     }
   }, [user, handleAuthChange]);
 
 
-  // useEffect(() => { // Comentado - Lógica de proteção de rotas
-  //   if (loading) {
-  //     return;
-  //   }
+  useEffect(() => { // Reativado para proteção de rotas
+    if (loading) {
+      return;
+    }
 
-  //   const isAuthRoute = pathname === '/login' || pathname === '/signup';
-  //   const isPublicRoute = pathname === '/'; 
+    const isAuthRoute = pathname === '/login' || pathname === '/signup';
+    const isPublicRoute = pathname === '/'; 
 
-  //   if (!user && !isAuthRoute && !isPublicRoute) {
-  //     router.push('/login');
-  //   } else if (user && isAuthRoute) {
-  //     router.push('/dashboard');
-  //   }
-  // }, [user, loading, pathname, router]);
+    if (!user && !isAuthRoute && !isPublicRoute) {
+      router.push('/login');
+    } else if (user && isAuthRoute) {
+      router.push('/dashboard');
+    }
+  }, [user, loading, pathname, router]);
 
 
   return (
@@ -145,3 +140,4 @@ export const useAuth = () => {
   }
   return context;
 };
+
