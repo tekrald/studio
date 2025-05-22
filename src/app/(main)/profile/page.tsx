@@ -103,7 +103,7 @@ export default function ProfilePage() {
         <Card className="shadow-xl mb-8">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl">Nosso Perfil</CardTitle> {/* Removido font-pacifico */}
+            <CardTitle className="text-3xl">Nosso Perfil</CardTitle> 
             <CardDescription>
               Gerencie suas informações compartilhadas do casal aqui.
             </CardDescription>
@@ -146,7 +146,7 @@ export default function ProfilePage() {
 
         <Card className="shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle> {/* Removido font-pacifico */}
+            <CardTitle className="text-2xl flex items-center"><Briefcase className="mr-3 text-primary h-7 w-7" />Formalização da Holding Familiar</CardTitle> 
             <CardDescription>
               Indique como vocês pretendem ou já formalizaram a holding para seus ativos.
             </CardDescription>
@@ -157,7 +157,7 @@ export default function ProfilePage() {
               <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => setHoldingType(value)} className="space-y-2 pt-1" disabled={isLoading}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="digital" id="holding-digital" />
-                  <Label htmlFor="holding-digital" className="font-normal">Maximalismo</Label>
+                  <Label htmlFor="holding-digital" className="font-normal">Digital</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="holding-physical" />
@@ -173,7 +173,7 @@ export default function ProfilePage() {
             {holdingType === 'digital' && (
               <Card className="p-4 bg-muted/30 space-y-3">
                 <p className="text-sm text-foreground">
-                  Para holdings com maximalismo, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
+                  Para holdings com foco digital, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
                 </p>
                 <Button 
                   type="button" 
@@ -247,3 +247,4 @@ export default function ProfilePage() {
 }
 
     
+
