@@ -24,7 +24,7 @@ export function Header() {
           <Image
             src="/domedome-logo.svg" 
             alt="domedome Logo"
-            width={250} 
+            width={150} 
             height={83}  
             className="h-auto" 
             priority

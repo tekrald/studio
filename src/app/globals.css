@@ -1,35 +1,36 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 60 56% 91%; /* Light Beige #F5F5DC */
-    --foreground: 40 50% 15%; /* Dark Warm Brown */
+    --background: 0 0% 94%; /* Very Light Gray */
+    --foreground: 0 0% 10%; /* Dark Gray */
 
-    --card: 60 50% 95%; /* Slightly off-white beige for cards */
-    --card-foreground: 40 50% 15%;
+    --card: 0 0% 98%; /* Almost White Gray */
+    --card-foreground: 0 0% 10%;
 
-    --popover: 60 50% 95%;
-    --popover-foreground: 40 50% 15%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 0 0% 10%;
 
     --primary: 16 100% 66%; /* Coral #FF7F50 */
     --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 40 60% 85%; /* Lighter, less saturated beige/brown */
-    --secondary-foreground: 40 50% 15%;
+    --secondary: 0 0% 90%; /* Light Gray */
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 40 60% 88%; /* Muted beige/brown */
-    --muted-foreground: 40 50% 35%; /* Lighter brown for muted text */
+    --muted: 0 0% 92%; /* Light Gray */
+    --muted-foreground: 0 0% 40%; /* Medium Gray for muted text */
 
     --accent: 265 65% 60%; /* New Purple */
-    --accent-foreground: 0 0% 100%; /* White (was Dark rich brown) */
+    --accent-foreground: 0 0% 100%; /* White */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 60 40% 80%; /* Softer border color */
-    --input: 60 40% 85%; /* Input background */
+    --border: 0 0% 85%; /* Gray Border */
+    --input: 0 0% 90%; /* Light Gray Input Background */
     --ring: 16 100% 55%; /* Ring color related to primary (Coral) */
 
     --radius: 0.5rem;
@@ -40,38 +41,38 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    --sidebar-background: 60 50% 93%; /* Slightly darker beige for sidebar */
-    --sidebar-foreground: 40 50% 15%;
+    --sidebar-background: 0 0% 96%; /* Very Light Gray for sidebar */
+    --sidebar-foreground: 0 0% 10%;
     --sidebar-primary: 16 100% 60%; /* Coral for sidebar primary elements */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 265 65% 65%; /* New Purple for sidebar */
     --sidebar-accent-foreground: 0 0% 100%; /* White */
-    --sidebar-border: 60 40% 78%;
+    --sidebar-border: 0 0% 88%;
     --sidebar-ring: 16 100% 55%;
 
-    /* Gradient colors */
+    /* Gradient colors - Kept as is for now */
     --gradient-pink: 350 100% 80%;
     --gradient-orange: 30 100% 70%;
   }
 
   .dark {
-    --background: 40 10% 10%; /* Dark Brown */
-    --foreground: 60 30% 85%; /* Light Beige Text */
+    --background: 0 0% 10%; /* Dark Gray */
+    --foreground: 0 0% 85%; /* Light Gray Text */
 
-    --card: 40 10% 15%;
-    --card-foreground: 60 30% 85%;
+    --card: 0 0% 15%; /* Darker Gray */
+    --card-foreground: 0 0% 85%;
 
-    --popover: 40 10% 15%;
-    --popover-foreground: 60 30% 85%;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 85%;
 
     --primary: 16 100% 60%; /* Slightly desaturated Coral for dark mode */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 10% 25%;
-    --secondary-foreground: 60 30% 85%;
+    --secondary: 0 0% 20%; /* Dark Gray */
+    --secondary-foreground: 0 0% 85%;
 
-    --muted: 40 10% 20%;
-    --muted-foreground: 60 30% 65%;
+    --muted: 0 0% 18%; /* Dark Gray */
+    --muted-foreground: 0 0% 60%; /* Medium-Light Gray */
 
     --accent: 265 65% 70%; /* New Lighter Purple for dark mode */
     --accent-foreground: 0 0% 100%; /* White */
@@ -79,8 +80,8 @@
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 40 10% 25%;
-    --input: 40 10% 25%;
+    --border: 0 0% 20%; /* Dark Gray Border */
+    --input: 0 0% 20%; /* Dark Gray Input */
     --ring: 16 100% 50%;
 
     --chart-1: 220 70% 50%;
@@ -89,15 +90,16 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    --sidebar-background: 40 10% 12%;
-    --sidebar-foreground: 60 30% 85%;
+    --sidebar-background: 0 0% 12%; /* Very Dark Gray for sidebar */
+    --sidebar-foreground: 0 0% 85%;
     --sidebar-primary: 16 100% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 265 65% 70%; /* New Lighter Purple for dark mode sidebar */
     --sidebar-accent-foreground: 0 0% 100%; /* White */
-    --sidebar-border: 40 10% 20%;
+    --sidebar-border: 0 0% 18%;
     --sidebar-ring: 16 100% 50%;
     
+    /* Gradient colors - Kept as is for now */
     --gradient-pink: 350 80% 50%;
     --gradient-orange: 30 80% 40%;
   }
@@ -109,6 +111,5 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
-    /* font-family: 'Lato', sans-serif; // This is handled by tailwind.config.ts if 'Lato' is in the sans array */
   }
 }
