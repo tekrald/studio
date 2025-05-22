@@ -124,13 +124,13 @@ export default function AssetManagementDashboard() {
 
   useEffect(() => {
     const currentUnionNode = nodes.find(node => node.id === UNION_NODE_ID);
-    if (!currentUnionNode && !authLoading) { 
+    if (!currentUnionNode && !authLoading && user) { 
         const unionNode: Node<UnionNodeData> = {
             id: UNION_NODE_ID,
             type: 'unionNode', 
             position: { x: 400, y: 100 },
             data: { 
-            label: effectiveUser.displayName || 'Nossa União',
+            label: user.displayName || 'Nossa União',
             onSettingsClick: handleOpenContractSettings,
             onOpenAssetModal: handleOpenAssetModal,
             onAddMember: handleOpenAddMemberModal,
@@ -140,7 +140,7 @@ export default function AssetManagementDashboard() {
         };
         setNodes([unionNode]);
     }
-  }, [ nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal, authLoading, effectiveUser.displayName]);
+  }, [ nodes, setNodes, handleOpenContractSettings, handleOpenAssetModal, handleOpenAddMemberModal, authLoading, user]);
 
 
   const handleAddAssetSubmit = async (data: AssetFormData) => {
@@ -409,15 +409,6 @@ export default function AssetManagementDashboard() {
             <Controls />
             <Background gap={16} />
           </ReactFlow>
-          {nodes.length <= 1 && !authLoading && ( 
-              <div className="absolute inset-0 flex items-center justify-center text-center text-muted-foreground pointer-events-none">
-                <div>
-                    <LayoutGrid size={64} className="mx-auto mb-4 opacity-50" />
-                    <p className="text-xl">Seu canvas de gestão familiar aparecerá aqui.</p>
-                    <p className="text-sm">Use o <PlusCircle size={14} className="inline text-primary"/> no nó da União para adicionar ativos ou membros.</p>
-                </div>
-            </div>
-          )}
         </div>
       </div>
   );
@@ -436,3 +427,4 @@ interface BaseNodeData {
 declare module 'reactflow' {
     interface NodeData extends Partial<UnionNodeData>, Partial<AssetNodeData>, Partial<MemberNodeData>, Partial<BaseNodeData> {}
 }
+
