@@ -5,7 +5,7 @@ import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Users, FileText, Network, DollarSign, LayoutGrid } from 'lucide-react';
+import { Users, Network, DollarSign, LayoutGrid, Settings } from 'lucide-react'; // Removido FileText, Adicionado Settings
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -14,7 +14,7 @@ import { Loader2 } from 'lucide-react';
 
 interface Node {
   id: string;
-  type: 'union' | 'asset'; // Adicionar 'member' futuramente
+  type: 'union' | 'asset';
   data: { label: string; details?: string };
   position: { x: number; y: number };
 }
@@ -42,7 +42,7 @@ export default function AssetManagementDashboard() {
         id: UNION_NODE_ID,
         type: 'union',
         data: { label: user.displayName || 'Nossa União' },
-        position: { x: window.innerWidth / 2 - 100, y: 100 }, // Posição inicial do nó União (ajustar conforme necessário)
+        position: { x: (window.innerWidth * 0.8) / 2 , y: 80 }, // Ajustado para o centro do canvas
       };
       setNodes([unionNode]);
     }
@@ -59,6 +59,9 @@ export default function AssetManagementDashboard() {
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
       
+      const unionNodePosition = nodes.find(n => n.id === UNION_NODE_ID)?.position || { x: (window.innerWidth * 0.8) / 2, y: 80 };
+      const assetNodesCount = nodes.filter(n => n.type === 'asset').length;
+
       const newAssetNode: Node = {
         id: result.assetId,
         type: 'asset',
@@ -66,10 +69,9 @@ export default function AssetManagementDashboard() {
           label: data.nomeAtivo,
           details: `Tipo: ${data.tipo === 'digital' ? 'Digital' : 'Físico'}, Valor: R$ ${data.valorAtualEstimado}`
         },
-        // Lógica simples para posicionar novos nós de ativos abaixo do nó de união
         position: {
-          x: (nodes.find(n => n.id === UNION_NODE_ID)?.position.x || window.innerWidth / 2 - 100) + (nodes.filter(n => n.type === 'asset').length % 4 - 1.5) * 150,
-          y: (nodes.find(n => n.id === UNION_NODE_ID)?.position.y || 100) + 150 + Math.floor(nodes.filter(n => n.type === 'asset').length / 4) * 100
+          x: unionNodePosition.x + (assetNodesCount % 4 - 1.5) * 180, // Espaçamento horizontal
+          y: unionNodePosition.y + 150 + Math.floor(assetNodesCount / 4) * 120 // Espaçamento vertical
         },
       };
       setNodes((prevNodes) => [...prevNodes, newAssetNode]);
@@ -92,8 +94,8 @@ export default function AssetManagementDashboard() {
     toast({ title: 'Em Breve!', description: 'Funcionalidade de adicionar membros será implementada.' });
   };
 
-  const handleConfigureContract = () => {
-    toast({ title: 'Em Breve!', description: 'Funcionalidade de configurar contrato será implementada.' });
+  const handleUnionSettingsClick = () => {
+    toast({ title: 'Em Breve!', description: 'Configurações da união/contrato serão implementadas aqui.' });
   };
 
   if (authLoading && !user) {
@@ -105,14 +107,11 @@ export default function AssetManagementDashboard() {
   }
   
   if (!user) {
-    // Não renderiza nada se o usuário não estiver carregado, layout principal cuida do redirecionamento/loading
     return null; 
   }
 
-
   return (
       <div className="flex flex-col h-[calc(100vh-var(--header-height,100px)-2rem)]">
-        {/* Card do Título da Holding */}
         <Card className="mb-6 shadow-xl bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
           <CardHeader className="p-6">
             <div className="flex items-center space-x-4">
@@ -129,7 +128,6 @@ export default function AssetManagementDashboard() {
           </CardHeader>
         </Card>
 
-        {/* Barra de Ações */}
         <div className="mb-4 p-4 rounded-lg shadow-md bg-card flex flex-wrap items-center gap-3">
             <h3 className="text-xl font-pacifico text-primary mr-auto md:mr-4">Ações:</h3>
             
@@ -149,18 +147,14 @@ export default function AssetManagementDashboard() {
             <Button onClick={handleAddMember} variant="outline" className="justify-start">
               <Users className="mr-2 h-5 w-5" /> Adicionar Membro
             </Button>
-            <Button onClick={handleConfigureContract} variant="outline" className="justify-start">
-              <FileText className="mr-2 h-5 w-5" /> Configurar Contrato
-            </Button>
+            {/* Botão "Configurar Contrato" removido daqui */}
         </div>
 
-        {/* Card do Canvas de Gestão */}
         <Card className="flex-grow p-1 shadow-lg relative overflow-hidden">
             <CardHeader className="absolute top-2 left-3 z-10">
               <CardTitle className="text-lg font-pacifico text-muted-foreground">Canvas de Gestão</CardTitle>
             </CardHeader>
             <div className="w-full h-full bg-muted/30 rounded-md border-2 border-dashed border-gray-300 relative">
-              {/* Renderização dos Nós */}
               {nodes.map((node) => (
                 <div
                   key={node.id}
@@ -169,21 +163,31 @@ export default function AssetManagementDashboard() {
                   } transform -translate-x-1/2 -translate-y-1/2 min-w-[150px] max-w-[200px] text-center cursor-grab`}
                   style={{ left: `${node.position.x}px`, top: `${node.position.y}px` }}
                 >
-                  <div className="font-semibold text-sm">{node.data.label}</div>
+                  <div className="font-semibold text-sm flex items-center justify-center">
+                    {node.type === 'union' && <Network className="w-4 h-4 inline-block mr-2 opacity-70" />}
+                    {node.type === 'asset' && <DollarSign className="w-4 h-4 inline-block mr-2 opacity-70" />}
+                    {node.data.label}
+                  </div>
                   {node.data.details && <div className="text-xs mt-1 opacity-80">{node.data.details}</div>}
-                  {node.type === 'asset' && <DollarSign className="w-4 h-4 inline-block mr-1 opacity-70" />}
-                  {node.type === 'union' && <Network className="w-4 h-4 inline-block mr-1 opacity-70" />}
+                  
+                  {node.type === 'union' && (
+                    <button
+                      onClick={handleUnionSettingsClick}
+                      className="absolute top-1 right-1 p-1 text-primary-foreground/70 hover:text-primary-foreground focus:outline-none focus:ring-1 focus:ring-primary-foreground rounded"
+                      aria-label="Configurações da União"
+                    >
+                      <Settings size={14} />
+                    </button>
+                  )}
                 </div>
               ))}
               
-              {/* Renderização das Arestas (SVGs) */}
               <svg className="absolute top-0 left-0 w-full h-full pointer-events-none">
                 {edges.map((edge) => {
                   const sourceNode = nodes.find((n) => n.id === edge.source);
                   const targetNode = nodes.find((n) => n.id === edge.target);
                   if (!sourceNode || !targetNode) return null;
                   
-                  // Ajustar para conectar às bordas dos nós em vez do centro, se for uma biblioteca de fluxo real
                   const sourceX = sourceNode.position.x; 
                   const sourceY = sourceNode.position.y; 
                   const targetX = targetNode.position.x; 
@@ -198,13 +202,12 @@ export default function AssetManagementDashboard() {
                       y2={targetY}
                       stroke="hsl(var(--border))"
                       strokeWidth="2"
-                      markerEnd="url(#arrowhead)" // Se definir uma ponta de seta
+                      markerEnd="url(#arrowhead)"
                     />
                   );
                 })}
-                {/* Definição de ponta de seta (opcional) */}
                 <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto" markerUnits="strokeWidth">
                     <polygon points="0 0, 10 3.5, 0 7" fill="hsl(var(--border))" />
                   </marker>
                 </defs>
