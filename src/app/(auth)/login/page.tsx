@@ -40,10 +40,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="https://placehold.co/100x100.png" alt="domedome Logo" width={80} height={80} data-ai-hint="logo domedome" className="rounded-full"/>
+             <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} data-ai-hint="logo domedome" className="rounded-full"/>
           </Link>
-          <CardTitle className="text-3xl">Bem-vindo(a) de Volta!</CardTitle> {/* Removido font-pacifico */}
-          <CardDescription>Faça login na sua conta domedome para continuar planejando seu dia especial.</CardDescription>
+          <CardTitle className="text-3xl font-lato">Bem-vindo(a) de Volta!</CardTitle>
+          <CardDescription className="font-lato">Faça login na sua conta domedome para continuar planejando seu dia especial.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
