@@ -5,7 +5,7 @@ import { useAuth } from '@/components/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Users, FileText, Settings, Network, DollarSign, Brain, LayoutGrid, Link2 } from 'lucide-react';
+import { Users, FileText, Network, DollarSign, LayoutGrid } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -55,7 +55,7 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsLoading(true);
-    const result = await addAsset(data, user.uid); // Firebase ainda está desabilitado aqui
+    const result = await addAsset(data, user.uid); 
     if (result.success && result.assetId) {
       toast({ title: 'Sucesso!', description: 'Ativo adicionado com sucesso.' });
       
@@ -104,10 +104,8 @@ export default function AssetManagementDashboard() {
     );
   }
   
-  // Se o usuário não estiver carregado após o authLoading ter terminado, não renderizar o dashboard
-  // Isso pode acontecer brevemente antes do redirecionamento para /login pelo MainAppLayout
   if (!user) {
-    return null; // Ou um spinner mais discreto se preferir, mas o MainAppLayout deve redirecionar
+    return null; 
   }
 
 
@@ -152,12 +150,6 @@ export default function AssetManagementDashboard() {
             <Button onClick={handleConfigureContract} variant="outline" className="w-full justify-start">
               <FileText className="mr-2 h-5 w-5" /> Configurar Contrato
             </Button>
-             <Button variant="outline" className="w-full justify-start" onClick={() => toast({ title: 'Em Breve!', description: 'Brainstorm de ideias será implementado.'})}>
-              <Brain className="mr-2 h-5 w-5" /> Brainstorm IA
-            </Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => toast({ title: 'Em Breve!', description: 'Configurações do canvas serão implementadas.'})}>
-              <Settings className="mr-2 h-5 w-5" /> Configurações
-            </Button>
           </Card>
 
           <Card className="flex-grow p-1 shadow-lg relative overflow-hidden">
@@ -188,12 +180,10 @@ export default function AssetManagementDashboard() {
                   const targetNode = nodes.find((n) => n.id === edge.target);
                   if (!sourceNode || !targetNode) return null;
                   
-                  // Ajustar pontos para centro dos nós (assumindo nós de tamanho fixo para simplificar)
-                  // Isso é bem rudimentar, bibliotecas de grafos lidam com isso de forma mais robusta
-                  const sourceX = sourceNode.position.x; // + 75; // Metade da largura do nó
-                  const sourceY = sourceNode.position.y; // + 30; // Metade da altura do nó
-                  const targetX = targetNode.position.x; // + 75;
-                  const targetY = targetNode.position.y; // + 30;
+                  const sourceX = sourceNode.position.x; 
+                  const sourceY = sourceNode.position.y; 
+                  const targetX = targetNode.position.x; 
+                  const targetY = targetNode.position.y;
 
                   return (
                     <line
