@@ -10,7 +10,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 
 export type UnionNodeData = {
   label: string;
-  onSettingsClick: () => void;
+  onSettingsClick: () => void; 
   onOpenAssetModal: () => void;
   onAddMember: () => void;
 };
@@ -28,7 +28,6 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
         const handleElement = document.getElementById(`handle-plus-${id}`);
         if (handleElement && handleElement.contains(event.target as Node)) {
-          // Click was on the handle itself, toggle handles it
           return;
         }
         setShowActions(false);
@@ -50,26 +49,23 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
   return (
     <Card 
       className={`w-60 shadow-xl border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-primary/60'} bg-card p-0 overflow-hidden relative`}
-      style={{ overflow: 'visible' }} // Ensure popover is not clipped
+      style={{ overflow: 'visible' }} 
     >
-      {/* Invisible handles for standard connections if needed later */}
       <Handle type="target" position={Position.Top} className="!opacity-0" />
       
-      {/* Colored Header */}
       <div className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] p-2 rounded-t-md flex justify-between items-center">
         <span className="text-xs font-semibold text-white">Contrato</span>
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 text-white hover:bg-white/20 hover:text-white"
-          onClick={data.onSettingsClick}
-          aria-label="Configurações da União"
+          className="h-7 w-7 text-white hover:bg-white/20 hover:text-white hover:opacity-75"
+          onClick={data.onSettingsClick} 
+          aria-label="Configurações do Contrato"
         >
           <Settings size={16} />
         </Button>
       </div>
 
-      {/* Main Content */}
       <div className="p-3 bg-card">
         <div className="flex items-center space-x-2 text-sm font-semibold text-card-foreground">
           <Network size={18} className="text-primary" />
@@ -77,7 +73,6 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
         </div>
       </div>
 
-      {/* Custom '+' Handle and Popover for Actions */}
       <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 z-10">
         <button
           id={`handle-plus-${id}`}
@@ -92,6 +87,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
           <div
             ref={popoverRef}
             className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-popover border border-border rounded-md shadow-xl p-2 space-y-2 z-20"
+            style={{ bottom: 'calc(100% + 0.5rem)' }} // Posiciona acima do botão '+'
           >
             <Button
               variant="ghost"
@@ -120,14 +116,14 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
           </div>
         )}
       </div>
-      {/* Invisible source handle at bottom, actual connections will be from the custom popover actions */}
        <Handle 
         type="source" 
         position={Position.Bottom} 
         id={`handle-source-invisible-${id}`} 
         className="!opacity-0 !w-px !h-px !cursor-default"
-        isConnectable={false} // Set to false as actual logic is via buttons
+        isConnectable={false} 
       />
     </Card>
   );
 }
+
