@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Protected routes logic
   useEffect(() => {
     // Permite acesso a '/', '/login', '/signup' mesmo se não estiver logado.
-    // Redireciona para '/login' se tentar acessar outras rotas sem estar logado.
+    // Redireciona para '/login' se tentar acessar outras rotas protegidas sem estar logado.
     if (!loading && !user && !['/login', '/signup', '/'].includes(pathname)) {
       router.push('/login');
     }
