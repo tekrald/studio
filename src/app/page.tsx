@@ -19,7 +19,7 @@ export default function HomePage() {
           </div>
           <div className="container mx-auto px-6 text-center relative z-10">
             <h1 className="text-4xl md:text-5xl font-lato mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
-              crie seu contrato de casamento personalizado
+              Crie seu contrato de casamento personalizado
             </h1>
             <p className="text-lg md:text-xl text-foreground/80 mb-10 max-w-3xl mx-auto">
               Sua plataforma segura e intuitiva para gestão de patrimônio familiar. Visualize sua holding, organize ativos e planeje o futuro com clareza e colaboração.
