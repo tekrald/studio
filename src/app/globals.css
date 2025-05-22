@@ -112,8 +112,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
-    font-family: var(--font-lato); /* Lato como fonte principal para o body */
+    @apply bg-background text-foreground font-sans; /* Alterado para usar font-sans do Tailwind */
   }
   /* Removida a regra para h1-h6 usar Pacifico. Eles herdarão Lato do body. */
   /* h1, h2, h3, h4, h5, h6 {
