@@ -9,7 +9,7 @@ import { ArrowRight, Lock, Users, Briefcase, BarChart3, Network, GitFork, Shield
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background"> {/* Removido font-lato daqui */}
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
@@ -17,18 +17,34 @@ export default function HomePage() {
           <div className="absolute inset-0 opacity-30">
              {/* Decorative background image or pattern can go here */}
           </div>
-          <div className="container mx-auto px-6 text-center relative z-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
-              Crie seu contrato de casamento personalizado
-            </h1>
-            <p className="text-lg md:text-xl text-foreground/80 mb-10 max-w-3xl mx-auto">
-              Sua plataforma segura e intuitiva para gestão de patrimônio familiar. Visualize sua holding, organize ativos e planeje o futuro com clareza e colaboração.
-            </p>
-            <Button size="lg" asChild className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white shadow-lg hover:shadow-xl transition-shadow duration-300 text-lg px-10 py-6">
-              <Link href="/signup">
-                Comece a Organizar Agora <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+          <div className="container mx-auto px-6 relative z-10">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+              <div className="text-center md:text-left">
+                <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))]">
+                  Crie seu contrato de casamento personalizado
+                </h1>
+                <p className="text-lg md:text-xl text-foreground/80 mb-10 max-w-2xl mx-auto md:mx-0">
+                  Sua plataforma segura e intuitiva para gestão de patrimônio familiar. Visualize sua holding, organize ativos e planeje o futuro com clareza e colaboração.
+                </p>
+                <Button size="lg" asChild className="bg-gradient-to-r from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white shadow-lg hover:shadow-xl transition-shadow duration-300 text-lg px-10 py-6">
+                  <Link href="/signup">
+                    Comece a Organizar Agora <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="flex justify-center items-center">
+                {/* Placeholder para o exemplo 3D do app */}
+                <Image 
+                  src="https://placehold.co/500x400.png" 
+                  alt="Exemplo visual do aplicativo domedome" 
+                  width={500} 
+                  height={400}
+                  className="rounded-lg shadow-2xl object-cover"
+                  data-ai-hint="abstract network"
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </section>
 
