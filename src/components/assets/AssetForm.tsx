@@ -11,25 +11,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { AssetFormData } from '@/types/asset';
+import { useAuth } from '@/components/auth-provider';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];
 
-// Tornar campos condicionais mais opcionais na base para validação por etapas
 const formSchema = z.object({
   tipo: z.enum(['digital', 'fisico'], { required_error: "Selecione o tipo de ativo." }),
-  nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'), // Mínimo 1 para validação de etapa
+  nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'),
   dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }),
+  quemComprou: z.string().optional(), // Novo campo
   valorAtualEstimado: z.preprocess(
     (val) => parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'O valor estimado deve ser positivo.')
   ),
-  descricaoDetalhada: z.string().min(1, 'A descrição é obrigatória.'), // Mínimo 1 para validação de etapa
+  descricaoDetalhada: z.string().min(1, 'A descrição é obrigatória.'),
   
   observacoesInvestimento: z.string().optional(),
   
@@ -50,7 +51,13 @@ const formSchema = z.object({
   documentacaoFisicoFile: z.any()
     .optional(),
 }).superRefine((data, ctx) => {
-  // Refinamento final para campos obrigatórios baseados no tipo
+  if (data.nomeAtivo.length > 0 && data.nomeAtivo.length < 3) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
+  }
+  if (data.descricaoDetalhada.length > 0 && data.descricaoDetalhada.length < 10) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A descrição detalhada deve ter pelo menos 10 caracteres.", path: ['descricaoDetalhada'] });
+  }
+
   if (data.tipo === 'digital') {
     if (!data.tipoCriptoAtivoDigital || data.tipoCriptoAtivoDigital.trim() === '') {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de ativo digital é obrigatório.", path: ['tipoCriptoAtivoDigital'] });
@@ -67,12 +74,6 @@ const formSchema = z.object({
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de bem físico é obrigatório.", path: ['tipoImovelBemFisico'] });
     }
   }
-   if (data.nomeAtivo.length < 3) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
-    }
-    if (data.descricaoDetalhada.length < 10) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A descrição detalhada deve ter pelo menos 10 caracteres.", path: ['descricaoDetalhada'] });
-    }
 });
 
 
@@ -83,10 +84,11 @@ interface AssetFormProps {
   onClose: () => void;
 }
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5; // Atualizado para 5 etapas
 
 export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const { user } = useAuth();
   const form = useForm<AssetFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
@@ -96,16 +98,26 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
       valorAtualEstimado: 0,
       observacoesInvestimento: '',
       dataAquisicao: new Date(),
+      quemComprou: '',
     },
-    mode: "onChange", // Para validar dinamicamente e habilitar/desabilitar botões
+    mode: "onChange", 
   });
 
   const assetType = form.watch('tipo');
   const [formError, setFormError] = useState<string | null>(null);
 
+  const [partnerNames, setPartnerNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (user?.displayName) {
+      const names = user.displayName.split('&').map(name => name.trim()).filter(name => name);
+      setPartnerNames(names);
+    }
+  }, [user]);
+
+
   const handleFormSubmit = async (values: AssetFormData) => {
     await onSubmit(values);
-    // O reset é feito pelo componente pai ao fechar o modal
   };
 
   const validateStep = async (step: number): Promise<boolean> => {
@@ -117,12 +129,16 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     } else if (step === 2) {
       fieldsToValidate = ['nomeAtivo', 'dataAquisicao'];
     } else if (step === 3) {
-      fieldsToValidate = ['valorAtualEstimado', 'descricaoDetalhada'];
+      // 'quemComprou' é opcional, então não precisa de validação forte aqui,
+      // mas podemos adicionar se quisermos garantir que uma opção seja selecionada.
+      // Por ora, não validaremos estritamente para permitir "Não especificado" implícito.
     } else if (step === 4) {
+      fieldsToValidate = ['valorAtualEstimado', 'descricaoDetalhada'];
+    } else if (step === 5) {
       if (assetType === 'digital') {
         fieldsToValidate = ['tipoCriptoAtivoDigital', 'quantidadeDigital', 'valorPagoEpocaDigital'];
       } else if (assetType === 'fisico') {
-        fieldsToValidate = ['tipoImovelBemFisico']; // Outros são opcionais
+        fieldsToValidate = ['tipoImovelBemFisico']; 
       }
     }
 
@@ -136,7 +152,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         }
       }
     }
-    // Validar especificidades que o trigger pode não pegar
+    
     if (step === 1 && !form.getValues('tipo')) {
         setFormError("Selecione o tipo de ativo.");
         return false;
@@ -145,7 +161,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         setFormError("Nome do ativo e data de aquisição são obrigatórios.");
         return false;
     }
-     if (step === 3 && (!form.getValues('descricaoDetalhada').trim() || form.getValues('valorAtualEstimado') === null || form.getValues('valorAtualEstimado') < 0 )) {
+     if (step === 4 && (!form.getValues('descricaoDetalhada').trim() || form.getValues('valorAtualEstimado') === null || form.getValues('valorAtualEstimado') < 0 )) {
         setFormError("Descrição detalhada e valor estimado são obrigatórios.");
         return false;
     }
@@ -172,7 +188,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <p className="text-sm text-center text-muted-foreground">Etapa {currentStep} de {TOTAL_STEPS}</p>
       
-      {currentStep === 1 && (
+      {currentStep === 1 && ( // Tipo de Ativo
         <div className="space-y-1.5">
           <Label htmlFor="tipo">Tipo de Ativo</Label>
           <Controller
@@ -194,7 +210,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         </div>
       )}
 
-      {currentStep === 2 && (
+      {currentStep === 2 && ( // Identificação do Ativo
         <>
           <div className="space-y-1.5">
             <Label htmlFor="nomeAtivo">Nome do Ativo</Label>
@@ -239,7 +255,38 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         </>
       )}
 
-      {currentStep === 3 && (
+      {currentStep === 3 && ( // Propriedade do Ativo
+        <div className="space-y-1.5">
+          <Label htmlFor="quemComprou">Quem Adquiriu o Ativo?</Label>
+           <Controller
+            name="quemComprou"
+            control={form.control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                <SelectTrigger id="quemComprou">
+                  <SelectValue placeholder="Selecione quem adquiriu (opcional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Não especificado</SelectItem>
+                  {partnerNames.length === 1 && (
+                    <SelectItem value={partnerNames[0]}>{partnerNames[0]}</SelectItem>
+                  )}
+                  {partnerNames.length > 1 && partnerNames.map(name => (
+                    <SelectItem key={name} value={name}>{name}</SelectItem>
+                  ))}
+                  <SelectItem value="Ambos">Ambos</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <p className="text-xs text-muted-foreground">
+            Se o nome do membro não aparecer, verifique o nome de exibição do casal no Perfil.
+          </p>
+          {form.formState.errors.quemComprou && <p className="text-sm text-destructive">{form.formState.errors.quemComprou.message}</p>}
+        </div>
+      )}
+
+      {currentStep === 4 && ( // Valores e Descrição
         <>
           <div className="space-y-1.5">
             <Label htmlFor="valorAtualEstimado">Valor Atual Estimado (R$)</Label>
@@ -254,7 +301,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         </>
       )}
       
-      {currentStep === 4 && (
+      {currentStep === 5 && ( // Detalhes Específicos e Observações
         <>
           {assetType === 'digital' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30">
@@ -338,6 +385,3 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     </form>
   );
 }
-
-
-    

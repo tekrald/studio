@@ -11,13 +11,27 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
     return { success: false, error: 'Usuário não autenticado.' };
   }
 
-  console.log('Simulando adição de ativo (Firebase desabilitado):', data);
+  console.log('Simulando adição de ativo (Firebase desabilitado):', {
+    userId,
+    tipo: data.tipo,
+    nomeAtivo: data.nomeAtivo,
+    dataAquisicao: data.dataAquisicao,
+    quemComprou: data.quemComprou, // Log do novo campo
+    valorAtualEstimado: data.valorAtualEstimado,
+    descricaoDetalhada: data.descricaoDetalhada,
+    observacoesInvestimento: data.observacoesInvestimento,
+    // Campos específicos (serão undefined se não aplicável ao tipo)
+    tipoCriptoAtivoDigital: data.tipoCriptoAtivoDigital,
+    quantidadeDigital: data.quantidadeDigital,
+    valorPagoEpocaDigital: data.valorPagoEpocaDigital,
+    tipoImovelBemFisico: data.tipoImovelBemFisico,
+    enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico,
+    documentacaoFisicoFileName: data.documentacaoFisicoFile?.[0]?.name, // Log do nome do arquivo
+  });
 
   // Simula um atraso de rede
   await new Promise(resolve => setTimeout(resolve, 500));
 
-  // Retorna um sucesso mockado, já que o Firebase está desabilitado
-  // A lógica de diferenciar assetData digital/físico é mantida para estrutura, mas não é salva.
   let assetTypeForLog: string;
   if (data.tipo === 'digital') {
     assetTypeForLog = 'digital';
@@ -31,13 +45,35 @@ export async function addAsset(data: AssetFormData, userId: string): Promise<{ s
   
   // Em uma implementação real com Firebase, você usaria:
   // try {
-  //   let assetData;
+  //   const commonData = {
+  //     userId,
+  //     nomeAtivo: data.nomeAtivo,
+  //     descricaoDetalhada: data.descricaoDetalhada,
+  //     valorAtualEstimado: data.valorAtualEstimado,
+  //     observacoesInvestimento: data.observacoesInvestimento || '',
+  //     dataAquisicao: data.dataAquisicao, // Idealmente serverTimestamp.fromDate(data.dataAquisicao)
+  //     quemComprou: data.quemComprou || '',
+  //     tipo: data.tipo,
+  //     createdAt: serverTimestamp(),
+  //     updatedAt: serverTimestamp(),
+  //   };
+  //   let assetDataToSave;
   //   if (data.tipo === 'digital') {
-  //     assetData = { ... } as Omit<DigitalAsset, 'id'>;
-  //   } else if (data.tipo === 'fisico') {
-  //     assetData = { ... } as Omit<PhysicalAsset, 'id'>;
+  //     assetDataToSave = {
+  //       ...commonData,
+  //       tipoCriptoAtivoDigital: data.tipoCriptoAtivoDigital!,
+  //       quantidadeDigital: data.quantidadeDigital!,
+  //       valorPagoEpocaDigital: data.valorPagoEpocaDigital!,
+  //     } as Omit<DigitalAsset, 'id'>;
+  //   } else { // fisico
+  //     assetDataToSave = {
+  //       ...commonData,
+  //       tipoImovelBemFisico: data.tipoImovelBemFisico!,
+  //       enderecoLocalizacaoFisico: data.enderecoLocalizacaoFisico || '',
+  //       // documentacaoFisico: "url_do_arquivo_no_storage" // Lógica de upload seria separada
+  //     } as Omit<PhysicalAsset, 'id'>;
   //   }
-  //   const docRef = await addDoc(collection(db!, 'assets'), assetData); // db! aqui assume que db não é null
+  //   const docRef = await addDoc(collection(db!, 'assets'), assetDataToSave); // db! aqui assume que db não é null
   //   return { success: true, assetId: docRef.id };
   // } catch (error) {
   //   console.error('Erro ao adicionar ativo:', error);

@@ -8,6 +8,7 @@ export interface AssetBase {
   observacoesInvestimento: string;
   dataAquisicao: Date;
   tipo: 'digital' | 'fisico';
+  quemComprou?: string; // Novo campo
 }
 
 export interface DigitalAsset extends AssetBase {
@@ -34,6 +35,7 @@ export type AssetFormData = Omit<DigitalAsset, 'id' | 'userId' | 'tipo'> | Omit<
   valorAtualEstimado: number;
   observacoesInvestimento: string;
   dataAquisicao: Date;
+  quemComprou?: string; // Novo campo
   // Digitais
   tipoCriptoAtivoDigital?: string;
   quantidadeDigital?: number;
