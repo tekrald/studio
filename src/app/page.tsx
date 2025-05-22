@@ -9,7 +9,7 @@ import { ArrowRight, Lock, Users, Briefcase, BarChart3, Network, GitFork, Shield
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background font-lato"> {/* Added font-lato here */}
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
@@ -35,7 +35,7 @@ export default function HomePage() {
         {/* Features Section */}
         <section className="py-16 lg:py-24 bg-background">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl lg:text-5xl text-center mb-16 text-primary">Construa Seu Legado Familiar</h2> {/* Removido font-pacifico */}
+            <h2 className="text-4xl lg:text-5xl text-center mb-16 text-primary">Construa Seu Legado Familiar</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
               <FeatureCard
                 icon={<Network className="h-12 w-12 text-primary" />}
@@ -74,7 +74,7 @@ export default function HomePage() {
         {/* Call to Action Section */}
         <section className="py-20 bg-primary/10">
           <div className="container mx-auto px-6 text-center">
-            <h2 className="text-4xl lg:text-5xl mb-6 text-primary">Prontos para o Próximo Nível?</h2> {/* Removido font-pacifico */}
+            <h2 className="text-4xl lg:text-5xl mb-6 text-primary">Prontos para o Próximo Nível?</h2>
             <p className="text-lg text-foreground/80 mb-10 max-w-2xl mx-auto">
               Crie sua conta domedome hoje e transforme a maneira como vocês gerenciam o patrimônio familiar. Simples, seguro e colaborativo.
             </p>
@@ -101,7 +101,7 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
     <div className="bg-card p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-start text-left">
       <div className="mb-5 p-3 rounded-full bg-primary/10">{icon}</div>
-      <h3 className="text-3xl mb-3 text-card-foreground">{title}</h3> {/* Removido font-pacifico */}
+      <h3 className="text-3xl mb-3 text-card-foreground">{title}</h3>
       <p className="text-foreground/70 text-base leading-relaxed">{description}</p>
     </div>
   );
