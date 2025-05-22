@@ -33,14 +33,13 @@ export default function HomePage() {
                 </Button>
               </div>
               <div className="flex justify-center items-center">
-                {/* Placeholder para o exemplo 3D do app */}
                 <Image 
-                  src="https://placehold.co/500x400.png" 
-                  alt="Exemplo visual do aplicativo domedome" 
+                  src="/hero-contract-illustration.png" 
+                  alt="Ilustração de um contrato de casamento domedome" 
                   width={500} 
                   height={400}
                   className="rounded-lg shadow-2xl object-cover"
-                  data-ai-hint="abstract network"
+                  data-ai-hint="contract illustration"
                   priority
                 />
               </div>
