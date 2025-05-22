@@ -3,7 +3,7 @@
 
 import type { NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
-import { Network, Settings, PlusCircle, DollarSign, Users } from 'lucide-react'; // Plus alterado para PlusCircle
+import { Network, Settings, PlusCircle, DollarSign, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -49,7 +49,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
 
   return (
     <Card 
-      className={`w-60 shadow-xl border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-primary/60'} bg-card p-0 overflow-hidden relative`}
+      className={`w-60 shadow-xl border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-primary/60'} bg-card p-0 overflow-hidden relative rounded-lg`} // Adicionado rounded-lg
       style={{ overflow: 'visible' }} // Permite que o popover não seja cortado
     >
       {/* Alça superior invisível para conexões de entrada */}
@@ -70,7 +70,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
       </div>
 
       {/* Corpo do Nó */}
-      <div className="p-3 bg-card rounded-b-md"> {/* Adicionado rounded-b-md aqui */}
+      <div className="p-3 bg-card rounded-b-md">
         <div className="flex items-center space-x-2 text-sm font-semibold text-card-foreground">
           <Network size={18} className="text-primary" />
           <span>{data.label}</span>
@@ -86,13 +86,13 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
           aria-label="Adicionar"
           style={{ width: '32px', height: '32px' }} // Garante tamanho do círculo
         >
-          <PlusCircle size={20} /> {/* Ícone PlusCircle */}
+          <PlusCircle size={20} />
         </button>
         {showActions && (
           <div
             ref={popoverRef}
             className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-popover border border-border rounded-md shadow-xl p-2 space-y-2 z-20"
-            style={{ bottom: 'calc(100% + 0.5rem)' }} // Posiciona acima do botão '+'
+            style={{ top: 'calc(100% + 0.5rem)' }} // Alterado de 'bottom' para 'top'
           >
             <Button
               variant="ghost"
@@ -126,8 +126,8 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
         type="source" 
         position={Position.Bottom} 
         id={`handle-source-invisible-${id}`} 
-        className="!opacity-0 !w-px !h-px !cursor-default" // Torna invisível e não funcional para conexão manual direta
-        isConnectable={false} // Importante para não permitir conexões manuais diretas nesta alça se o "+" controla
+        className="!opacity-0 !w-px !h-px !cursor-default" 
+        isConnectable={false} 
       />
     </Card>
   );
