@@ -25,8 +25,7 @@ const formSchema = z.object({
   tipo: z.enum(['digital', 'fisico'], { required_error: "Selecione o tipo de ativo." }),
   nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'),
   dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }),
-  // valorAtualEstimado removido do form
-  observacoes: z.string().optional(), // Alterado de descricaoDetalhada, agora opcional
+  observacoes: z.string().optional(), 
   quemComprou: z.string().optional(),
   contribuicaoParceiro1: z.preprocess(
     (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
@@ -37,18 +36,16 @@ const formSchema = z.object({
     z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
   ),
   
-  // Campos Digitais Condicionais
-  tipoAtivoDigital: z.string().optional(), // Alterado de tipoCriptoAtivoDigital, será um select
+  tipoAtivoDigital: z.enum(['cripto', 'nft', 'outro'], { errorMap: () => ({ message: "Selecione um tipo de ativo digital válido." }) }).optional(),
   quantidadeDigital: z.preprocess(
     (val) => String(val) === '' ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'A quantidade deve ser positiva.').optional()
   ),
-  valorPagoEpocaDigital: z.preprocess( // Label alterada
+  valorPagoEpocaDigital: z.preprocess( 
     (val) => String(val) === '' ? undefined : parseFloat(String(val).replace(',', '.')),
     z.number().min(0, 'O valor pago deve ser positivo.').optional()
   ),
 
-  // Campos Físicos Condicionais
   tipoImovelBemFisico: z.string().optional(),
   enderecoLocalizacaoFisico: z.string().optional(),
   documentacaoFisicoFile: z.any().optional(),
@@ -56,10 +53,9 @@ const formSchema = z.object({
   if (data.nomeAtivo.length > 0 && data.nomeAtivo.length < 3) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
   }
-  // Validação de 'observacoes' (antiga 'descricaoDetalhada') removida, pois é opcional
   
   if (data.tipo === 'digital') {
-    if (!data.tipoAtivoDigital || data.tipoAtivoDigital.trim() === '') { // Validando o select
+    if (!data.tipoAtivoDigital || data.tipoAtivoDigital.trim() === '') { 
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de ativo digital é obrigatório.", path: ['tipoAtivoDigital'] });
     }
     if (data.quantidadeDigital === undefined || data.quantidadeDigital === null) {
@@ -84,7 +80,7 @@ interface AssetFormProps {
   onClose: () => void;
 }
 
-const TOTAL_STEPS = 4; // Mantido em 4 etapas
+const TOTAL_STEPS = 4;
 
 export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -95,7 +91,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
       tipo: undefined,
       nomeAtivo: '',
       dataAquisicao: new Date(),
-      observacoes: '', // Default para observacoes
+      observacoes: '',
       quemComprou: '', 
       contribuicaoParceiro1: undefined,
       contribuicaoParceiro2: undefined,
@@ -109,7 +105,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
   });
 
   const assetType = form.watch('tipo');
-  const quemComprou = form.watch('quemComprou');
+  const quemComprouWatch = form.watch('quemComprou');
   const [formError, setFormError] = useState<string | null>(null);
 
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
@@ -141,20 +137,21 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     setFormError(null);
     let fieldsToValidate: (keyof AssetFormData)[] = [];
     
-    if (step === 1) { // Tipo
+    if (step === 1) { 
       fieldsToValidate = ['tipo'];
-    } else if (step === 2) { // Detalhes Principais (Nome, Data, Observações)
+    } else if (step === 2) { 
       fieldsToValidate = ['nomeAtivo', 'dataAquisicao', 'observacoes'];
-    } else if (step === 3) { // Propriedade e Contribuições
+    } else if (step === 3) { 
       fieldsToValidate = ['quemComprou'];
       if (form.getValues('quemComprou') === 'Ambos') {
-        // contribuições são opcionais, Zod cuida do tipo
+        fieldsToValidate.push('contribuicaoParceiro1'); // Opcional, mas se preenchido, precisa ser válido
+        fieldsToValidate.push('contribuicaoParceiro2'); // Opcional, mas se preenchido, precisa ser válido
       }
-    } else if (step === 4) { // Detalhes Específicos
+    } else if (step === 4) { 
       if (assetType === 'digital') {
         fieldsToValidate = ['tipoAtivoDigital', 'quantidadeDigital', 'valorPagoEpocaDigital'];
       } else if (assetType === 'fisico') {
-        fieldsToValidate = ['tipoImovelBemFisico']; 
+        fieldsToValidate = ['tipoImovelBemFisico', 'enderecoLocalizacaoFisico', 'documentacaoFisicoFile']; 
       }
     }
 
@@ -174,24 +171,20 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
       }
     }
     
-    // Validações específicas de preenchimento por etapa
     if (step === 1 && !form.getValues('tipo')) {
         setFormError("Selecione o tipo de ativo.");
         return false;
     }
-    if (step === 2 && (
-        !form.getValues('nomeAtivo').trim() || 
-        !form.getValues('dataAquisicao')
-        // 'observacoes' é opcional
-    )) {
+    if (step === 2 && (!form.getValues('nomeAtivo').trim() || !form.getValues('dataAquisicao'))) {
         setFormError("Nome e data de aquisição são obrigatórios.");
         return false;
     }
-     if (step === 3 && !form.getValues('quemComprou')) {
-        // Se quemComprou for "UNSPECIFIED_BUYER", está ok, pois é opcional
+     if (step === 3) {
+        // 'quemComprou' é opcional por padrão ("Não especificado").
+        // Se 'Ambos' for selecionado, as contribuições são opcionais, Zod valida o tipo se preenchido.
     }
      if (step === 4) {
-        if (assetType === 'digital' && (!form.getValues('tipoAtivoDigital') || !form.getValues('quantidadeDigital') || form.getValues('valorPagoEpocaDigital') === null || form.getValues('valorPagoEpocaDigital') === undefined) ) {
+        if (assetType === 'digital' && (!form.getValues('tipoAtivoDigital') || form.getValues('quantidadeDigital') === undefined || form.getValues('valorPagoEpocaDigital') === undefined) ) {
              setFormError("Para ativo digital, tipo, quantidade e valor no momento da compra são obrigatórios.");
              return false;
         }
@@ -200,7 +193,6 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
              return false;
         }
     }
-
 
     return true;
   };
@@ -225,7 +217,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <p className="text-sm text-center text-muted-foreground">Etapa {currentStep} de {TOTAL_STEPS}</p>
       
-      {currentStep === 1 && ( // Tipo de Ativo
+      {currentStep === 1 && ( 
         <div className="space-y-1.5">
           <Label htmlFor="tipo">Tipo de Ativo</Label>
           <Controller
@@ -247,7 +239,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         </div>
       )}
 
-      {currentStep === 2 && ( // Detalhes Principais
+      {currentStep === 2 && ( 
         <>
           <div className="space-y-1.5">
             <Label htmlFor="nomeAtivo">Nome do Ativo</Label>
@@ -291,13 +283,13 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="observacoes">Observações (Opcional)</Label>
-            <Textarea id="observacoes" {...form.register('observacoes')} placeholder="Alguma observação sobre o ativo..." disabled={isLoading} rows={3}/>
+            <Textarea id="observacoes" {...form.register('observacoes')} placeholder="Alguma observação sobre esta ação" disabled={isLoading} rows={3}/>
             {form.formState.errors.observacoes && <p className="text-sm text-destructive">{form.formState.errors.observacoes.message}</p>}
           </div>
         </>
       )}
 
-      {currentStep === 3 && ( // Propriedade e Contribuições
+      {currentStep === 3 && ( 
         <>
           <div className="space-y-1.5">
             <Label htmlFor="quemComprou">Quem Adquiriu o Ativo? (Opcional)</Label>
@@ -332,7 +324,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
             {form.formState.errors.quemComprou && <p className="text-sm text-destructive">{form.formState.errors.quemComprou.message}</p>}
           </div>
 
-          {quemComprou === 'Ambos' && (
+          {quemComprouWatch === 'Ambos' && (
             <div className="space-y-4 mt-4 p-4 border rounded-md bg-muted/30">
               <h4 className="text-md font-semibold text-primary">Detalhes da Contribuição (Opcional)</h4>
               <div className="space-y-1.5">
@@ -364,7 +356,7 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
         </>
       )}
       
-      {currentStep === 4 && ( // Detalhes Específicos do Ativo
+      {currentStep === 4 && ( 
         <>
           {assetType === 'digital' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30">
@@ -396,8 +388,8 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
                   {form.formState.errors.quantidadeDigital && <p className="text-sm text-destructive">{form.formState.errors.quantidadeDigital.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="valorPagoEpocaDigital">Valor do ativo no momento da compra (R$)</Label>
-                  <Input id="valorPagoEpocaDigital" type="number" {...form.register('valorPagoEpocaDigital')} placeholder="R$ 0,00" disabled={isLoading} step="0.01"/>
+                  <Label htmlFor="valorPagoEpocaDigital">Valor do ativo no momento da compra</Label>
+                  <Input id="valorPagoEpocaDigital" type="number" {...form.register('valorPagoEpocaDigital')} placeholder="0.00" disabled={isLoading} step="0.01"/>
                   {form.formState.errors.valorPagoEpocaDigital && <p className="text-sm text-destructive">{form.formState.errors.valorPagoEpocaDigital.message}</p>}
                 </div>
               </div>
@@ -458,3 +450,6 @@ export function AssetForm({ onSubmit, isLoading, initialData, onClose }: AssetFo
     </form>
   );
 }
+
+
+    
