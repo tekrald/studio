@@ -11,21 +11,23 @@ export default function MainAppLayout({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    }
-  }, [user, loading, router]);
+  // useEffect(() => { // Comentado - Lógica de proteção de rotas neste layout
+  //   if (!loading && !user) {
+  //     router.push('/login');
+  //   }
+  // }, [user, loading, router]);
 
-  if (loading || !user) {
+  if (loading) { // Mantém o loader se 'loading' for true (embora agora seja sempre false no AuthProvider)
     return (
       <div className="flex flex-col min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Carregando seu espaço de casamento...</p>
+        <p className="mt-4 text-muted-foreground">Carregando seu espaço...</p>
       </div>
     );
   }
 
+  // Se user for null, as páginas internas podem precisar lidar com isso.
+  // Por ora, permitimos a renderização.
   return (
     <div className="flex flex-col min-h-screen">
       <Header />

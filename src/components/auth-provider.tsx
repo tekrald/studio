@@ -34,37 +34,39 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const MOCK_USER_STORAGE_KEY = 'domedomeMockUser';
+// const MOCK_USER_STORAGE_KEY = 'domedomeMockUser'; // Comentado
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null); // Inicializa user como null
+  const [loading, setLoading] = useState(false); // Inicializa loading como false
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem(MOCK_USER_STORAGE_KEY);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser) as User);
-      }
-    } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem(MOCK_USER_STORAGE_KEY);
-    }
-    setLoading(false);
-  }, []);
+  // useEffect(() => { // Comentado - Leitura do localStorage
+  //   try {
+  //     const storedUser = localStorage.getItem(MOCK_USER_STORAGE_KEY);
+  //     if (storedUser) {
+  //       setUser(JSON.parse(storedUser) as User);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to parse user from localStorage", error);
+  //     localStorage.removeItem(MOCK_USER_STORAGE_KEY);
+  //   }
+  //   setLoading(false);
+  // }, []);
 
   const handleAuthChange = useCallback((newUser: User | null) => {
     setUser(newUser);
-    if (newUser) {
-      localStorage.setItem(MOCK_USER_STORAGE_KEY, JSON.stringify(newUser));
-    } else {
-      localStorage.removeItem(MOCK_USER_STORAGE_KEY);
-    }
+    // if (newUser) { // Comentado - Escrita no localStorage
+    //   localStorage.setItem(MOCK_USER_STORAGE_KEY, JSON.stringify(newUser));
+    // } else {
+    //   localStorage.removeItem(MOCK_USER_STORAGE_KEY);
+    // }
   }, []);
   
   const login = useCallback((email: string, name?: string) => {
+    console.log("AuthProvider: Mock login chamado com", email, name);
+    // Não define usuário real, apenas simula para evitar quebrar chamadas
     const mockUser: User = { 
       email, 
       uid: `mock-${email}`, 
@@ -74,11 +76,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       jurisdiction: '',
       notesForAccountant: '',
     };
-    handleAuthChange(mockUser);
-    router.push('/dashboard');
+    handleAuthChange(mockUser); // Pode definir um mock user se quiser testar partes que dependem dele
+    router.push('/dashboard'); // Ou para onde quiser após um "login" mock
   }, [handleAuthChange, router]);
 
   const signup = useCallback((email: string, name: string) => {
+    console.log("AuthProvider: Mock signup chamado com", email, name);
     const mockUser: User = { 
       email, 
       uid: `mock-${email}-signup`, 
@@ -93,6 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [handleAuthChange, router]);
 
   const logout = useCallback(() => {
+    console.log("AuthProvider: Logout chamado");
     handleAuthChange(null);
     router.push('/'); // Garante redirecionamento para a landing page
   }, [handleAuthChange, router]);
@@ -104,18 +108,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         ...data, 
       };
       handleAuthChange(updatedUser);
+      console.log("AuthProvider: Mock updateProfile chamado com", data);
+    } else {
+      console.log("AuthProvider: Mock updateProfile chamado, mas não há usuário para atualizar.");
     }
   }, [user, handleAuthChange]);
 
 
-  // Protected routes logic
-  useEffect(() => {
-    // Permite acesso a '/', '/login', '/signup' mesmo se não estiver logado.
-    // Redireciona para '/login' se tentar acessar outras rotas protegidas sem estar logado.
-    if (!loading && !user && !['/login', '/signup', '/'].includes(pathname)) {
-      router.push('/login');
-    }
-  }, [user, loading, pathname, router]);
+  // useEffect(() => { // Comentado - Lógica de proteção de rotas
+  //   if (loading) {
+  //     return;
+  //   }
+
+  //   const isAuthRoute = pathname === '/login' || pathname === '/signup';
+  //   const isPublicRoute = pathname === '/'; 
+
+  //   if (!user && !isAuthRoute && !isPublicRoute) {
+  //     router.push('/login');
+  //   } else if (user && isAuthRoute) {
+  //     router.push('/dashboard');
+  //   }
+  // }, [user, loading, pathname, router]);
 
 
   return (
