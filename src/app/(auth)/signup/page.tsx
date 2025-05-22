@@ -7,17 +7,20 @@ import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-// import { Textarea } from '@/components/ui/textarea'; // Removido pois não é mais usado aqui
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink, Users, BookOpen } from 'lucide-react';
 
-const TOTAL_STEPS = 5; 
+const TOTAL_STEPS = 6; 
 
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
   
+  const [religion, setReligion] = useState('');
+  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | 'other' | ''>('');
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +32,7 @@ export default function SignupPage() {
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
 
   const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
-  const [acknowledgedPhysicalInfo, setAcknowledgedPhysicalInfo] = useState(false); // Novo estado
+  const [acknowledgedPhysicalInfo, setAcknowledgedPhysicalInfo] = useState(false);
   
   const [acceptedContract, setAcceptedContract] = useState(false);
   
@@ -53,12 +56,18 @@ export default function SignupPage() {
 
   const validateStep = () => {
     setError(null);
-    if (currentStep === 1) {
+    if (currentStep === 1) { // Detalhes da União
+      if (!relationshipStructure) {
+        setError("Por favor, selecione a estrutura da relação.");
+        return false;
+      }
+      // Religião é opcional
+    } else if (currentStep === 2) { // Nome do Casal
       if (!name.trim()) {
         setError("Por favor, insira o nome do casal.");
         return false;
       }
-    } else if (currentStep === 2) {
+    } else if (currentStep === 3) { // Detalhes da Conta
       if (!email.trim() || !password || !confirmPassword) {
         setError("Por favor, preencha email, senha e confirmação de senha.");
         return false;
@@ -75,9 +84,9 @@ export default function SignupPage() {
         setError('A senha deve ter pelo menos 6 caracteres.');
         return false;
       }
-    } else if (currentStep === 3) {
+    } else if (currentStep === 4) { // Fotos do Casal
       // Upload de fotos é opcional
-    } else if (currentStep === 4) { 
+    } else if (currentStep === 5) { // Formalização da Holding
       if (!holdingType) {
         setError("Por favor, selecione como vocês pretendem estruturar a holding.");
         return false;
@@ -86,7 +95,7 @@ export default function SignupPage() {
         setError("Você deve confirmar que está ciente sobre a necessidade de consulta profissional para holding física/mista.");
         return false;
       }
-    } else if (currentStep === 5) { 
+    } else if (currentStep === 6) { // Termos e Condições
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos e Condições para continuar.');
         return false;
@@ -120,14 +129,30 @@ export default function SignupPage() {
     setError(null);
 
     try {
+      // Simulação de envio para o backend
       await new Promise(resolve => setTimeout(resolve, 1000)); 
-      signup(email, name, holdingType); // Passando holdingType
+      // A função signup atualmente não aceita religion ou relationshipStructure.
+      // Estes dados precisariam ser passados e tratados no AuthProvider e/ou backend.
+      signup(email, name, holdingType); 
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
     } finally {
       setIsLoading(false);
     }
   };
+  
+  const religionOptions = [
+    { value: "cristianismo", label: "Cristianismo" },
+    { value: "islamismo", label: "Islamismo" },
+    { value: "hinduismo", label: "Hinduísmo" },
+    { value: "budismo", label: "Budismo" },
+    { value: "judaismo", label: "Judaísmo" },
+    { value: "espiritismo", label: "Espiritismo" },
+    { value: "ateismo", label: "Ateísmo" },
+    { value: "agnosticismo", label: "Agnosticismo" },
+    { value: "outra", label: "Outra" },
+    { value: "nao_dizer", label: "Prefiro não dizer" },
+  ];
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-gray-100 to-[#f0f0f0] p-4">
@@ -136,12 +161,51 @@ export default function SignupPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
             <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority data-ai-hint="logo domedome" />
           </Link>
-          {/* CardTitle removido */}
-          <CardDescription className="text-lg">Siga as etapas para começar a planejar seu dia especial. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
+          <CardDescription className="text-lg">Siga as etapas para começar a construir seu futuro. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
-            {currentStep === 1 && (
+            {currentStep === 1 && ( // Detalhes da União
+              <div className="space-y-4">
+                <div>
+                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2"><Users size={20} className="mr-2 text-primary" />Estrutura da Relação</Label>
+                    <RadioGroup 
+                        value={relationshipStructure} 
+                        onValueChange={(value: 'monogamous' | 'polygamous' | 'other' | '') => setRelationshipStructure(value)} 
+                        className="space-y-2"
+                        disabled={isLoading}
+                    >
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="monogamous" id="rel-monogamous" />
+                            <Label htmlFor="rel-monogamous" className="font-normal">Monogâmica</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="polygamous" id="rel-polygamous" />
+                            <Label htmlFor="rel-polygamous" className="font-normal">Poligâmica</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="other" id="rel-other" />
+                            <Label htmlFor="rel-other" className="font-normal">Outra</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                <div>
+                    <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2"><BookOpen size={20} className="mr-2 text-primary" />Religião / Crença Espiritual (Opcional)</Label>
+                    <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
+                        <SelectTrigger id="religion">
+                            <SelectValue placeholder="Selecione uma opção" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {religionOptions.map(opt => (
+                                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+              </div>
+            )}
+
+            {currentStep === 2 && ( // Nome do Casal
               <div className="space-y-2">
                 <Label htmlFor="name">Nome do Casal (ex: Alex & Jamie)</Label>
                 <Input
@@ -152,12 +216,11 @@ export default function SignupPage() {
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
                   autoFocus
-                  className="font-lato"
                 />
               </div>
             )}
 
-            {currentStep === 2 && (
+            {currentStep === 3 && ( // Detalhes da Conta
               <>
                 <div className="space-y-2">
                   <Label htmlFor="email">Endereço de Email Compartilhado</Label>
@@ -169,7 +232,6 @@ export default function SignupPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
                     autoFocus
-                    className="font-lato"
                   />
                 </div>
                 <div className="space-y-2">
@@ -180,7 +242,6 @@ export default function SignupPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
-                    className="font-lato"
                   />
                    <p className="text-xs text-muted-foreground">Mínimo 6 caracteres.</p>
                 </div>
@@ -192,15 +253,14 @@ export default function SignupPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
-                    className="font-lato"
                   />
                 </div>
               </>
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 4 && ( // Fotos do Casal
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Adicione fotos que representem vocês como casal (opcional).</p>
+                <p className="text-sm text-muted-foreground">Adicione fotos que representem vocês como união (opcional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <div className="space-y-2">
                     <Label htmlFor="photo1">Foto 1</Label>
@@ -240,7 +300,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 4 && ( 
+            {currentStep === 5 && ( // Formalização da Holding
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center"><Briefcase size={20} className="mr-2 text-primary" />Formalização da Holding Familiar</Label>
                 <CardDescription>Como vocês pretendem estruturar a holding para seus ativos?</CardDescription>
@@ -299,7 +359,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 5 && ( 
+            {currentStep === 6 && ( // Termos e Condições
               <div className="space-y-4">
                 <Label className="text-lg font-semibold">Termos e Condições do Aplicativo</Label>
                 <div className="p-4 border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm">
@@ -370,5 +430,6 @@ export default function SignupPage() {
 
 
     
+
 
 
