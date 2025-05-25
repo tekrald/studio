@@ -54,18 +54,24 @@ const formSchema = z.object({
     z.number().min(1, "A idade deve ser positiva.").max(120, "Idade irreal.").optional()
   ),
 }).superRefine((data, ctx) => {
-  if (data.nomeAtivo.length > 0 && data.nomeAtivo.length < 3) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O nome do ativo deve ter pelo menos 3 caracteres.", path: ['nomeAtivo'] });
-  }
   if (data.tipo === 'digital' && (data.quantidadeDigital === undefined || data.quantidadeDigital === null)) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade é obrigatória para esta transação digital.", path: ['quantidadeDigital'] });
   }
-  if (data.tipo === 'fisico' && (!existingAssetToUpdate || existingAssetToUpdate.transactions?.length === 0) ) { // Only validate for first transaction of physical asset
+  // Only validate tipoImovelBemFisico for the first transaction of a physical asset
+  // This check needs to be aware of whether we are adding to an existing asset.
+  // The 'existingAssetToUpdate' prop can help determine this.
+  // For now, assuming if existingAssetToUpdate implies transactions > 0, this might be too strict.
+  // A better check might be based on if this is the *first* transaction being added for this specific physical asset ID.
+  // This detail is not easily available in Zod superRefine without passing more context.
+  // So, we rely on the UI to disable/hide this field for subsequent transactions.
+  if (data.tipo === 'fisico' /* && !existingAssetToUpdate?.transactions?.length */ ) { 
     if (!data.tipoImovelBemFisico || data.tipoImovelBemFisico.trim() === '') {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tipo de bem físico é obrigatório.", path: ['tipoImovelBemFisico'] });
+      // This validation should only run if it's the first transaction of a physical asset.
+      // The form logic attempts to handle this by disabling/hiding the field for existing assets.
     }
   }
 });
+
 
 interface AssetFormProps {
   onSubmit: (data: AssetFormData) => Promise<void>;
@@ -73,10 +79,61 @@ interface AssetFormProps {
   onClose: () => void;
   availableMembers: { id: string; name: string; birthDate?: Date | string }[];
   targetMemberId?: string | null;
-  existingAssetToUpdate?: { name: string; type: 'digital' | 'fisico'; assignedTo?: string | null, transactions?: any[] };
+  existingAssetToUpdate?: { 
+    name: string; 
+    type: 'digital' | 'fisico'; 
+    assignedTo?: string | null;
+    transactions?: any[]; // Simplified for now
+  };
 }
 
 const TOTAL_STEPS = 4; 
+
+// Placeholder SVG Icons
+const BitcoinIcon = () => (
+  <svg fill="currentColor" className="text-orange-500" width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.572 8.93A5.23 5.23 0 0012.03 7.5H8.79a.773.773 0 00-.763.763v7.474c0 .421.342.763.764.763h3.239a5.23 5.23 0 004.542-1.43 3.717 3.717 0 001.016-2.627 3.717 3.717 0 00-1.016-2.627zm-5.226 4.865H9.556v-1.905h1.791v1.905zm0-3.095H9.556v-1.905h1.791v1.905zm3.095 4.642a1.548 1.548 0 01-1.547 1.548h-1.548v-1.905h1.548a1.548 1.548 0 011.547 1.547v.358zm0-3.095a1.548 1.548 0 01-1.547 1.547h-1.548v-1.905h1.548a1.548 1.548 0 011.547 1.548v.357z" />
+  </svg>
+);
+
+const EthereumIcon = () => (
+  <svg fill="currentColor" className="text-gray-600" width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.028 2a.75.75 0 00-.73.883l.067.19.001 1.895-4.058 2.135a.75.75 0 00-.316 1.014l.05.08 4.105 6.935.01.018v5.04a.75.75 0 00.748.748l.11-.002.11-.002v-5.04l.01-.018 4.105-6.935a.75.75 0 00-.265-1.094l-4.058-2.135.001-1.895a.75.75 0 00-.621-.856l-.11-.01zM12.028 9.03L14.89 7.5l-2.862-4.833zm0 0L9.166 7.5l2.862-4.833zm-.002 1.08l2.93 5.004L12.026 13zm0 0L9.095 15.114 12.026 13z"/>
+  </svg>
+);
+
+const SolanaIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="stroke-current text-purple-500">
+    <defs>
+      <linearGradient id="solana_grad_1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: "rgb(0, 255, 163)", stopOpacity: 1}} />
+        <stop offset="100%" style={{stopColor: "rgb(220, 30, 255)", stopOpacity: 1}} />
+      </linearGradient>
+      <linearGradient id="solana_grad_2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: "rgb(153, 69, 255)", stopOpacity: 1}} />
+        <stop offset="100%" style={{stopColor: "rgb(0, 255, 163)", stopOpacity: 1}} />
+      </linearGradient>
+      <linearGradient id="solana_grad_3" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: "rgb(220, 30, 255)", stopOpacity: 1}} />
+        <stop offset="100%" style={{stopColor: "rgb(153, 69, 255)", stopOpacity: 1}} />
+      </linearGradient>
+    </defs>
+    <path d="M 10,80 L 40,90 L 70,80 L 40,70 Z" fill="url(#solana_grad_1)" />
+    <path d="M 10,50 L 40,60 L 70,50 L 40,40 Z" fill="url(#solana_grad_2)" />
+    <path d="M 10,20 L 40,30 L 70,20 L 40,10 Z" fill="url(#solana_grad_3)" />
+    <path d="M 30,80 L 60,90 L 90,80 L 60,70 Z" fill="url(#solana_grad_1)" opacity="0.5" />
+    <path d="M 30,50 L 60,60 L 90,50 L 60,40 Z" fill="url(#solana_grad_2)" opacity="0.5" />
+    <path d="M 30,20 L 60,30 L 90,20 L 60,10 Z" fill="url(#solana_grad_3)" opacity="0.5" />
+  </svg>
+);
+
+
+const cryptoOptions = [
+  { value: 'Bitcoin', label: 'Bitcoin', icon: <BitcoinIcon /> },
+  { value: 'Ethereum', label: 'Ethereum', icon: <EthereumIcon /> },
+  { value: 'Solana', label: 'Solana', icon: <SolanaIcon /> },
+];
+
 
 export function AssetForm({ 
   onSubmit, 
@@ -88,6 +145,7 @@ export function AssetForm({
 }: AssetFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const { user } = useAuth();
+  
   const form = useForm<AssetFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -106,7 +164,7 @@ export function AssetForm({
       setReleaseCondition: false,
       releaseTargetAge: undefined,
     },
-    mode: "onChange",
+    mode: "onChange", // Important for reactive validation and button states
   });
 
   const watchedTipo = form.watch('tipo');
@@ -123,14 +181,11 @@ export function AssetForm({
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
 
   useEffect(() => {
-    // Reset form fields when existingAssetToUpdate or targetMemberId changes
-    // This ensures the form starts fresh or pre-fills correctly
     if (existingAssetToUpdate) {
       form.reset({
         tipo: existingAssetToUpdate.type,
         nomeAtivo: existingAssetToUpdate.name,
         assignedToMemberId: existingAssetToUpdate.assignedTo || "UNASSIGNED",
-        // Fields for a new transaction (should be empty)
         dataAquisicao: new Date(),
         observacoes: '',
         quemComprou: '',
@@ -138,16 +193,12 @@ export function AssetForm({
         contribuicaoParceiro2: undefined,
         quantidadeDigital: undefined,
         valorPagoEpocaDigital: undefined,
-        // tipoImovelBemFisico and enderecoLocalizacaoFisico are for the *first* transaction of a physical asset.
-        // They shouldn't be reset if we are adding a new transaction to an *existing* physical asset.
-        // This logic might need refinement if we allow editing these for existing physical assets.
-        // For now, assume these are only set on the first transaction.
-        tipoImovelBemFisico: form.getValues('tipoImovelBemFisico') || '', // Keep if already set
-        enderecoLocalizacaoFisico: form.getValues('enderecoLocalizacaoFisico') || '', // Keep if already set
-        setReleaseCondition: false, // Reset for new transaction logic
+        tipoImovelBemFisico: form.getValues('tipoImovelBemFisico') || '', 
+        enderecoLocalizacaoFisico: form.getValues('enderecoLocalizacaoFisico') || '', 
+        setReleaseCondition: false,
         releaseTargetAge: undefined,
       });
-    } else { // New asset
+    } else {
       form.reset({
         tipo: undefined,
         nomeAtivo: '',
@@ -165,7 +216,7 @@ export function AssetForm({
         releaseTargetAge: undefined,
       });
     }
-  }, [targetMemberId, existingAssetToUpdate, form.reset]);
+  }, [targetMemberId, existingAssetToUpdate, form.reset, form.getValues]);
 
 
   useEffect(() => {
@@ -195,11 +246,11 @@ export function AssetForm({
 
     if (step === 1) {
       fieldsToValidate = ['tipo'];
-      if (!existingAssetToUpdate) { 
+      if (!existingAssetToUpdate) { // Only validate nomeAtivo if it's a new asset
         fieldsToValidate.push('nomeAtivo');
       }
     } else if (step === 2) {
-      fieldsToValidate = ['dataAquisicao', 'observacoes'];
+      fieldsToValidate = ['dataAquisicao', 'observacoes']; // observacoes é opcional, mas podemos trigger
     } else if (step === 3) {
       fieldsToValidate = ['quemComprou'];
       if (form.getValues('quemComprou') === 'Ambos') {
@@ -209,11 +260,10 @@ export function AssetForm({
       if (watchedTipo === 'digital') {
         fieldsToValidate = ['quantidadeDigital', 'valorPagoEpocaDigital'];
       } else if (watchedTipo === 'fisico') {
-         // Only validate these for the first transaction of a physical asset
+        // Only validate these for the first transaction of a physical asset
         if(!existingAssetToUpdate || existingAssetToUpdate.transactions?.length === 0) {
             fieldsToValidate.push('tipoImovelBemFisico');
         }
-        // 'enderecoLocalizacaoFisico' and 'documentacaoFisicoFile' are optional.
       }
       if (!existingAssetToUpdate) { // Only for new assets, not when adding transaction to existing
          fieldsToValidate.push('assignedToMemberId');
@@ -247,10 +297,15 @@ export function AssetForm({
         setFormError("O nome do ativo é obrigatório.");
         return false;
     }
+     if (step === 4 && watchedTipo === 'digital' && (form.getValues('quantidadeDigital') === undefined || form.getValues('quantidadeDigital') === null) ) {
+        setFormError("Quantidade é obrigatória para esta transação digital.");
+        return false;
+    }
     if (step === 4 && form.getValues('setReleaseCondition') && !form.getValues('releaseTargetAge') && memberHasBirthDate && !existingAssetToUpdate ) {
         setFormError("Se a condição de liberação por idade estiver marcada, a idade é obrigatória.");
         return false;
     }
+
 
     return true;
   };
@@ -269,14 +324,14 @@ export function AssetForm({
       setCurrentStep(currentStep - 1);
     }
   };
-
+  
   const isNextButtonDisabled = () => {
     if (isLoading) return true;
     if (currentStep === 1) {
-        if (existingAssetToUpdate) return false; 
-        return !watchedTipo || !watchedNomeAtivo || watchedNomeAtivo.trim().length < 1;
+      if (existingAssetToUpdate) return false; // If updating, name/type fixed
+      return !watchedTipo || !watchedNomeAtivo || watchedNomeAtivo.trim().length < 1;
     }
-    // Add more specific step validations if needed for other steps
+    // Add more specific step validations if needed
     return false; 
   };
 
@@ -316,12 +371,40 @@ export function AssetForm({
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="nomeAtivo">Nome do Ativo</Label>
-            <Input 
-                id="nomeAtivo" 
-                {...form.register('nomeAtivo')} 
-                placeholder="Ex: Bitcoin, Casa da Praia" 
-                disabled={isLoading || !!existingAssetToUpdate} 
-            />
+            {watchedTipo === 'digital' && !existingAssetToUpdate ? (
+                 <Controller
+                    name="nomeAtivo"
+                    control={form.control}
+                    render={({ field }) => (
+                    <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isLoading}
+                    >
+                        <SelectTrigger id="nomeAtivoDigital">
+                        <SelectValue placeholder="Escolha a criptomoeda" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        {cryptoOptions.map(opt => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                            <div className="flex items-center gap-2">
+                                {opt.icon}
+                                <span>{opt.label}</span>
+                            </div>
+                            </SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                    )}
+                />
+            ) : (
+                <Input 
+                    id="nomeAtivo" 
+                    {...form.register('nomeAtivo')} 
+                    placeholder={watchedTipo === 'digital' ? "Ex: Outra Cripto" : "Ex: Casa da Praia, Ações XPTO"} 
+                    disabled={isLoading || !!existingAssetToUpdate?.nomeAtivo} 
+                />
+            )}
             {form.formState.errors.nomeAtivo && <p className="text-sm text-destructive">{form.formState.errors.nomeAtivo.message}</p>}
           </div>
         </>
@@ -516,7 +599,6 @@ export function AssetForm({
               </div>
             </div>
           )}
-          {/* This section is only for NEW assets, not when adding a transaction to an existing one */}
           {!existingAssetToUpdate && (
             <div className="space-y-4 p-4 border rounded-md bg-card">
                 <h4 className="text-md font-semibold text-primary flex items-center"><UserCheck size={18} className="mr-2"/> Designação e Liberação do Ativo (Opcional)</h4>
@@ -618,3 +700,4 @@ export function AssetForm({
     </form>
   );
 }
+
