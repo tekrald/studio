@@ -42,7 +42,7 @@ const formSchema = z.object({
   ),
   tipoImovelBemFisico: z.string().optional(),
   enderecoLocalizacaoFisico: z.string().optional(),
-  documentacaoFisicoFile: z.any().optional(), // Validação mais robusta seria ideal aqui
+  documentacaoFisicoFile: z.any().optional(),
   assignedToMemberId: z.string().optional().nullable(),
   setReleaseCondition: z.boolean().optional(),
   releaseTargetAge: z.preprocess(
@@ -53,17 +53,17 @@ const formSchema = z.object({
   if (data.tipo === 'digital' && (data.quantidadeDigital === undefined || data.quantidadeDigital === null)) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Quantidade é obrigatória para esta transação digital.", path: ['quantidadeDigital'] });
   }
-  if (data.tipo === 'fisico' && !data.existingAssetToUpdate) { // Apenas para novo ativo físico
+  if (data.tipo === 'fisico' && !data.existingAssetToUpdate) { 
     if (!data.tipoImovelBemFisico || data.tipoImovelBemFisico.trim() === '') {
-      // ctx.addIssue({ code: z.ZodIssueCode.custom, message: "O tipo de bem físico é obrigatório.", path: ['tipoImovelBemFisico'] });
+      // Considerado opcional, ou preenchido automaticamente se for uma transação para ativo existente.
     }
   }
    if (data.setReleaseCondition && (data.releaseTargetAge === undefined || data.releaseTargetAge === null) && data.assignedToMemberId && data.memberHasBirthDate) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'A idade de liberação é obrigatória se a condição estiver marcada.', path: ['releaseTargetAge'] });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'A idade de liberação é obrigatória se a condição estiver marcada e o membro tiver data de nascimento.', path: ['releaseTargetAge'] });
   }
 }).transform(data => ({
   ...data,
-  existingAssetToUpdate: undefined, // Remover campos auxiliares antes de submeter
+  existingAssetToUpdate: undefined, 
   memberHasBirthDate: undefined
 }));
 
@@ -78,7 +78,7 @@ interface AssetFormProps {
     name: string;
     type: 'digital' | 'fisico';
     assignedTo?: string | null;
-    transactions?: any[]; // Simplificado, idealmente seria AssetTransaction[]
+    transactions?: any[]; 
   };
 }
 
@@ -161,7 +161,7 @@ export function AssetForm({
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
 
-  useEffect(() => {
+ useEffect(() => {
     const initialValues: Partial<AssetFormData> = {
       dataAquisicao: new Date(),
       observacoes: '',
@@ -181,12 +181,12 @@ export function AssetForm({
       initialValues.enderecoLocalizacaoFisico = existingAssetToUpdate.type === 'fisico' && existingAssetToUpdate.transactions?.length ? (existingAssetToUpdate.transactions[0] as any).enderecoLocalizacaoFisico || '' : '';
       initialValues.assignedToMemberId = existingAssetToUpdate.assignedTo || "UNASSIGNED";
     } else if (targetMemberId) {
-      initialValues.tipo = undefined; // Forçar seleção do tipo
-      initialValues.nomeAtivo = ''; // Forçar entrada do nome
+      initialValues.tipo = undefined;
+      initialValues.nomeAtivo = ''; 
       initialValues.assignedToMemberId = targetMemberId;
       initialValues.tipoImovelBemFisico = '';
       initialValues.enderecoLocalizacaoFisico = '';
-    } else {
+    } else { // Novo ativo, não direcionado a membro específico inicialmente
       initialValues.tipo = undefined;
       initialValues.nomeAtivo = '';
       initialValues.assignedToMemberId = "UNASSIGNED";
@@ -194,8 +194,8 @@ export function AssetForm({
       initialValues.enderecoLocalizacaoFisico = '';
     }
     form.reset(initialValues);
-    setCurrentStep(1); // Sempre resetar para a primeira etapa ao abrir/mudar contexto
-  }, [targetMemberId, existingAssetToUpdate, form.reset]);
+    setCurrentStep(1);
+  }, [targetMemberId, existingAssetToUpdate, form]);
 
 
   useEffect(() => {
@@ -212,9 +212,16 @@ export function AssetForm({
 
   useEffect(() => {
     const fetchPrice = async () => {
-      if (watchedTipo === 'digital' && watchedNomeAtivo && watchedDataAquisicao && isValid(new Date(watchedDataAquisicao)) && cryptoOptions.some(opt => opt.value === watchedNomeAtivo)) {
+      const shouldFetch = watchedTipo === 'digital' && 
+                          watchedNomeAtivo && 
+                          watchedDataAquisicao && 
+                          isValid(new Date(watchedDataAquisicao)) && 
+                          cryptoOptions.some(opt => opt.value === watchedNomeAtivo) &&
+                          !existingAssetToUpdate; // Only fetch for new assets, not when adding a transaction to existing
+
+      if (shouldFetch) {
         setIsFetchingPrice(true);
-        form.setValue('valorPagoEpocaDigital', undefined); // Clear previous value
+        form.setValue('valorPagoEpocaDigital', undefined);
 
         try {
           const dateString = format(new Date(watchedDataAquisicao), 'yyyy-MM-dd');
@@ -223,8 +230,6 @@ export function AssetForm({
           if (!response.ok) {
             const errorData = await response.json();
             console.error("Erro ao buscar preço da API:", errorData.error || response.statusText);
-            // Não definir preço, deixar o usuário preencher ou tentar novamente.
-            // Ou pode-se mostrar um toast de erro aqui.
           } else {
             const data = await response.json();
             if (data.price !== undefined) {
@@ -233,14 +238,13 @@ export function AssetForm({
           }
         } catch (error) {
           console.error("Falha ao conectar à API de preço:", error);
-          // Lidar com erro de rede
         } finally {
           setIsFetchingPrice(false);
         }
       }
     };
     fetchPrice();
-  }, [watchedTipo, watchedNomeAtivo, watchedDataAquisicao, form]);
+  }, [watchedTipo, watchedNomeAtivo, watchedDataAquisicao, form, existingAssetToUpdate]);
 
 
   const handleFormSubmit = async (values: AssetFormData) => {
@@ -259,9 +263,9 @@ export function AssetForm({
 
     if (step === 1) {
       fieldsToValidate = ['tipo'];
-      if (!existingAssetToUpdate) {
-        fieldsToValidate.push('nomeAtivo');
-      }
+       if (!existingAssetToUpdate) { // Only validate nomeAtivo if it's a new asset
+         fieldsToValidate.push('nomeAtivo');
+       }
     } else if (step === 2) {
       fieldsToValidate = ['dataAquisicao', 'observacoes'];
     } else if (step === 3) {
@@ -277,10 +281,9 @@ export function AssetForm({
            fieldsToValidate.push('tipoImovelBemFisico');
          }
       }
-       // Validação para 'assignedToMemberId' e 'releaseTargetAge' acontece se não for atualização
       if (!existingAssetToUpdate) {
         fieldsToValidate.push('assignedToMemberId');
-        if (currentValues.setReleaseCondition && memberHasBirthDate) { // Adicionado memberHasBirthDate aqui
+        if (currentValues.setReleaseCondition && memberHasBirthDate) {
           fieldsToValidate.push('releaseTargetAge');
         }
       }
@@ -301,7 +304,6 @@ export function AssetForm({
         return false;
       }
     }
-    // Validações manuais para garantir
     if (step === 1 && !currentValues.tipo) {
         setFormError("Selecione o tipo de ativo."); return false;
     }
@@ -337,6 +339,7 @@ export function AssetForm({
     if (isSubmittingForm || isFetchingPrice) return true;
     if (currentStep === 1) {
         if (existingAssetToUpdate) return !watchedTipo;
+        if (watchedTipo === 'digital') return !watchedTipo || !watchedNomeAtivo; // For digital, watchedNomeAtivo is from select
         return !watchedTipo || !watchedNomeAtivo || watchedNomeAtivo.trim().length < 1;
     }
     return false;
@@ -410,7 +413,7 @@ export function AssetForm({
             </div>
           )}
 
-         {(watchedTipo === 'fisico' || (existingAssetToUpdate && watchedTipo === 'fisico')) && !cryptoOptions.map(o => o.value).includes(watchedNomeAtivo || '') && (
+         {watchedTipo === 'fisico' && !existingAssetToUpdate && (
             <div className="space-y-1.5">
                 <Label htmlFor="nomeAtivoFisicoInput">Nome do Ativo</Label>
                 <Input
@@ -423,17 +426,15 @@ export function AssetForm({
             </div>
           )}
 
-          {existingAssetToUpdate && cryptoOptions.map(o => o.value).includes(existingAssetToUpdate.name) && watchedTipo === 'digital' && (
+          {existingAssetToUpdate && (
              <div className="space-y-1.5">
-                <Label htmlFor="nomeAtivoExistenteCrypto">Criptomoeda</Label>
+                <Label htmlFor="nomeAtivoExistente">Nome do Ativo</Label>
                 <div className="flex items-center gap-2 p-2 border rounded-md bg-muted/50 h-10">
-                    {cryptoOptions.find(opt => opt.value === existingAssetToUpdate.name)?.icon}
+                    {existingAssetToUpdate.type === 'digital' && cryptoOptions.find(opt => opt.value === existingAssetToUpdate.name)?.icon}
                     <span>{existingAssetToUpdate.name}</span>
                 </div>
             </div>
           )}
-
-
         </>
       )}
 
@@ -592,7 +593,7 @@ export function AssetForm({
                      {isFetchingPrice && <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />}
                   </div>
                   <Input id="valorPagoEpocaDigital" type="number" {...form.register('valorPagoEpocaDigital')} placeholder="Ex: 150.75" disabled={isSubmittingForm || isFetchingPrice} step="any" />
-                   <p className="text-xs text-muted-foreground">Preço populado automaticamente. Você pode ajustar este valor.</p>
+                   <p className="text-xs text-muted-foreground">Preço populado automaticamente (simulação). Você pode ajustar.</p>
                   {form.formState.errors.valorPagoEpocaDigital && <p className="text-sm text-destructive">{form.formState.errors.valorPagoEpocaDigital.message}</p>}
                 </div>
               </div>
@@ -724,7 +725,16 @@ export function AssetForm({
 
         {currentStep < TOTAL_STEPS ? (
           <Button type="button" onClick={handleNextStep} disabled={isNextButtonDisabled()}>
-            Próximo <ArrowRight className="ml-2 h-4 w-4" />
+            {isFetchingPrice ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Buscando...
+              </>
+            ) : (
+              <>
+                Próximo <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         ) : (
           <Button type="submit" disabled={isSubmittingForm || isFetchingPrice}>
@@ -736,3 +746,4 @@ export function AssetForm({
     </form>
   );
 }
+
