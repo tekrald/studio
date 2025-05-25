@@ -16,6 +16,47 @@ const SYMBOL_MAP: { [key: string]: string } = {
   'Solana': 'SOL',
 };
 
+async function fetchPriceFromCMC(cmcSymbol: string, dateString: string, currency: 'BRL' | 'USD', apiKey: string) {
+  const apiUrl = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/historical?symbol=${cmcSymbol}&time_start=${dateString}&time_end=${dateString}&count=1&interval=daily&convert=${currency}`;
+  
+  try {
+    const cmcResponse = await fetch(apiUrl, {
+      headers: {
+        'X-CMC_PRO_API_KEY': apiKey,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!cmcResponse.ok) {
+      const errorData = await cmcResponse.json().catch(() => ({ status: { error_message: 'Failed to parse error from CMC' } }));
+      console.error(`Erro da API CoinMarketCap ao buscar em ${currency}:`, errorData);
+      return { success: false, error: `Falha ao buscar preço (${currency}) da API externa.`, details: errorData.status?.error_message || 'Erro desconhecido da CMC', status: cmcResponse.status };
+    }
+
+    const data = await cmcResponse.json();
+    const quotes = data?.data?.[cmcSymbol]?.[0]?.quotes;
+    
+    if (!quotes || quotes.length === 0) {
+      console.warn(`Resposta da API CoinMarketCap (para ${currency}) não contém cotações:`, data);
+      return { success: false, error: `Preço em ${currency} não encontrado para a data ou símbolo na resposta da API.` , details: `No quotes found for ${cmcSymbol} on ${dateString} in ${currency}.`};
+    }
+    
+    const priceInSelectedCurrency = quotes[0]?.quote?.[currency]?.price;
+
+    if (priceInSelectedCurrency === undefined || priceInSelectedCurrency === null) {
+      console.warn(`Preço em ${currency} não encontrado na cotação:`, quotes[0]);
+      return { success: false, error: `Preço em ${currency} não encontrado para a data ou símbolo.` };
+    }
+
+    return { success: true, price: parseFloat(priceInSelectedCurrency.toFixed(2)), currency };
+
+  } catch (error) {
+    console.error(`Erro ao buscar preço da CoinMarketCap (${currency}):`, error);
+    // @ts-ignore
+    return { success: false, error: `Erro interno ao buscar preço (${currency}).`, details: error.message, status: 500 };
+  }
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const symbolName = searchParams.get('symbol');
@@ -36,57 +77,30 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: `Símbolo da moeda não mapeado: ${symbolName}` }, { status: 400 });
   }
 
-  // Format date just to be sure, though it should come as YYYY-MM-DD
   let formattedDate;
   try {
-    formattedDate = format(new Date(dateString + 'T00:00:00Z'), 'yyyy-MM-dd'); // Ensure UTC interpretation
+    // Ensure the date is treated as UTC to avoid timezone shifts when selecting "a day"
+    const dateObj = new Date(dateString + 'T00:00:00Z');
+    if (isNaN(dateObj.getTime())) throw new Error('Invalid date object');
+    formattedDate = format(dateObj, 'yyyy-MM-dd');
   } catch (e) {
-    return NextResponse.json({ error: 'Formato de data inválido.' }, { status: 400 });
+    console.error("Erro ao formatar data:", e);
+    return NextResponse.json({ error: 'Formato de data inválido. Use YYYY-MM-DD.' }, { status: 400 });
   }
 
-  // CoinMarketCap API URL for historical quotes
-  // We aim for the closing price of the specified day.
-  // CMC API needs the date for time_start or time_end.
-  // Using interval=daily should give one quote for the day.
-  const apiUrl = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/historical?symbol=${cmcSymbol}&time_start=${formattedDate}&time_end=${formattedDate}&count=1&interval=daily&convert=BRL`;
-  
-  try {
-    const cmcResponse = await fetch(apiUrl, {
-      headers: {
-        'X-CMC_PRO_API_KEY': apiKey,
-        'Accept': 'application/json',
-      },
-    });
+  // Try fetching in BRL first
+  let result = await fetchPriceFromCMC(cmcSymbol, formattedDate, 'BRL', apiKey);
 
-    if (!cmcResponse.ok) {
-      const errorData = await cmcResponse.json();
-      console.error('Erro da API CoinMarketCap:', errorData);
-      return NextResponse.json({ error: 'Falha ao buscar preço da API externa.', details: errorData.status?.error_message || 'Erro desconhecido da CMC' }, { status: cmcResponse.status });
-    }
+  // If BRL fetch failed or didn't find a BRL price, try USD
+  if (!result.success || result.price === undefined) {
+    console.log(`Preço em BRL não encontrado para ${cmcSymbol} em ${formattedDate}. Tentando USD.`);
+    result = await fetchPriceFromCMC(cmcSymbol, formattedDate, 'USD', apiKey);
+  }
 
-    const data = await cmcResponse.json();
-
-    // Extract the price in BRL
-    // The structure is data.data[SYMBOL].quotes[0].quote.BRL.price
-    const quotes = data?.data?.[cmcSymbol]?.[0]?.quotes; // CMC v2 returns symbol in data object directly with array of quotes
-    if (!quotes || quotes.length === 0) {
-      console.error('Resposta da API CoinMarketCap não contém cotações:', data);
-      return NextResponse.json({ error: 'Preço não encontrado para a data ou símbolo especificado na resposta da API.' }, { status: 404 });
-    }
-    
-    // Assuming the first quote in the array is for the requested day
-    const priceInBRL = quotes[0]?.quote?.BRL?.price;
-
-    if (priceInBRL === undefined || priceInBRL === null) {
-      console.error('Preço em BRL não encontrado na cotação:', quotes[0]);
-      return NextResponse.json({ error: 'Preço em BRL não encontrado para a data ou símbolo especificado.' }, { status: 404 });
-    }
-
-    return NextResponse.json({ price: parseFloat(priceInBRL.toFixed(2)), currency: 'BRL' });
-
-  } catch (error) {
-    console.error('Erro ao buscar preço da CoinMarketCap:', error);
-    // @ts-ignore
-    return NextResponse.json({ error: 'Erro interno ao buscar preço.', details: error.message }, { status: 500 });
+  if (result.success && result.price !== undefined) {
+    return NextResponse.json({ price: result.price, currency: result.currency });
+  } else {
+    // If both attempts fail, return the last error
+    return NextResponse.json({ error: result.error, details: result.details }, { status: result.status || 500 });
   }
 }

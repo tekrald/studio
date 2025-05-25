@@ -122,11 +122,12 @@ export function AssetForm({
   const [currentStep, setCurrentStep] = useState(1);
   const { user } = useAuth();
   const [isFetchingPrice, setIsFetchingPrice] = useState(false);
+  const [fetchedPriceCurrency, setFetchedPriceCurrency] = useState<'BRL' | 'USD' | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
 
-  const assignedToMemberIdWatch = useForm().watch('assignedToMemberId'); // Temp form instance for watch before main form is created
+  const assignedToMemberIdWatch = useForm().watch('assignedToMemberId'); 
   const selectedMemberForRelease = availableMembers.find(m => m.id === assignedToMemberIdWatch);
   const memberHasBirthDateForSchema = !!selectedMemberForRelease?.birthDate;
 
@@ -157,7 +158,7 @@ export function AssetForm({
   const watchedNomeAtivo = form.watch('nomeAtivo');
   const watchedDataAquisicao = form.watch('dataAquisicao');
   const quemComprouWatch = form.watch('quemComprou');
-  const currentAssignedToMemberId = form.watch('assignedToMemberId'); // Use this for reactivity inside the component
+  const currentAssignedToMemberId = form.watch('assignedToMemberId');
   const setReleaseConditionWatch = form.watch('setReleaseCondition');
 
   const actualSelectedMember = availableMembers.find(m => m.id === currentAssignedToMemberId);
@@ -177,7 +178,7 @@ export function AssetForm({
       valorPagoEpocaDigital: undefined,
       tipoImovelBemFisico: '',
       enderecoLocalizacaoFisico: '',
-      assignedToMemberId: targetMemberId || undefined, // Pre-fill if targetMemberId is provided
+      assignedToMemberId: targetMemberId || undefined,
       setReleaseCondition: false,
       releaseTargetAge: undefined,
     };
@@ -188,21 +189,16 @@ export function AssetForm({
       initialValues.tipoImovelBemFisico = existingAssetToUpdate.type === 'fisico' && existingAssetToUpdate.transactions?.length ? (existingAssetToUpdate.transactions[0] as any).tipoImovelBemFisico || '' : '';
       initialValues.enderecoLocalizacaoFisico = existingAssetToUpdate.type === 'fisico' && existingAssetToUpdate.transactions?.length ? (existingAssetToUpdate.transactions[0] as any).enderecoLocalizacaoFisico || '' : '';
       initialValues.assignedToMemberId = existingAssetToUpdate.assignedTo || undefined;
+      setCurrentStep(2); // Skip to data for existing asset transaction
     } else if (targetMemberId) {
-       // This case is handled by defaultValues now
+      form.reset(initialValues); // Reset with targetMemberId pre-filled
+      setCurrentStep(1);
     } else {
-      // Reset for a completely new asset not tied to a member initially
-      initialValues.assignedToMemberId = undefined;
+      form.reset(initialValues); // Reset for a completely new asset
+      setCurrentStep(1);
     }
-    
-    form.reset(initialValues);
-    if (!existingAssetToUpdate && !targetMemberId) { // Only reset to step 1 if truly a new asset flow
-        setCurrentStep(1);
-    } else if (existingAssetToUpdate) {
-        setCurrentStep(2); // Skip to data for existing asset transaction
-    } else if (targetMemberId) {
-        setCurrentStep(1); // Start from step 1 but with member pre-selected
-    }
+    setFetchedPriceCurrency(null);
+    form.clearErrors('valorPagoEpocaDigital');
 
   }, [targetMemberId, existingAssetToUpdate, form]);
 
@@ -221,11 +217,12 @@ export function AssetForm({
 
  useEffect(() => {
     const fetchPrice = async () => {
-      const isDigitalNewAssetTransaction = watchedTipo === 'digital'; // Fetch for any digital transaction
+      const isDigitalNewAssetTransaction = watchedTipo === 'digital';
       const isCryptoSelected = cryptoOptions.some(opt => opt.value === watchedNomeAtivo);
 
       if (isDigitalNewAssetTransaction && isCryptoSelected && watchedNomeAtivo && watchedDataAquisicao && isValid(new Date(watchedDataAquisicao))) {
         setIsFetchingPrice(true);
+        setFetchedPriceCurrency(null);
         form.setValue('valorPagoEpocaDigital', undefined);
         form.clearErrors('valorPagoEpocaDigital'); 
 
@@ -234,16 +231,16 @@ export function AssetForm({
           const response = await fetch(`/api/crypto-price?symbol=${encodeURIComponent(watchedNomeAtivo)}&date=${dateString}`);
 
           if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: "Falha ao buscar preço da API.", details: "Não foi possível obter detalhes do erro da API." }));
+            const errorData = await response.json().catch(() => ({ error: "Falha ao buscar preço.", details: "Não foi possível obter detalhes do erro da API." }));
             const errorMessage = errorData.error || response.statusText;
             const errorDetails = errorData.details || "Tente novamente ou insira manualmente.";
             console.error("Erro ao buscar preço da API:", errorMessage, errorDetails);
             form.setError("valorPagoEpocaDigital", { type: "manual", message: `Falha: ${errorMessage}. ${errorDetails}` });
-
           } else {
             const data = await response.json();
-            if (data.price !== undefined) {
+            if (data.price !== undefined && data.currency) {
               form.setValue('valorPagoEpocaDigital', data.price, { shouldValidate: true, shouldDirty: true });
+              setFetchedPriceCurrency(data.currency as 'BRL' | 'USD');
             } else {
               form.setError("valorPagoEpocaDigital", { type: "manual", message: "Preço não retornado pela API. Insira manualmente." });
             }
@@ -277,19 +274,19 @@ export function AssetForm({
     let fieldsToValidate: (keyof AssetFormData)[] = [];
     let currentValues = form.getValues();
     
-    if (step === 1) { // Tipo e Nome
+    if (step === 1) {
       fieldsToValidate = ['tipo'];
        if (!existingAssetToUpdate) { 
          fieldsToValidate.push('nomeAtivo');
        }
-    } else if (step === 2) { // Detalhes Principais
+    } else if (step === 2) {
       fieldsToValidate.push('dataAquisicao', 'observacoes');
-    } else if (step === 3) { // Propriedade e Contribuições
+    } else if (step === 3) {
       fieldsToValidate = ['quemComprou'];
       if (currentValues.quemComprou === 'Ambos') {
         fieldsToValidate.push('contribuicaoParceiro1', 'contribuicaoParceiro2');
       }
-    } else if (step === 4) { // Detalhes Específicos
+    } else if (step === 4) {
       if (currentValues.tipo === 'digital') {
         fieldsToValidate = ['quantidadeDigital', 'valorPagoEpocaDigital'];
       } else if (currentValues.tipo === 'fisico') {
@@ -297,12 +294,9 @@ export function AssetForm({
            fieldsToValidate.push('tipoImovelBemFisico'); 
          }
       }
-      // Designação e liberação só para novos ativos ou quando não pré-definido por targetMemberId
-      if (!existingAssetToUpdate && !targetMemberId) { 
+      if (!targetMemberId && !existingAssetToUpdate?.assignedTo) { 
         fieldsToValidate.push('assignedToMemberId');
       }
-      // Condição de liberação pode ser validada aqui se 'assignedToMemberId' foi setado nesta etapa
-      // e 'setReleaseCondition' está marcado. A schema já lida com isso se memberHasBirthDateContext for true.
       if (currentValues.setReleaseCondition && memberHasBirthDate) { 
           fieldsToValidate.push('releaseTargetAge');
       }
@@ -335,7 +329,7 @@ export function AssetForm({
             if (step === 4) {
                 if (currentValues.tipo === 'digital' && (issue.path.includes('quantidadeDigital') || issue.path.includes('valorPagoEpocaDigital'))) return true;
                 if (currentValues.tipo === 'fisico' && (!existingAssetToUpdate || (existingAssetToUpdate.transactions && existingAssetToUpdate.transactions.length === 0)) && issue.path.includes('tipoImovelBemFisico')) return true;
-                if ((!existingAssetToUpdate && !targetMemberId) && issue.path.includes('assignedToMemberId')) return true;
+                if ((!targetMemberId && !existingAssetToUpdate?.assignedTo) && issue.path.includes('assignedToMemberId')) return true;
                 if (currentValues.setReleaseCondition && memberHasBirthDate && issue.path.includes('releaseTargetAge')) return true;
             }
             return false;
@@ -392,7 +386,14 @@ export function AssetForm({
               control={form.control}
               render={({ field }) => (
                 <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                        field.onChange(value);
+                        form.setValue('nomeAtivo', ''); // Reset nomeAtivo when tipo changes
+                        form.clearErrors('nomeAtivo');
+                        setFetchedPriceCurrency(null);
+                        form.setValue('valorPagoEpocaDigital', undefined);
+                        form.clearErrors('valorPagoEpocaDigital');
+                    }}
                     value={field.value}
                     disabled={isSubmittingForm || !!existingAssetToUpdate}
                 >
@@ -417,9 +418,14 @@ export function AssetForm({
                     control={form.control}
                     render={({ field }) => (
                     <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                            field.onChange(value);
+                            setFetchedPriceCurrency(null);
+                            form.setValue('valorPagoEpocaDigital', undefined);
+                            form.clearErrors('valorPagoEpocaDigital');
+                        }}
                         value={field.value}
-                        disabled={isSubmittingForm} // Always enabled for new digital asset
+                        disabled={isSubmittingForm}
                     >
                         <SelectTrigger id="nomeAtivoDigitalSelect">
                         <SelectValue placeholder="Selecione a criptomoeda" />
@@ -448,7 +454,7 @@ export function AssetForm({
                     id="nomeAtivoFisicoInput"
                     {...form.register('nomeAtivo')}
                     placeholder={"Ex: Casa da Praia, Ações XPTO"}
-                    disabled={isSubmittingForm} // Always enabled for new physical asset
+                    disabled={isSubmittingForm}
                 />
                 {form.formState.errors.nomeAtivo && <p className="text-sm text-destructive">{form.formState.errors.nomeAtivo.message}</p>}
             </div>
@@ -466,7 +472,7 @@ export function AssetForm({
         </>
       )}
 
-      {currentStep === 2 && ( // Detalhes Principais
+      {currentStep === 2 && ( 
         <>
           <div className="space-y-1.5">
             <Label htmlFor="dataAquisicao">Data de Aquisição (desta transação)</Label>
@@ -537,7 +543,7 @@ export function AssetForm({
         </>
       )}
 
-      {currentStep === 3 && ( // Propriedade e Contribuições
+      {currentStep === 3 && ( 
         <>
           <div className="space-y-1.5">
             <Label htmlFor="quemComprou">Quem Adquiriu/Contribuiu nesta Transação? (Opcional)</Label>
@@ -604,7 +610,7 @@ export function AssetForm({
         </>
       )}
 
-      {currentStep === 4 && ( // Detalhes Específicos e Liberação
+      {currentStep === 4 && ( 
         <>
           {watchedTipo === 'digital' && (
             <div className="space-y-4 p-4 border rounded-md bg-muted/30 mb-4">
@@ -617,7 +623,9 @@ export function AssetForm({
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                     <Label htmlFor="valorPagoEpocaDigital">Valor do ativo no momento da compra</Label>
+                     <Label htmlFor="valorPagoEpocaDigital">
+                        Valor do ativo no momento da compra {fetchedPriceCurrency ? `(em ${fetchedPriceCurrency})` : ''}
+                     </Label>
                      {isFetchingPrice && <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />}
                   </div>
                   <Input id="valorPagoEpocaDigital" type="number" {...form.register('valorPagoEpocaDigital')} placeholder="Ex: 150.75" disabled={isSubmittingForm || isFetchingPrice} step="any" />
@@ -664,7 +672,7 @@ export function AssetForm({
               </div>
             </div>
           )}
-          {(!existingAssetToUpdate || !targetMemberId || (existingAssetToUpdate && !existingAssetToUpdate.assignedTo)) && ( // Only show for new assets or if not already assigned via targetMemberId
+          {(!targetMemberId || (existingAssetToUpdate && !existingAssetToUpdate.assignedTo)) && ( 
             <div className="space-y-4 p-4 border rounded-md bg-card">
                 <h4 className="text-md font-semibold text-primary flex items-center"><UserCheck size={18} className="mr-2"/> Designação e Liberação do Ativo (Opcional)</h4>
                 <div className="space-y-1.5">
@@ -753,7 +761,7 @@ export function AssetForm({
 
         {currentStep < TOTAL_STEPS ? (
           <Button type="button" onClick={handleNextStep} disabled={isNextButtonDisabled()}>
-             {isFetchingPrice && currentStep === 1 ? ( // Show loader only on step 1 if fetching price
+             {isFetchingPrice && currentStep === 1 ? ( 
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Buscando...
@@ -774,5 +782,3 @@ export function AssetForm({
     </form>
   );
 }
-
-    
