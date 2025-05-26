@@ -141,8 +141,8 @@ export default function SignupPage() {
         setError("Please select your union structure.");
         return false;
       }
-    } else if (currentStep === 2) { // Union Belief - optional
-      // No mandatory validation here
+    } else if (currentStep === 2) { // Union Belief
+        // No mandatory validation here, can be left as "Select an option" (or default to the first one)
     } else if (currentStep === 3) { // Union Name
       if (!unionName.trim()) {
         setError("Please enter the name of your union.");
@@ -219,11 +219,11 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gradient-green/20 via-gradient-blue/20 to-background p-4">
       <Card className="w-full max-w-2xl shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" />
+            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
            <CardDescription className="font-lato text-muted-foreground mb-3">
              Follow the steps to create your contract.
@@ -261,7 +261,7 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-md"> {/* Changed max-w-lg to max-w-md */}
+              <div className="space-y-4 flex flex-col w-full max-w-md">
                 <div className="w-full">
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
@@ -284,7 +284,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col w-full max-w-lg">
+                 <div className="space-y-4 flex flex-col w-full max-w-md">
                     <div className="w-full">
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
@@ -302,7 +302,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 3 && ( 
-              <div className="space-y-2 flex flex-col w-full max-w-lg">
+              <div className="space-y-2 flex flex-col w-full max-w-md">
                 <Label htmlFor="unionName" className="text-foreground/90 w-full text-left">Union Name</Label>
                 <Input
                   id="unionName"
@@ -318,7 +318,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 4 && ( 
-              <div className="space-y-6 flex flex-col w-full max-w-lg">
+              <div className="space-y-6 flex flex-col w-full max-w-md">
                 <div className="space-y-2 w-full">
                   <Label htmlFor="email" className="text-foreground/90 text-left">Main Email Address</Label>
                   <Input
@@ -381,7 +381,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 5 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-lg">
+              <div className="space-y-4 flex flex-col w-full max-w-md">
                 <Label className="text-lg font-semibold flex items-center justify-start text-foreground/90 w-full"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
                 <CardDescription className="text-muted-foreground w-full text-left">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
@@ -417,7 +417,7 @@ export default function SignupPage() {
                     <Label htmlFor="photo1" className="text-foreground/90">Partner 1 Photo</Label>
                     <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-start">
                       {photo1Preview ? (
-                        <Image src={photo1Preview} alt="Photo 1 Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
+                        <Image src={photo1Preview} alt="Partner 1 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
                       ) : (
                         <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
                           <Camera size={32} />
@@ -434,7 +434,7 @@ export default function SignupPage() {
                     <Label htmlFor="photo2" className="text-foreground/90">Partner 2 Photo</Label>
                      <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-start">
                       {photo2Preview ? (
-                        <Image src={photo2Preview} alt="Photo 2 Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
+                        <Image src={photo2Preview} alt="Partner 2 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
                       ) : (
                         <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
                           <Camera size={32} />
@@ -574,4 +574,6 @@ export default function SignupPage() {
   );
 }
     
+    
+
     
