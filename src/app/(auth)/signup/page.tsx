@@ -223,7 +223,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-2xl shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpeActa" style={{ filter: 'brightness(0) invert(1)' }}/>
+            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" />
           </Link>
            <CardDescription className="font-lato text-muted-foreground mb-3">
              Follow the steps to create your contract.
@@ -261,7 +261,7 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-lg">
+              <div className="space-y-4 flex flex-col w-full max-w-md"> {/* Changed max-w-lg to max-w-md */}
                 <div className="w-full">
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
@@ -574,5 +574,4 @@ export default function SignupPage() {
   );
 }
     
-
     
