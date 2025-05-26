@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { UserCircle, Save, Loader2, Users, BookOpen, Landmark, FileText, Edit3 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; // Ensure ContractClause is exported
+import type { ContractClause } from '@/components/contract/ContractSettingsDialog'; 
 
 const initialReligionOptions = [
     { value: "agnosticism", label: "Agnosticism" },
@@ -53,7 +53,7 @@ export default function ProfilePage() {
     if (user) {
       setDisplayName(user.displayName || '');
       setRelationshipStructure(user.relationshipStructure || '');
-      setReligion(user.religion || ''); // Ensure this is correctly loaded
+      setReligion(user.religion || ''); 
       setHoldingType(user.holdingType || '');
       setCnpjHolding(user.cnpjHolding || '');
       setContractClauses(user.contractClauses || []);
@@ -304,9 +304,7 @@ export default function ProfilePage() {
                 </div>
               </Card>
             )}
-             <CardDescription className="text-xs pt-2 text-muted-foreground">
-              Remember: Ipê Acta offers visual management for your planning. The legal formalization of your entity and tax matters should be handled with qualified professionals.
-            </CardDescription>
+            {/* CardDescription removida daqui */}
           </CardContent>
         </Card>
 
@@ -333,5 +331,7 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    
 
     
