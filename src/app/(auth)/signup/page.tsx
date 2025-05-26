@@ -11,9 +11,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/co
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink, Users, BookOpen } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink, Users, BookOpen, Wallet } from 'lucide-react';
 
-const TOTAL_STEPS = 6; 
+const TOTAL_STEPS = 7; // Aumentado para incluir a etapa da carteira
 
 const religionOptions = [
     { value: "cristianismo", label: "Cristianismo" },
@@ -38,6 +38,9 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [connectedWalletAddress, setConnectedWalletAddress] = useState<string | null>(null);
   
   const [photo1, setPhoto1] = useState<File | null>(null);
   const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
@@ -65,6 +68,18 @@ export default function SignupPage() {
       }
       setError(null);
     }
+  };
+
+  const handleConnectWallet = () => {
+    // Simulação de conexão de carteira
+    setIsLoading(true);
+    setError(null);
+    setTimeout(() => {
+      const mockAddress = `0x${Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
+      setConnectedWalletAddress(mockAddress);
+      setIsWalletConnected(true);
+      setIsLoading(false);
+    }, 1000);
   };
 
   const validateStep = () => {
@@ -96,9 +111,11 @@ export default function SignupPage() {
         setError('A senha deve ter pelo menos 6 caracteres.');
         return false;
       }
-    } else if (currentStep === 4) { // Fotos do Casal
+    } else if (currentStep === 4) { // Conectar Carteira
+      // Esta etapa é opcional, então não há validação bloqueante
+    } else if (currentStep === 5) { // Fotos do Casal
       // Upload de fotos é opcional
-    } else if (currentStep === 5) { // Formalização da Holding
+    } else if (currentStep === 6) { // Formalização da Holding
       if (!holdingType) {
         setError("Por favor, selecione como vocês pretendem estruturar a holding.");
         return false;
@@ -107,7 +124,7 @@ export default function SignupPage() {
         setError("Você deve confirmar que está ciente sobre a necessidade de consulta profissional para holding física/mista.");
         return false;
       }
-    } else if (currentStep === 6) { // Termos e Condições
+    } else if (currentStep === 7) { // Termos e Condições
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos e Condições para continuar.');
         return false;
@@ -142,7 +159,15 @@ export default function SignupPage() {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1000)); 
-      signup(email, name, holdingType, relationshipStructure, religion); 
+      signup(
+        email,
+        name,
+        holdingType,
+        relationshipStructure,
+        religion,
+        isWalletConnected,
+        connectedWalletAddress
+      ); 
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
     } finally {
@@ -251,7 +276,37 @@ export default function SignupPage() {
               </>
             )}
 
-            {currentStep === 4 && ( 
+            {currentStep === 4 && (
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold flex items-center"><Wallet size={20} className="mr-2 text-primary" />Conectar Carteira da União (Opcional)</Label>
+                <CardDescription>Conecte a carteira digital da união para futuramente sincronizar ativos digitais automaticamente.</CardDescription>
+                {isWalletConnected && connectedWalletAddress ? (
+                  <div className="p-4 border rounded-md bg-green-50 border-green-200 text-green-700">
+                    <p className="font-semibold">Carteira Conectada!</p>
+                    <p className="text-sm break-all">Endereço: {connectedWalletAddress}</p>
+                    <Button variant="link" className="p-0 h-auto text-sm mt-1 text-green-700" onClick={() => {setIsWalletConnected(false); setConnectedWalletAddress(null);}}>
+                        Desconectar
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={handleConnectWallet}
+                    className="w-full bg-primary hover:bg-primary/90"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wallet className="mr-2 h-4 w-4" />}
+                    Conectar Carteira (Simulado)
+                  </Button>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Esta é uma simulação. Nenhuma carteira real será conectada neste momento.
+                  Esta etapa é opcional e você pode prosseguir sem conectar uma carteira.
+                </p>
+              </div>
+            )}
+
+            {currentStep === 5 && ( 
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">Adicione fotos que representem vocês como união (opcional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -293,7 +348,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 5 && ( 
+            {currentStep === 6 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center"><Briefcase size={20} className="mr-2 text-primary" />Formalização da Holding Familiar</Label>
                 <CardDescription>Como vocês pretendem estruturar a holding para seus ativos?</CardDescription>
@@ -352,7 +407,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 6 && ( 
+            {currentStep === 7 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold">Termos e Condições do Aplicativo</Label>
                 <div className="p-4 border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm">
@@ -362,6 +417,7 @@ export default function SignupPage() {
                   <p className="mb-2"><strong>3. Natureza do Serviço:</strong> domedome é uma ferramenta de planejamento e visualização. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de holdings ou empresas. A responsabilidade pela formalização e aconselhamento profissional é inteiramente sua.</p>
                   <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade. Coletamos informações para fornecer e melhorar o serviço.</p>
                   <p><strong>5. Limitação de Responsabilidade:</strong> O domedome não se responsabiliza por perdas ou danos resultantes do uso do serviço, nem por decisões tomadas com base nas informações aqui apresentadas, na máxima extensão permitida por lei.</p>
+                  <p className="mt-2"><strong>6. Conexão de Carteira (Simulada):</strong> Se você optar por "conectar" uma carteira, esta funcionalidade é atualmente simulada para fins de demonstração. Nenhum dado real da sua carteira é acessado ou armazenado. A futura integração real buscará apenas informações públicas (saldos, endereços de tokens) com sua permissão explícita.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" checked={acceptedContract} onCheckedChange={(checked) => setAcceptedContract(Boolean(checked))} disabled={isLoading} />
@@ -412,5 +468,4 @@ export default function SignupPage() {
     </div>
   );
 }
-
     

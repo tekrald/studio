@@ -8,15 +8,11 @@ interface User {
   email: string;
   uid: string;
   displayName?: string;
-  // Campos da Holding
   holdingType?: 'digital' | 'physical' | '';
-  // Campos da União
   relationshipStructure?: 'monogamous' | 'polygamous' | '';
   religion?: string;
-  // Campos da empresa (se holding física) - estes não são mais coletados nos formulários principais
-  // companyType?: string;
-  // jurisdiction?: string;
-  // notesForAccountant?: string;
+  isWalletConnected?: boolean;
+  connectedWalletAddress?: string | null;
 }
 
 interface UpdateProfileData {
@@ -24,6 +20,8 @@ interface UpdateProfileData {
   holdingType?: 'digital' | 'physical' | '';
   relationshipStructure?: 'monogamous' | 'polygamous' | '';
   religion?: string;
+  isWalletConnected?: boolean;
+  connectedWalletAddress?: string | null;
 }
 
 interface AuthContextType {
@@ -34,7 +32,9 @@ interface AuthContextType {
     name: string,
     holdingTypeParam?: 'digital' | 'physical' | '',
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
-    religionParam?: string
+    religionParam?: string,
+    isWalletConnectedParam?: boolean,
+    connectedWalletAddressParam?: string | null,
   ) => void;
   logout: () => void;
   loading: boolean;
@@ -45,12 +45,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Manter loading como true inicialmente
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // This effect runs once on mount to check for a stored user
     try {
       const storedUser = localStorage.getItem('domedomeMockUser');
       if (storedUser) {
@@ -58,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem('domedomeMockUser'); // Clear corrupted data
+      localStorage.removeItem('domedomeMockUser');
     }
     setLoading(false);
   }, []);
@@ -78,23 +77,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedUser = localStorage.getItem('domedomeMockUser');
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser) as User;
-        if (parsedUser.email === email) { // only load if it's the same email
+        if (parsedUser.email === email) {
             existingUser = parsedUser;
         }
       }
     } catch (error) {
-        // ignore error during load attempt
+      // ignore
     }
 
     const mockUser: User = {
-      ...existingUser, // spread existing data first
+      ...existingUser,
       email,
       uid: `mock-${email}`,
       displayName: name || existingUser.displayName || email.split('@')[0],
-      // Ensure all fields from User interface are initialized if not present in existingUser
       holdingType: existingUser.holdingType || '',
       relationshipStructure: existingUser.relationshipStructure || '',
       religion: existingUser.religion || '',
+      isWalletConnected: existingUser.isWalletConnected || false,
+      connectedWalletAddress: existingUser.connectedWalletAddress || null,
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
@@ -105,7 +105,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     name: string,
     holdingTypeParam?: 'digital' | 'physical' | '',
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
-    religionParam?: string
+    religionParam?: string,
+    isWalletConnectedParam?: boolean,
+    connectedWalletAddressParam?: string | null,
   ) => {
     const mockUser: User = {
       email,
@@ -114,6 +116,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       holdingType: holdingTypeParam || '',
       relationshipStructure: relationshipStructureParam || '',
       religion: religionParam || '',
+      isWalletConnected: isWalletConnectedParam || false,
+      connectedWalletAddress: connectedWalletAddressParam || null,
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
@@ -121,7 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     handleAuthChange(null);
-    router.push('/'); // Explicitly redirect to the landing page
+    router.push('/'); 
   }, [handleAuthChange, router]);
 
   const updateProfile = useCallback((data: UpdateProfileData) => {
@@ -136,26 +140,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
-    // Route protection logic
     if (loading) {
-      return; // Don't do anything while loading initial user state
+      return; 
     }
 
     const isAuthRoute = pathname === '/login' || pathname === '/signup';
-    const isPublicRoute = pathname === '/'; // Landing page is public
+    const isPublicRoute = pathname === '/'; 
 
-    if (!user) { // If the user is not logged in
+    if (!user) { 
       if (!isAuthRoute && !isPublicRoute) {
-        // And they are trying to access a protected page (not login, signup, or landing)
-        router.push('/login'); // Redirect to login
+        router.push('/login'); 
       }
-      // If they are on an auth route or the public landing page, do nothing (allow access)
-    } else { // If the user is logged in
+    } else { 
       if (isAuthRoute) {
-        // And they are on a login/signup page
-        router.push('/dashboard'); // Redirect to dashboard
+        router.push('/dashboard'); 
       }
-      // If they are on any other page (including landing or protected routes), do nothing (allow access)
     }
   }, [user, loading, pathname, router]);
 
@@ -174,5 +173,4 @@ export const useAuth = () => {
   }
   return context;
 };
-
     
