@@ -14,13 +14,11 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { MemberFormData } from '@/types/member';
 
-// Schema Zod simplificado, tipoRelacao não é mais um campo do formulário
 const formSchema = z.object({
   nome: z.string().min(2, 'O nome do filho(a) é obrigatório e deve ter pelo menos 2 caracteres.'),
-  dataNascimento: z.date().optional(),
+  dataNascimento: z.date({ required_error: "A data de nascimento é obrigatória." }),
 });
 
-// A prop onSubmit espera MemberFormData, que ainda inclui tipoRelacao
 interface AddMemberFormProps {
   onSubmit: (data: MemberFormData) => Promise<void>;
   isLoading: boolean;
@@ -28,7 +26,7 @@ interface AddMemberFormProps {
 }
 
 export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormProps) {
-  const form = useForm<Omit<MemberFormData, 'tipoRelacao'>>({ // Omit tipoRelacao do tipo do formulário
+  const form = useForm<Omit<MemberFormData, 'tipoRelacao'>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome: '',
@@ -38,7 +36,6 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
   });
 
   const handleFormSubmit = (values: Omit<MemberFormData, 'tipoRelacao'>) => {
-    // Adiciona tipoRelacao: 'filho_a' antes de chamar a prop onSubmit
     const formDataWithRelation: MemberFormData = {
       ...values,
       tipoRelacao: 'filho_a',
@@ -55,7 +52,7 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
       </div>
       
       <div className="space-y-1.5">
-        <Label htmlFor="dataNascimento" className="text-foreground/90">Data de Nascimento (Opcional)</Label>
+        <Label htmlFor="dataNascimento" className="text-foreground/90">Data de Nascimento</Label>
         <Controller
           name="dataNascimento"
           control={form.control}
