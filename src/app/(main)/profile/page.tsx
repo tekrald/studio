@@ -266,11 +266,11 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="" id="profile-holding-undefined" className="border-primary checked:bg-primary"/>
-                  <Label htmlFor="profile-holding-undefined" className="font-normal text-foreground/90">Not yet defined / Not formalized</Label>
+                  <Label htmlFor="profile-holding-undefined" className="font-normal text-foreground/90">Digital / Not formalized</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="profile-holding-physical" className="border-primary checked:bg-primary"/>
-                  <Label htmlFor="profile-holding-physical" className="font-normal text-foreground/90">Physical or Mixed (with physical assets)</Label>
+                  <Label htmlFor="profile-holding-physical" className="font-normal text-foreground/90">Mixed (with physical assets)</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -323,3 +323,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+
