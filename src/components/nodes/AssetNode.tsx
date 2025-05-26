@@ -6,10 +6,10 @@ import { Handle, Position } from 'reactflow';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DollarSign, Coins, Landmark, BuildingIcon, Clock, Info } from 'lucide-react'; // Added Info
+import { DollarSign, Coins, Landmark, BuildingIcon, Clock, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { AssetTransaction } from '@/types/asset'; 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'; // Added Tooltip components
+import type { AssetTransaction } from '@/types/asset';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export interface ExtendedAssetNodeData {
   id: string;
@@ -22,8 +22,8 @@ export interface ExtendedAssetNodeData {
   transactions: AssetTransaction[];
   assignedToMemberId?: string;
   releaseCondition?: { type: 'age'; targetAge: number };
-  observacoes?: string; // Changed from observacoesGerais
-  isAutoLoaded?: boolean; // New prop
+  observacoes?: string;
+  isAutoLoaded?: boolean;
   onOpenDetails?: () => void;
 }
 
@@ -62,9 +62,11 @@ const SolanaIcon = () => (
 
 const getIconForAsset = (data: ExtendedAssetNodeData) => {
   if (data.tipo === 'digital') {
-    if (data.nomeAtivo === 'Bitcoin') return <BitcoinIcon />;
-    if (data.nomeAtivo === 'Ethereum') return <EthereumIcon />;
-    if (data.nomeAtivo === 'Solana') return <SolanaIcon />; // Assuming you might add Solana
+    const nameLower = data.nomeAtivo.toLowerCase();
+    if (nameLower.includes('bitcoin') || nameLower.includes('btc')) return <BitcoinIcon />;
+    if (nameLower.includes('ethereum') || nameLower.includes('eth')) return <EthereumIcon />;
+    if (nameLower.includes('solana') || nameLower.includes('sol')) return <SolanaIcon />;
+    if (nameLower.includes('usdc')) return <Coins size={18} className="text-green-400 mr-2" />; // Example for USDC
     return <Coins size={18} className="text-primary mr-2" />;
   }
   if (data.tipo === 'fisico') {
@@ -73,11 +75,11 @@ const getIconForAsset = (data: ExtendedAssetNodeData) => {
       return <Landmark size={18} className="text-primary mr-2" />;
     }
     if (tipoBemLower.includes('veículo') || tipoBemLower.includes('carro') || tipoBemLower.includes('automóvel')) {
-      return <BuildingIcon size={18} className="text-primary mr-2" />; 
+      return <BuildingIcon size={18} className="text-primary mr-2" />;
     }
-    return <Landmark size={18} className="text-primary mr-2" />; 
+    return <Landmark size={18} className="text-primary mr-2" />;
   }
-  return <DollarSign size={18} className="text-primary mr-2" />; 
+  return <DollarSign size={18} className="text-primary mr-2" />;
 };
 
 
@@ -86,7 +88,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
   const { toast } = useToast();
 
   const handleClockClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     toast({
       title: 'Configurar Liberação',
       description: `Em breve: configurar liberação do ativo "${data.nomeAtivo}" ${data.releaseCondition?.targetAge ? `aos ${data.releaseCondition.targetAge} anos` : ''}.`,
@@ -112,7 +114,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
         onClick={handleCardClick}
       >
         <Handle type="target" position={Position.Top} id={`t-${nodeId}`} className="!opacity-50 !bg-ring" />
-        
+
         <CardHeader className="p-3 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center overflow-hidden">
@@ -137,7 +139,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
 
         <CardContent className="p-3 text-xs space-y-1">
           {data.tipo === 'digital' && data.quantidadeTotalDigital !== undefined && (
-              <Badge variant="outline" className="text-xs whitespace-normal text-left border-primary/50 text-primary">
+              <Badge variant="outline" className="text-xs whitespace-normal text-left border-primary/50 text-primary bg-card">
                   Qtd Total: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
               </Badge>
           )}
@@ -156,7 +158,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
               <TooltipTrigger asChild>
                 <div className="flex items-center space-x-1 text-xs text-accent mt-1 cursor-default">
                   <Info size={13} />
-                  <span>Automático</span>
+                  <span>Informação da carteira</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-popover text-popover-foreground text-xs p-2">
@@ -170,4 +172,3 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
     </TooltipProvider>
   );
 }
-
