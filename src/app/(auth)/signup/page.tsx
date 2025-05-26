@@ -19,17 +19,18 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 const TOTAL_STEPS = 8;
 
 const religionOptions = [
-    { value: "cristianismo", label: "Cristianismo" },
-    { value: "islamismo", label: "Islamismo" },
-    { value: "hinduismo", label: "Hinduísmo" },
-    { value: "budismo", label: "Budismo" },
-    { value: "judaismo", label: "Judaísmo" },
-    { value: "espiritismo", label: "Espiritismo" },
-    { value: "ateismo", label: "Ateísmo" },
     { value: "agnosticismo", label: "Agnosticismo" },
-    { value: "outra", label: "Outra" },
+    { value: "ateismo", label: "Ateísmo" },
+    { value: "budismo", label: "Budismo" },
+    { value: "cristianismo", label: "Cristianismo" },
+    { value: "espiritismo", label: "Espiritismo" },
+    { value: "hinduismo", label: "Hinduísmo" },
+    { value: "islamismo", label: "Islamismo" },
+    { value: "judaismo", label: "Judaísmo" },
     { value: "nao_dizer", label: "Prefiro não dizer" },
-];
+    { value: "outra", label: "Outra" },
+].sort((a, b) => a.label.localeCompare(b.label));
+
 
 const defaultContractClauses: ContractClause[] = [
   { id: `initial-${Date.now()}-1`, text: "Todos os ativos adquiridos conjuntamente serão divididos conforme acordado em caso de dissolução da sociedade." },
@@ -138,7 +139,7 @@ export default function SignupPage() {
         setError("Por favor, selecione a estrutura da sua união.");
         return false;
       }
-    } else if (currentStep === 2) { // Crença - Opcional
+    } else if (currentStep === 2) { // Crença
       // Nenhuma validação obrigatória aqui, pois o campo em si é opcional
     } else if (currentStep === 3) { // Nome da União
       if (!unionName.trim()) {
@@ -268,7 +269,7 @@ export default function SignupPage() {
 
             {currentStep === 3 && ( // Etapa 3: Nome da União
               <div className="space-y-2">
-                <Label htmlFor="unionName" className="text-foreground/90">Nome da União (Ex: Alex & Jamie)</Label>
+                <Label htmlFor="unionName" className="text-foreground/90">Nome da União (Ex: Alex &amp; Jamie)</Label>
                 <Input
                   id="unionName"
                   type="text"
@@ -515,3 +516,5 @@ export default function SignupPage() {
     
 
     
+
+  

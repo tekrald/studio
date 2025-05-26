@@ -14,17 +14,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; // Import dialog and type
 
 const religionOptions = [
-    { value: "cristianismo", label: "Cristianismo" },
-    { value: "islamismo", label: "Islamismo" },
-    { value: "hinduismo", label: "Hinduísmo" },
-    { value: "budismo", label: "Budismo" },
-    { value: "judaismo", label: "Judaísmo" },
-    { value: "espiritismo", label: "Espiritismo" },
-    { value: "ateismo", label: "Ateísmo" },
     { value: "agnosticismo", label: "Agnosticismo" },
-    { value: "outra", label: "Outra" },
+    { value: "ateismo", label: "Ateísmo" },
+    { value: "budismo", label: "Budismo" },
+    { value: "cristianismo", label: "Cristianismo" },
+    { value: "espiritismo", label: "Espiritismo" },
+    { value: "hinduismo", label: "Hinduísmo" },
+    { value: "islamismo", label: "Islamismo" },
+    { value: "judaismo", label: "Judaísmo" },
     { value: "nao_dizer", label: "Prefiro não dizer" },
-  ];
+    { value: "outra", label: "Outra" },
+].sort((a, b) => a.label.localeCompare(b.label));
 
 export default function ProfilePage() {
   const { user, updateProfile, loading: authLoading } = useAuth();
@@ -179,7 +179,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="displayName" className="text-foreground/90">Nome da União (Ex: Alex & Jamie)</Label>
+              <Label htmlFor="displayName" className="text-foreground/90">Nome da União (Ex: Alex &amp; Jamie)</Label>
               <Input
                 id="displayName"
                 type="text"
@@ -223,7 +223,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Religião / Crença Espiritual (Opcional)</Label>
+                <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Crença da União</Label>
                 <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
                     <SelectTrigger id="religion" className="bg-input text-foreground">
                         <SelectValue placeholder="Selecione uma opção" />
@@ -336,3 +336,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+  
