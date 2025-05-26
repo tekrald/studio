@@ -288,7 +288,7 @@ export default function ProfilePage() {
             {holdingType === 'physical' && (
               <Card className="p-4 bg-muted/30 space-y-4 border-border">
                  <p className="text-sm text-foreground/80 font-medium">
-                  Formalizing entities with physical assets (real estate, vehicles) or mixed assets usually requires consulting an accountant or lawyer for legal and tax processes.
+                  The formalization of physical assets (real estate, vehicles) requires consulting an accountant or lawyer to open a company and ensure tax legality for succession.
                 </p>
                 <div className="space-y-2">
                   <Label htmlFor="cnpjHolding" className="text-foreground/90">Entity CNPJ (Optional)</Label>
