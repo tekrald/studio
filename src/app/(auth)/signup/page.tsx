@@ -26,8 +26,8 @@ const religionOptions = [
     { value: "hinduism", label: "Hinduism" },
     { value: "islam", label: "Islam" },
     { value: "judaism", label: "Judaism" },
-    { value: "spiritualism", label: "Spiritualism" },
     { value: "other", label: "Other" },
+    { value: "spiritualism", label: "Spiritualism" },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 
@@ -42,11 +42,11 @@ export default function SignupPage() {
   // Step 1: Union Structure
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
   
-  // Step 2: Belief
+  // Step 2: Union Belief
   const [religion, setReligion] = useState('');
 
   // Step 3: Union Name
-  const [unionName, setUnionName] = useState('');
+  const [unionName, setUnionName] = useState(''); // Changed from coupleName to unionName
 
   // Step 4: Account Details
   const [email, setEmail] = useState('');
@@ -55,7 +55,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Step 5: Connect Wallet
+  // Step 5: Connect Joint Wallet
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [connectedWalletAddress, setConnectedWalletAddress] = useState<string | null>(null);
 
@@ -139,7 +139,7 @@ export default function SignupPage() {
         setError("Please select your union structure.");
         return false;
       }
-    } else if (currentStep === 2) { // Belief
+    } else if (currentStep === 2) { // Union Belief
       // No mandatory validation here
     } else if (currentStep === 3) { // Union Name
       if (!unionName.trim()) {
@@ -209,7 +209,7 @@ export default function SignupPage() {
         contractClauses
       );
     } catch (err) {
-      setError('Failed to create record. Please try again.');
+      setError('Failed to create contract. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -220,9 +220,9 @@ export default function SignupPage() {
       <Card className="w-full max-w-lg shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
+            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa"/>
           </Link>
-          <CardDescription className="text-lg font-sans text-muted-foreground">Follow the steps to create your record. (Step {currentStep} of {TOTAL_STEPS})</CardDescription>
+          <CardDescription className="text-lg font-sans text-muted-foreground">Follow the steps to create your contract. (Step {currentStep} of {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
@@ -249,7 +249,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 2 && ( // Step 2: Belief
+            {currentStep === 2 && ( // Step 2: Union Belief
                  <div className="space-y-4">
                     <div>
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
@@ -273,7 +273,7 @@ export default function SignupPage() {
                 <Input
                   id="unionName"
                   type="text"
-                  placeholder="Ex: Alex & Jamie Holding"
+                  placeholder="Alex & Jamie Holding"
                   value={unionName}
                   onChange={(e) => setUnionName(e.target.value)}
                   disabled={isLoading}
@@ -419,8 +419,8 @@ export default function SignupPage() {
 
             {currentStep === 7 && ( // Step 7: Initial Agreements
               <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Initial Record Agreements</Label>
-                <CardDescription className="text-muted-foreground">Define the initial clauses of your record. You can edit them later.</CardDescription>
+                <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Initial Contract Agreements</Label>
+                <CardDescription className="text-muted-foreground">Define the initial clauses of your contract. You can edit them later.</CardDescription>
                 
                 <div className="space-y-2">
                   <Label htmlFor="clause-text-area" className="text-foreground/90">
@@ -524,7 +524,7 @@ export default function SignupPage() {
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Already have a record?{' '}
+            Already have a contract?{' '}
             <Button variant="link" asChild className="p-0 h-auto text-accent hover:text-accent/80">
               <Link href="/login">Access here</Link>
             </Button>
@@ -534,3 +534,4 @@ export default function SignupPage() {
     </div>
   );
 }
+
