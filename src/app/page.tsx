@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { ArrowRight, Lock, Users, Briefcase, BarChart3, ShieldCheck, FileSignature, Wallet, Brain } from 'lucide-react';
+import { ArrowRight, FileSignature, Briefcase, Wallet, Users, BarChart3, ShieldCheck } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -13,10 +13,7 @@ export default function HomePage() {
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-32 bg-background"> {/* Alterado o fundo */}
-          <div className="absolute inset-0 opacity-5">
-             {/* Decorative background image or pattern can go here */}
-          </div>
+        <section className="relative py-20 md:py-32 bg-background">
           <div className="container mx-auto px-6 relative z-10">
             <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
               <div className="text-center md:text-left">
@@ -34,12 +31,12 @@ export default function HomePage() {
               </div>
               <div className="flex justify-center items-center bg-transparent">
                 <Image
-                  src="/hero-contract-illustration.png" // Mantenha este nome por enquanto
+                  src="/nova-hero-imagem.png"
                   alt="Ilustração de contrato de casamento e holding familiar"
                   width={500}
                   height={400}
-                  className="" // Removidas classes de sombra e borda
-                  data-ai-hint="casamento finanças"
+                  className=""
+                  data-ai-hint="casamento finanças contrato"
                   priority
                 />
               </div>

@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Holding', icon: Briefcase },
+  { href: '/dashboard', label: 'Registros', icon: Briefcase },
   { href: '/profile', label: 'Perfil da União', icon: UserCircle },
 ];
 
@@ -87,7 +87,7 @@ export function Header() {
       {user && (
         <div className="md:hidden bg-background border-t border-border p-2 flex justify-around">
            {navLinks.map((link) => {
-              const label = link.href === '/profile' && user?.displayName ? user.displayName.split('&')[0].trim() : link.label;
+              const label = link.href === '/profile' && user?.displayName ? user.displayName.split('&')[0]?.trim() || user.displayName.split('E')[0]?.trim() : link.label;
               return (
                 <Button key={link.href} variant="ghost" size="sm" asChild
                   className={cn(
