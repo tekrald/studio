@@ -11,17 +11,25 @@ import { User, Users, Baby, PersonStanding, PlusCircle } from 'lucide-react';
 export type MemberNodeData = {
   id: string;
   name: string;
-  relationshipType: string;
+  relationshipType: string; // e.g., 'filho_a'
   onAddAssetClick?: (memberId: string) => void;
 };
 
 const getIconForMember = (data: MemberNodeData) => {
   const relTypeLower = data.relationshipType.toLowerCase();
-  if (relTypeLower.includes('filho') || relTypeLower.includes('filha')) return <Baby size={18} className="text-accent mr-2" />;
-  if (relTypeLower.includes('pai') || relTypeLower.includes('mãe')) return <PersonStanding size={18} className="text-accent mr-2" />;
-  if (relTypeLower.includes('cônjuge') || relTypeLower.includes('parceiro')) return <Users size={18} className="text-accent mr-2" />;
+  // Assuming 'filho_a' means child. Translate other relationship types if needed.
+  if (relTypeLower.includes('filho_a') || relTypeLower.includes('child')) return <Baby size={18} className="text-accent mr-2" />;
+  if (relTypeLower.includes('pai') || relTypeLower.includes('mae') || relTypeLower.includes('parent')) return <PersonStanding size={18} className="text-accent mr-2" />;
+  if (relTypeLower.includes('cônjuge') || relTypeLower.includes('parceiro') || relTypeLower.includes('spouse') || relTypeLower.includes('partner')) return <Users size={18} className="text-accent mr-2" />;
   return <User size={18} className="text-accent mr-2" />;
 };
+
+// Helper to get a displayable relationship type
+const getDisplayRelationship = (relationshipType: string) => {
+    if (relationshipType === 'filho_a') return 'Child';
+    // Add more translations as needed
+    return relationshipType.charAt(0).toUpperCase() + relationshipType.slice(1);
+}
 
 export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeData>) {
   const icon = getIconForMember(data);
@@ -50,7 +58,7 @@ export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeD
 
       <CardContent className="p-3 text-xs">
         <Badge variant="outline" className="border-accent/50 text-accent text-xs">
-          {data.relationshipType}
+          {getDisplayRelationship(data.relationshipType)}
         </Badge>
       </CardContent>
 
@@ -61,7 +69,7 @@ export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeD
                 size="icon"
                 className="h-7 w-7 bg-card hover:bg-muted border-dashed border-accent text-accent hover:text-accent/90 rounded-full shadow"
                 onClick={handleAddAsset}
-                aria-label="Adicionar Ativo a este Membro"
+                aria-label="Add Asset to this Member"
             >
                 <PlusCircle size={16} />
             </Button>

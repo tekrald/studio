@@ -1,5 +1,6 @@
-# Ipê Acta - Contratos e Gestão Patrimonial
 
-Este é um projeto NextJS para Ipê Acta, uma plataforma para criação de contratos de casamento personalizados e gestão de holdings familiares, com foco na integração de ativos digitais via wallets. Desenvolvido no Firebase Studio.
+# Ipê Acta - Contracts and Asset Management
 
-Para começar, explore `src/app/page.tsx`.
+This is a NextJS project for Ipê Acta, a platform for creating personalized marriage contracts and managing family holdings, with a focus on integrating digital assets via wallets. Developed in Firebase Studio.
+
+To get started, explore `src/app/page.tsx`.

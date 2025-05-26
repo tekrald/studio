@@ -18,7 +18,6 @@ import { PlusCircle, Trash2, Edit3, Users, Save, Landmark } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
-// Exporting ContractClause interface
 export interface ContractClause {
   id: string;
   text: string;
@@ -36,15 +35,15 @@ interface ContractSettingsDialogProps {
 }
 
 const suggestedClausesTemplates = {
-  partilhaBens: [
-    { id: 'sug_pb_1', text: "Partilha de ativos em caso de dissolução da união: divisão de 50/50 dos ativos adquiridos em conjunto durante a vigência do acordo." },
-    { id: 'sug_pb_2', text: "Ativos adquiridos individualmente antes da união permanecerão como propriedade individual de cada parte." },
-    { id: 'sug_pb_3', text: "Em caso de aquisição do ativo [NOME DO ATIVO ESPECÍFICO], a propriedade será dividida em X% para Parte A e Z% para Parte B." },
+  assetSharing: [
+    { id: 'sug_as_1', text: "Asset sharing in case of union dissolution: 50/50 division of assets acquired jointly during the agreement." },
+    { id: 'sug_as_2', text: "Individually acquired assets before the union will remain as individual property of each party." },
+    { id: 'sug_as_3', text: "In case of acquisition of the asset [SPECIFIC ASSET NAME], ownership will be divided X% for Party A and Z% for Party B." },
   ],
-  regrasConvivencia: [
-    { id: 'sug_rc_1', text: "As despesas operacionais da união (ex: custos de manutenção, taxas) serão divididas da seguinte forma: [Descrever a divisão]." },
-    { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de [VALOR/MOEDA]) deverão ser discutidas e aprovadas por ambas as partes da união." },
-    { id: 'sug_rc_3', text: "Contribuições e responsabilidades financeiras: [Definir regras para aportes, trabalho, etc.]." },
+  cohabitationRules: [
+    { id: 'sug_cr_1', text: "Operational expenses of the union (e.g., maintenance costs, fees) will be divided as follows: [Describe the division]." },
+    { id: 'sug_cr_2', text: "Major financial decisions (above [VALUE/CURRENCY]) must be discussed and approved by both parties of the union." },
+    { id: 'sug_cr_3', text: "Financial contributions and responsibilities: [Define rules for contributions, work, etc.]." },
   ],
 };
 
@@ -55,8 +54,8 @@ export function ContractSettingsDialog({
   onAddClause,
   onRemoveClause,
   onUpdateClause,
-  dialogTitle = "Configurações dos Acordos",
-  dialogDescription = "Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Este sistema é flexível para acomodar diversas configurações e acordos."
+  dialogTitle = "Agreement Settings",
+  dialogDescription = "Add, view, edit, and manage the clauses of your contract. This system is flexible to accommodate various configurations and agreements."
 }: ContractSettingsDialogProps) {
   const [newClauseText, setNewClauseText] = useState('');
   const [editingClauseId, setEditingClauseId] = useState<string | null>(null);
@@ -115,9 +114,9 @@ export function ContractSettingsDialog({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4 flex-grow min-h-0">
           <div className="md:col-span-2 flex flex-col min-h-0">
-            <h3 className="text-lg font-semibold mb-3 text-foreground">Cláusulas Atuais</h3>
+            <h3 className="text-lg font-semibold mb-3 text-foreground">Current Clauses</h3>
             {clauses.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-10">Nenhuma cláusula adicionada ainda. Comece adicionando uma nova ou usando uma sugestão.</p>
+              <p className="text-sm text-muted-foreground text-center py-10">No clauses added yet. Start by adding a new one or using a suggestion.</p>
             ) : (
               <ScrollArea className="flex-grow border border-border rounded-md p-4 bg-background max-h-[calc(90vh-350px)] md:max-h-none">
                 <ul className="space-y-3">
@@ -126,10 +125,10 @@ export function ContractSettingsDialog({
                       <p className="whitespace-pre-wrap flex-grow mb-2">{clause.text}</p>
                       <div className="flex justify-end space-x-2">
                         <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => handleEditClick(clause)}>
-                          <Edit3 size={16} className="mr-1" /> Editar
+                          <Edit3 size={16} className="mr-1" /> Edit
                         </Button>
                         <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive/80" onClick={() => onRemoveClause(clause.id)}>
-                          <Trash2 size={16} className="mr-1" /> Remover
+                          <Trash2 size={16} className="mr-1" /> Remove
                         </Button>
                       </div>
                     </li>
@@ -142,23 +141,23 @@ export function ContractSettingsDialog({
           <div className="flex flex-col space-y-6 min-h-0">
             <div>
               <Label htmlFor="clause-text-area" className="text-lg font-semibold mb-2 text-foreground block">
-                {editingClauseId ? 'Editar Cláusula' : 'Adicionar Nova Cláusula'}
+                {editingClauseId ? 'Edit Clause' : 'Add New Clause'}
               </Label>
               <Textarea
                 id="clause-text-area"
                 value={editingClauseId ? currentClauseTextForEdit : newClauseText}
                 onChange={(e) => editingClauseId ? setCurrentClauseTextForEdit(e.target.value) : setNewClauseText(e.target.value)}
-                placeholder="Digite o texto da cláusula aqui..."
+                placeholder="Enter clause text here..."
                 className="min-h-[100px] bg-input text-foreground placeholder:text-muted-foreground"
                 rows={5}
               />
               <div className="mt-3 flex flex-col sm:flex-row gap-2">
                 <Button onClick={handleSaveOrAddClause} className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!(editingClauseId ? currentClauseTextForEdit.trim() : newClauseText.trim())}>
-                  {editingClauseId ? <><Save size={18} className="mr-2" /> Salvar Alterações</> : <><PlusCircle size={18} className="mr-2" /> Adicionar Cláusula</>}
+                  {editingClauseId ? <><Save size={18} className="mr-2" /> Save Changes</> : <><PlusCircle size={18} className="mr-2" /> Add Clause</>}
                 </Button>
                 {editingClauseId && (
                   <Button variant="outline" onClick={handleCancelEdit} className="w-full sm:w-auto text-foreground/90 border-border hover:bg-muted/80">
-                    Cancelar Edição
+                    Cancel Edit
                   </Button>
                 )}
               </div>
@@ -167,20 +166,20 @@ export function ContractSettingsDialog({
             <Separator className="bg-border"/>
 
             <div>
-              <h3 className="text-lg font-semibold mb-3 text-foreground">Sugestões de Cláusulas</h3>
+              <h3 className="text-lg font-semibold mb-3 text-foreground">Clause Suggestions</h3>
               <ScrollArea className="max-h-[calc(90vh-500px)] md:max-h-none pr-2">
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Landmark size={18} className="mr-2"/>Partilha de Ativos</h4>
-                    {suggestedClausesTemplates.partilhaBens.map(sug => (
+                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Landmark size={18} className="mr-2"/>Asset Sharing</h4>
+                    {suggestedClausesTemplates.assetSharing.map(sug => (
                         <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5 text-foreground/90 border-border hover:bg-muted/80" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}
                         </Button>
                     ))}
                   </div>
                   <div>
-                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras da União</h4>
-                     {suggestedClausesTemplates.regrasConvivencia.map(sug => (
+                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Union Rules</h4>
+                     {suggestedClausesTemplates.cohabitationRules.map(sug => (
                         <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5 text-foreground/90 border-border hover:bg-muted/80" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}
                         </Button>
@@ -195,7 +194,7 @@ export function ContractSettingsDialog({
         <DialogFooter className="mt-auto pt-4 border-t border-border">
           <DialogClose asChild>
             <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80">
-              Fechar
+              Close
             </Button>
           </DialogClose>
         </DialogFooter>

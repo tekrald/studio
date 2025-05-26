@@ -11,19 +11,18 @@ import { useToast } from '@/hooks/use-toast';
 import { UserCircle, Save, Loader2, Briefcase, Users, BookOpen, Landmark, FileText, Edit3 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; // Import dialog and type
+import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog';
 
 const religionOptions = [
-    { value: "agnosticismo", label: "Agnosticismo" },
-    { value: "ateismo", label: "Ateísmo" },
-    { value: "budismo", label: "Budismo" },
-    { value: "cristianismo", label: "Cristianismo" },
-    { value: "espiritismo", label: "Espiritismo" },
-    { value: "hinduismo", label: "Hinduísmo" },
-    { value: "islamismo", label: "Islamismo" },
-    { value: "judaismo", label: "Judaísmo" },
-    // { value: "nao_dizer", label: "Prefiro não dizer" }, // Removido
-    { value: "outra", label: "Outra" },
+    { value: "agnosticism", label: "Agnosticism" },
+    { value: "atheism", label: "Atheism" },
+    { value: "buddhism", label: "Buddhism" },
+    { value: "christianity", label: "Christianity" },
+    { value: "hinduism", label: "Hinduism" },
+    { value: "islam", label: "Islam" },
+    { value: "judaism", label: "Judaism" },
+    { value: "other", label: "Other" },
+    { value: "spiritualism", label: "Spiritualism" },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 export default function ProfilePage() {
@@ -37,7 +36,6 @@ export default function ProfilePage() {
   const [holdingType, setHoldingType] = useState<'physical' | ''>('');
   const [cnpjHolding, setCnpjHolding] = useState('');
 
-  // State for contract clauses and dialog
   const [contractClauses, setContractClauses] = useState<ContractClause[]>([]);
   const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
 
@@ -50,7 +48,7 @@ export default function ProfilePage() {
       setReligion(user.religion || '');
       setHoldingType(user.holdingType || '');
       setCnpjHolding(user.cnpjHolding || '');
-      setContractClauses(user.contractClauses || []); // Load contract clauses
+      setContractClauses(user.contractClauses || []);
     }
   }, [user]);
 
@@ -71,24 +69,23 @@ export default function ProfilePage() {
     }
   }, [displayName, user?.email]);
 
-  // Clause Management Handlers
   const handleAddContractClause = (text: string) => {
     const newClause: ContractClause = {
       id: `clause-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       text,
     };
     setContractClauses(prev => [...prev, newClause]);
-    toast({ title: 'Cláusula Adicionada', description: 'Nova cláusula pronta para ser salva.' });
+    toast({ title: 'Clause Added', description: 'New clause ready to be saved.' });
   };
   
   const handleRemoveClause = (id: string) => {
     setContractClauses(prev => prev.filter(clause => clause.id !== id));
-    toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida (lembre-se de salvar as alterações).' });
+    toast({ title: 'Clause Removed', description: 'Clause removed (remember to save changes).' });
   };
 
   const handleUpdateContractClause = (id: string, newText: string) => {
     setContractClauses(prev => prev.map(clause => clause.id === id ? { ...clause, text: newText } : clause));
-    toast({ title: 'Cláusula Atualizada', description: 'A cláusula foi modificada (lembre-se de salvar as alterações).' });
+    toast({ title: 'Clause Updated', description: 'Clause modified (remember to save changes).' });
   };
 
 
@@ -97,42 +94,32 @@ export default function ProfilePage() {
 
     if (!relationshipStructure) {
         toast({
-        title: 'Campo Obrigatório',
-        description: 'Por favor, selecione a estrutura da sua união.',
+        title: 'Required Field',
+        description: 'Please select your union structure.',
         variant: 'destructive',
       });
       return;
     }
-     if (holdingType === 'physical' && !cnpjHolding.trim()) {
-        // Tornando CNPJ opcional, então removemos essa validação estrita.
-        // Se precisar ser obrigatório, descomente e ajuste a mensagem.
-        // toast({
-        //   title: 'Campo Obrigatório',
-        //   description: 'Por favor, insira o CNPJ da holding física/mista.',
-        //   variant: 'destructive',
-        // });
-        // return;
-    }
-
+    
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula atraso
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
       updateProfile({
         displayName,
         relationshipStructure,
         religion,
         holdingType,
         cnpjHolding: holdingType === 'physical' ? cnpjHolding : '',
-        contractClauses, // Salvar cláusulas
+        contractClauses,
       });
       toast({
-        title: 'Perfil Atualizado',
-        description: 'Suas informações de perfil foram salvas.',
+        title: 'Profile Updated',
+        description: 'Your profile information has been saved.',
       });
     } catch (error) {
       toast({
-        title: 'Erro',
-        description: 'Falha ao atualizar perfil. Por favor, tente novamente.',
+        title: 'Error',
+        description: 'Failed to update profile. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -151,7 +138,7 @@ export default function ProfilePage() {
   if (!user) {
     return (
        <div className="flex flex-col min-h-[calc(100vh-var(--header-height,100px)-2rem)] items-center justify-center">
-        <p className="text-muted-foreground">Usuário não encontrado. Faça login para acessar seu perfil.</p>
+        <p className="text-muted-foreground">User not found. Log in to access your profile.</p>
       </div>
     );
   }
@@ -162,24 +149,24 @@ export default function ProfilePage() {
         <Card className="shadow-xl mb-8 bg-card border-border">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl text-foreground">Perfil da União</CardTitle>
+            <CardTitle className="text-3xl text-foreground">Union Profile</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Gerencie suas informações e preferências aqui.
+              Manage your information and preferences here.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24 text-3xl ring-4 ring-primary ring-offset-background ring-offset-2">
-                <AvatarImage src={`https://placehold.co/150x150.png?text=${avatarText}`} alt={displayName} data-ai-hint="casal avatar"/>
+                <AvatarImage src={`https://placehold.co/150x150.png?text=${avatarText}`} alt={displayName} data-ai-hint="couple avatar"/>
                 <AvatarFallback className="bg-gradient-to-br from-gradient-green to-gradient-blue text-black">
                   {avatarText || '??'}
                 </AvatarFallback>
               </Avatar>
-              <p className="text-sm text-muted-foreground">As iniciais do avatar são baseadas no nome da união.</p>
+              <p className="text-sm text-muted-foreground">Avatar initials are based on the union name.</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="displayName" className="text-foreground/90">Nome da União (Ex: Alex &amp; Jamie)</Label>
+              <Label htmlFor="displayName" className="text-foreground/90">Union Name (Ex: Alex &amp; Jamie)</Label>
               <Input
                 id="displayName"
                 type="text"
@@ -191,7 +178,7 @@ export default function ProfilePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground/90">Endereço de Email Principal</Label>
+              <Label htmlFor="email" className="text-foreground/90">Main Email Address</Label>
               <Input
                 id="email"
                 type="email"
@@ -199,11 +186,11 @@ export default function ProfilePage() {
                 disabled
                 className="cursor-not-allowed bg-muted/50 text-muted-foreground"
               />
-              <p className="text-xs text-muted-foreground">O endereço de email não pode ser alterado aqui.</p>
+              <p className="text-xs text-muted-foreground">Email address cannot be changed here.</p>
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="relationshipStructure" className="flex items-center text-foreground/90"><Users size={18} className="mr-2 text-primary" />Estrutura da União</Label>
+                <Label htmlFor="relationshipStructure" className="flex items-center text-foreground/90"><Users size={18} className="mr-2 text-primary" />Union Structure</Label>
                 <RadioGroup
                     value={relationshipStructure}
                     onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous' | '')}
@@ -212,21 +199,21 @@ export default function ProfilePage() {
                 >
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="monogamous" id="profile-rel-monogamous" className="border-primary checked:bg-primary" />
-                        <Label htmlFor="profile-rel-monogamous" className="font-normal text-foreground/90">Monogâmica</Label>
+                        <Label htmlFor="profile-rel-monogamous" className="font-normal text-foreground/90">Monogamous</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="polygamous" id="profile-rel-polygamous" className="border-primary checked:bg-primary"/>
-                        <Label htmlFor="profile-rel-polygamous" className="font-normal text-foreground/90">Poligâmica</Label>
+                        <Label htmlFor="profile-rel-polygamous" className="font-normal text-foreground/90">Polygamous</Label>
                     </div>
                 </RadioGroup>
-                 {!relationshipStructure && <p className="text-xs text-destructive">Este campo é obrigatório.</p>}
+                 {!relationshipStructure && <p className="text-xs text-destructive">This field is required.</p>}
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Crença da União</Label>
+                <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Union Belief</Label>
                 <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
                     <SelectTrigger id="religion" className="bg-input text-foreground">
-                        <SelectValue placeholder="Selecione uma opção" />
+                        <SelectValue placeholder="Select an option" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover text-popover-foreground">
                         {religionOptions.map(opt => (
@@ -240,9 +227,9 @@ export default function ProfilePage() {
 
         <Card className="shadow-xl mb-8 bg-card border-border">
             <CardHeader>
-                <CardTitle className="text-2xl flex items-center text-foreground"><FileText className="mr-3 text-primary h-7 w-7" />Acordos do Registro</CardTitle>
+                <CardTitle className="text-2xl flex items-center text-foreground"><FileText className="mr-3 text-primary h-7 w-7" />Record Agreements</CardTitle>
                 <CardDescription className="text-muted-foreground">
-                Visualize e gerencie as cláusulas e acordos definidos para este registro.
+                View and manage the clauses and agreements defined for this record.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -253,7 +240,7 @@ export default function ProfilePage() {
                     onClick={() => setIsContractSettingsModalOpen(true)}
                     disabled={isLoading}
                 >
-                    <Edit3 className="mr-2 h-4 w-4" /> Gerenciar Acordos ({contractClauses.length} cláusulas)
+                    <Edit3 className="mr-2 h-4 w-4" /> Manage Agreements ({contractClauses.length} clauses)
                 </Button>
             </CardContent>
         </Card>
@@ -261,14 +248,14 @@ export default function ProfilePage() {
 
         <Card className="shadow-xl bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center text-foreground"><Landmark className="mr-3 text-primary h-7 w-7" />Formalização da Entidade</CardTitle>
+            <CardTitle className="text-2xl flex items-center text-foreground"><Landmark className="mr-3 text-primary h-7 w-7" />Entity Formalization</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Indique como sua entidade está ou será formalizada.
+              Indicate how your entity is or will be formalized.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-base text-foreground/90">Como esta entidade está ou será estruturada legalmente?</Label>
+              <Label className="text-base text-foreground/90">How is this entity legally structured or to be structured?</Label>
               <RadioGroup
                 value={holdingType}
                 onValueChange={(value: 'physical' | '') => {
@@ -279,11 +266,11 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="" id="profile-holding-undefined" className="border-primary checked:bg-primary"/>
-                  <Label htmlFor="profile-holding-undefined" className="font-normal text-foreground/90">Ainda não definido / Não formalizado</Label>
+                  <Label htmlFor="profile-holding-undefined" className="font-normal text-foreground/90">Not yet defined / Not formalized</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="profile-holding-physical" className="border-primary checked:bg-primary"/>
-                  <Label htmlFor="profile-holding-physical" className="font-normal text-foreground/90">Física ou Mista (com ativos físicos)</Label>
+                  <Label htmlFor="profile-holding-physical" className="font-normal text-foreground/90">Physical or Mixed (with physical assets)</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -291,10 +278,10 @@ export default function ProfilePage() {
             {holdingType === 'physical' && (
               <Card className="p-4 bg-muted/30 space-y-4 border-border">
                  <p className="text-sm text-foreground/80 font-medium">
-                  A formalização de entidades com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
+                  Formalizing entities with physical assets (real estate, vehicles) or mixed assets usually requires consulting an accountant or lawyer for legal and tax processes.
                 </p>
                 <div className="space-y-2">
-                  <Label htmlFor="cnpjHolding" className="text-foreground/90">CNPJ da Entidade (Opcional)</Label>
+                  <Label htmlFor="cnpjHolding" className="text-foreground/90">Entity CNPJ (Optional)</Label>
                   <Input
                     id="cnpjHolding"
                     type="text"
@@ -308,7 +295,7 @@ export default function ProfilePage() {
               </Card>
             )}
              <CardDescription className="text-xs pt-2 text-muted-foreground">
-              Lembre-se: Ipê Acta oferece uma gestão visual para seu planejamento. A formalização legal da sua entidade e questões tributárias devem ser tratadas com profissionais qualificados.
+              Remember: Ipê Acta offers visual management for your planning. The legal formalization of your entity and tax matters should be handled with qualified professionals.
             </CardDescription>
           </CardContent>
         </Card>
@@ -319,7 +306,7 @@ export default function ProfilePage() {
           ) : (
             <Save className="mr-2 h-4 w-4" />
           )}
-          Salvar Todas as Alterações
+          Save All Changes
         </Button>
       </form>
 
@@ -330,11 +317,9 @@ export default function ProfilePage() {
         onAddClause={handleAddContractClause}
         onRemoveClause={handleRemoveClause}
         onUpdateClause={handleUpdateContractClause}
-        dialogTitle="Gerenciar Acordos do Registro"
-        dialogDescription="Edite, adicione ou remova cláusulas dos seus acordos. As alterações serão salvas ao clicar em 'Salvar Todas as Alterações' no perfil."
+        dialogTitle="Manage Record Agreements"
+        dialogDescription="Edit, add, or remove clauses from your agreements. Changes will be saved when you click 'Save All Changes' on the profile."
       />
     </div>
   );
 }
-
-  

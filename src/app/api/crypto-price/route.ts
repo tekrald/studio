@@ -29,31 +29,31 @@ async function fetchPriceFromCMC(cmcSymbol: string, dateString: string, currency
 
     if (!cmcResponse.ok) {
       const errorData = await cmcResponse.json().catch(() => ({ status: { error_message: 'Failed to parse error from CMC' } }));
-      console.error(`Erro da API CoinMarketCap ao buscar em ${currency}:`, errorData);
-      return { success: false, error: `Falha ao buscar preço (${currency}) da API externa.`, details: errorData.status?.error_message || 'Erro desconhecido da CMC', status: cmcResponse.status };
+      console.error(`CoinMarketCap API Error fetching in ${currency}:`, errorData);
+      return { success: false, error: `Failed to fetch price (${currency}) from external API.`, details: errorData.status?.error_message || 'Unknown CMC error', status: cmcResponse.status };
     }
 
     const data = await cmcResponse.json();
     const quotes = data?.data?.[cmcSymbol]?.[0]?.quotes;
     
     if (!quotes || quotes.length === 0) {
-      console.warn(`Resposta da API CoinMarketCap (para ${currency}) não contém cotações:`, data);
-      return { success: false, error: `Preço em ${currency} não encontrado para a data ou símbolo na resposta da API.` , details: `No quotes found for ${cmcSymbol} on ${dateString} in ${currency}.`};
+      console.warn(`CoinMarketCap API response (for ${currency}) does not contain quotes:`, data);
+      return { success: false, error: `Price in ${currency} not found for the date or symbol in API response.` , details: `No quotes found for ${cmcSymbol} on ${dateString} in ${currency}.`};
     }
     
     const priceInSelectedCurrency = quotes[0]?.quote?.[currency]?.price;
 
     if (priceInSelectedCurrency === undefined || priceInSelectedCurrency === null) {
-      console.warn(`Preço em ${currency} não encontrado na cotação:`, quotes[0]);
-      return { success: false, error: `Preço em ${currency} não encontrado para a data ou símbolo.` };
+      console.warn(`Price in ${currency} not found in quote:`, quotes[0]);
+      return { success: false, error: `Price in ${currency} not found for the date or symbol.` };
     }
 
     return { success: true, price: parseFloat(priceInSelectedCurrency.toFixed(2)), currency };
 
   } catch (error) {
-    console.error(`Erro ao buscar preço da CoinMarketCap (${currency}):`, error);
+    console.error(`Error fetching price from CoinMarketCap (${currency}):`, error);
     // @ts-ignore
-    return { success: false, error: `Erro interno ao buscar preço (${currency}).`, details: error.message, status: 500 };
+    return { success: false, error: `Internal error fetching price (${currency}).`, details: error.message, status: 500 };
   }
 }
 
@@ -63,18 +63,18 @@ export async function GET(request: NextRequest) {
   const dateString = searchParams.get('date'); // Expected YYYY-MM-DD format
 
   if (!symbolName || !dateString) {
-    return NextResponse.json({ error: 'Símbolo da moeda e data são obrigatórios' }, { status: 400 });
+    return NextResponse.json({ error: 'Currency symbol and date are required' }, { status: 400 });
   }
 
   const apiKey = process.env.COINMARKETCAP_API_KEY;
   if (!apiKey) {
-    console.error('COINMARKETCAP_API_KEY não está configurada no servidor.');
-    return NextResponse.json({ error: 'Configuração da API do servidor incompleta.' }, { status: 500 });
+    console.error('COINMARKETCAP_API_KEY is not configured on the server.');
+    return NextResponse.json({ error: 'Server API configuration incomplete.' }, { status: 500 });
   }
 
   const cmcSymbol = SYMBOL_MAP[symbolName];
   if (!cmcSymbol) {
-    return NextResponse.json({ error: `Símbolo da moeda não mapeado: ${symbolName}` }, { status: 400 });
+    return NextResponse.json({ error: `Currency symbol not mapped: ${symbolName}` }, { status: 400 });
   }
 
   let formattedDate;
@@ -84,8 +84,8 @@ export async function GET(request: NextRequest) {
     if (isNaN(dateObj.getTime())) throw new Error('Invalid date object');
     formattedDate = format(dateObj, 'yyyy-MM-dd');
   } catch (e) {
-    console.error("Erro ao formatar data:", e);
-    return NextResponse.json({ error: 'Formato de data inválido. Use YYYY-MM-DD.' }, { status: 400 });
+    console.error("Error formatting date:", e);
+    return NextResponse.json({ error: 'Invalid date format. Use YYYY-MM-DD.' }, { status: 400 });
   }
 
   // Try fetching in BRL first
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
 
   // If BRL fetch failed or didn't find a BRL price, try USD
   if (!result.success || result.price === undefined) {
-    console.log(`Preço em BRL não encontrado para ${cmcSymbol} em ${formattedDate}. Tentando USD.`);
+    console.log(`Price in BRL not found for ${cmcSymbol} on ${formattedDate}. Trying USD.`);
     result = await fetchPriceFromCMC(cmcSymbol, formattedDate, 'USD', apiKey);
   }
 

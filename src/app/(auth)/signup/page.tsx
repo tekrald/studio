@@ -19,60 +19,58 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 const TOTAL_STEPS = 8;
 
 const religionOptions = [
-    { value: "agnosticismo", label: "Agnosticismo" },
-    { value: "ateismo", label: "Ateísmo" },
-    { value: "budismo", label: "Budismo" },
-    { value: "cristianismo", label: "Cristianismo" },
-    { value: "espiritismo", label: "Espiritismo" },
-    { value: "hinduismo", label: "Hinduísmo" },
-    { value: "islamismo", label: "Islamismo" },
-    { value: "judaismo", label: "Judaísmo" },
-    { value: "outra", label: "Outra" },
+    { value: "agnosticism", label: "Agnosticism" },
+    { value: "atheism", label: "Atheism" },
+    { value: "buddhism", label: "Buddhism" },
+    { value: "christianity", label: "Christianity" },
+    { value: "hinduism", label: "Hinduism" },
+    { value: "islam", label: "Islam" },
+    { value: "judaism", label: "Judaism" },
+    { value: "spiritualism", label: "Spiritualism" },
+    { value: "other", label: "Other" },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 
 const defaultContractClauses: ContractClause[] = [
-  { id: `initial-${Date.now()}-1`, text: "Todos os ativos adquiridos conjuntamente serão divididos conforme acordado em caso de dissolução da sociedade." },
-  { id: `initial-${Date.now()}-2`, text: "As responsabilidades financeiras e operacionais serão divididas conforme definido neste registro." },
+  { id: `initial-${Date.now()}-1`, text: "All jointly acquired assets will be divided as agreed upon in case of dissolution of the union." },
+  { id: `initial-${Date.now()}-2`, text: "Financial and operational responsibilities will be divided as defined in this record." },
 ];
 
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Etapa 1: Estrutura da União
+  // Step 1: Union Structure
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
   
-  // Etapa 2: Crença
+  // Step 2: Belief
   const [religion, setReligion] = useState('');
 
-  // Etapa 3: Nome da União
+  // Step 3: Union Name
   const [unionName, setUnionName] = useState('');
 
-  // Etapa 4: Detalhes da Conta
+  // Step 4: Account Details
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-
-  // Etapa 5: Conectar Carteira
+  // Step 5: Connect Wallet
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [connectedWalletAddress, setConnectedWalletAddress] = useState<string | null>(null);
 
-  // Etapa 6: Fotos
+  // Step 6: Photos
   const [photo1, setPhoto1] = useState<File | null>(null);
   const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
   const [photo2, setPhoto2] = useState<File | null>(null);
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
-
-  // Etapa 7: Acordos Iniciais
+  
+  // Step 7: Initial Agreements
   const [contractClauses, setContractClauses] = useState<ContractClause[]>(defaultContractClauses);
   const [newClauseText, setNewClauseText] = useState('');
   const [editingClause, setEditingClause] = useState<ContractClause | null>(null);
 
-
-  // Etapa 8: Termos e Condições
+  // Step 8: Terms and Conditions
   const [acceptedContract, setAcceptedContract] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +101,7 @@ export default function SignupPage() {
       setIsLoading(false);
     }, 1000);
   };
-
+  
   const handleAddOrUpdateClause = () => {
     const textToSave = editingClause ? editingClause.text : newClauseText;
     if (!textToSave.trim()) return;
@@ -128,49 +126,49 @@ export default function SignupPage() {
       setEditingClause(null);
     }
   };
+
    const handleCancelEdit = () => {
     setEditingClause(null);
     setNewClauseText('');
   };
 
-
   const validateStep = () => {
     setError(null);
-    if (currentStep === 1) { // Estrutura da União
+    if (currentStep === 1) { // Union Structure
       if (!relationshipStructure) {
-        setError("Por favor, selecione a estrutura da sua união.");
+        setError("Please select your union structure.");
         return false;
       }
-    } else if (currentStep === 2) { // Crença
-      // Nenhuma validação obrigatória aqui
-    } else if (currentStep === 3) { // Nome da União
+    } else if (currentStep === 2) { // Belief
+      // No mandatory validation here
+    } else if (currentStep === 3) { // Union Name
       if (!unionName.trim()) {
-        setError("Por favor, insira o nome da união.");
+        setError("Please enter the name of the union.");
         return false;
       }
-    } else if (currentStep === 4) { // Detalhes da Conta
+    } else if (currentStep === 4) { // Account Details
       if (!email.trim() || !password || !confirmPassword) {
-        setError("Por favor, preencha email, senha e confirmação de senha.");
+        setError("Please fill in email, password, and password confirmation.");
         return false;
       }
       if (!/\S+@\S+\.\S+/.test(email)) {
-        setError("Por favor, insira um endereço de email válido.");
+        setError("Please enter a valid email address.");
         return false;
       }
       if (password !== confirmPassword) {
-        setError('As senhas não coincidem.');
+        setError('Passwords do not match.');
         return false;
       }
       if (password.length < 6) {
-        setError('A senha deve ter pelo menos 6 caracteres.');
+        setError('Password must be at least 6 characters long.');
         return false;
       }
-    } else if (currentStep === 5) { // Conectar Carteira - Opcional
-    } else if (currentStep === 6) { // Fotos - Opcional
-    } else if (currentStep === 7) { // Acordos Iniciais - Opcional (pode ser vazio)
-    } else if (currentStep === 8) { // Termos
+    } else if (currentStep === 5) { // Connect Wallet - Optional
+    } else if (currentStep === 6) { // Photos - Optional
+    } else if (currentStep === 7) { // Initial Agreements - Optional (can be empty)
+    } else if (currentStep === 8) { // Terms
       if (!acceptedContract) {
-        setError('Você precisa aceitar os Termos de Serviço para continuar.');
+        setError('You must accept the Terms of Service to continue.');
         return false;
       }
     }
@@ -208,10 +206,10 @@ export default function SignupPage() {
         religion,
         isWalletConnected,
         connectedWalletAddress,
-        contractClauses 
+        contractClauses
       );
     } catch (err) {
-      setError('Falha ao criar registro. Por favor, tente novamente.');
+      setError('Failed to create record. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -224,14 +222,14 @@ export default function SignupPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
             <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardDescription className="text-lg font-sans text-muted-foreground">Siga as etapas para criar seu registro. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
+          <CardDescription className="text-lg font-sans text-muted-foreground">Follow the steps to create your record. (Step {currentStep} of {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
-            {currentStep === 1 && ( // Etapa 1: Estrutura da União
+            {currentStep === 1 && ( // Step 1: Union Structure
               <div className="space-y-4">
                 <div>
-                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><Users size={20} className="mr-2 text-primary" />Estrutura da União</Label>
+                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
                         value={relationshipStructure}
                         onValueChange={(value: 'monogamous' | 'polygamous') => setRelationshipStructure(value)}
@@ -240,24 +238,24 @@ export default function SignupPage() {
                     >
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="monogamous" id="rel-monogamous" className="border-primary checked:bg-primary"/>
-                            <Label htmlFor="rel-monogamous" className="font-normal text-foreground/90">Monogâmica</Label>
+                            <Label htmlFor="rel-monogamous" className="font-normal text-foreground/90">Monogamous</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="polygamous" id="rel-polygamous" className="border-primary checked:bg-primary"/>
-                            <Label htmlFor="rel-polygamous" className="font-normal text-foreground/90">Poligâmica</Label>
+                            <Label htmlFor="rel-polygamous" className="font-normal text-foreground/90">Polygamous</Label>
                         </div>
                     </RadioGroup>
                 </div>
               </div>
             )}
 
-            {currentStep === 2 && ( // Etapa 2: Crença
+            {currentStep === 2 && ( // Step 2: Belief
                  <div className="space-y-4">
                     <div>
-                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Crença da União</Label>
+                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
                             <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary">
-                                <SelectValue placeholder="Selecione uma opção" />
+                                <SelectValue placeholder="Select an option" />
                             </SelectTrigger>
                             <SelectContent className="bg-popover text-popover-foreground border-border">
                                 {religionOptions.map(opt => (
@@ -269,9 +267,9 @@ export default function SignupPage() {
                  </div>
             )}
 
-            {currentStep === 3 && ( // Etapa 3: Nome da União
+            {currentStep === 3 && ( // Step 3: Union Name
               <div className="space-y-2">
-                <Label htmlFor="unionName" className="text-foreground/90">Nome da União</Label>
+                <Label htmlFor="unionName" className="text-foreground/90">Union Name</Label>
                 <Input
                   id="unionName"
                   type="text"
@@ -285,14 +283,14 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 4 && ( // Etapa 4: Detalhes da Conta
+            {currentStep === 4 && ( // Step 4: Account Details
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground/90">Endereço de Email Principal</Label>
+                  <Label htmlFor="email" className="text-foreground/90">Main Email Address</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="voce@exemplo.com"
+                    placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
@@ -301,7 +299,7 @@ export default function SignupPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-foreground/90">Senha</Label>
+                  <Label htmlFor="password" className="text-foreground/90">Password</Label>
                   <div className="relative">
                     <Input
                         id="password"
@@ -321,10 +319,10 @@ export default function SignupPage() {
                         <Eye size={16} />
                     </Button>
                   </div>
-                   <p className="text-xs text-muted-foreground">Mínimo 6 caracteres.</p>
+                   <p className="text-xs text-muted-foreground">Minimum 6 characters.</p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-foreground/90">Confirmar Senha</Label>
+                  <Label htmlFor="confirmPassword" className="text-foreground/90">Confirm Password</Label>
                    <div className="relative">
                     <Input
                         id="confirmPassword"
@@ -348,16 +346,16 @@ export default function SignupPage() {
               </>
             )}
 
-            {currentStep === 5 && ( // Etapa 5: Conectar Carteira
+            {currentStep === 5 && ( // Step 5: Connect Joint Wallet
               <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center text-foreground/90"><Wallet size={20} className="mr-2 text-primary" />Conectar Carteira Conjunta</Label>
-                <CardDescription className="text-muted-foreground">Conecte sua carteira digital para auto-visualizar seus ativos digitais dentro da holding.</CardDescription>
+                <Label className="text-lg font-semibold flex items-center text-foreground/90"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
+                <CardDescription className="text-muted-foreground">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
                   <div className="p-4 border rounded-md bg-accent/10 border-accent/30 text-accent">
-                    <p className="font-semibold">Carteira Conectada!</p>
-                    <p className="text-sm break-all">Endereço: {connectedWalletAddress}</p>
+                    <p className="font-semibold">Wallet Connected!</p>
+                    <p className="text-sm break-all">Address: {connectedWalletAddress}</p>
                     <Button variant="link" className="p-0 h-auto text-sm mt-1 text-accent hover:text-accent/80" onClick={() => {setIsWalletConnected(false); setConnectedWalletAddress(null);}}>
-                        Desconectar
+                        Disconnect
                     </Button>
                   </div>
                 ) : (
@@ -368,24 +366,24 @@ export default function SignupPage() {
                     disabled={isLoading}
                   >
                     {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wallet className="mr-2 h-4 w-4" />}
-                    Conectar Carteira (Simulado)
+                    Connect Wallet (Simulated)
                   </Button>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Esta é uma simulação. Nenhuma carteira real será conectada neste momento.
+                  This is a simulation. No real wallet will be connected at this time.
                 </p>
               </div>
             )}
 
-            {currentStep === 6 && ( // Etapa 6: Fotos
+            {currentStep === 6 && ( // Step 6: Photos
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Adicione fotos da união (opcional).</p>
+                <p className="text-sm text-muted-foreground">Add photos of the union (optional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <div className="space-y-2">
-                    <Label htmlFor="photo1" className="text-foreground/90">Foto Parceiro/a 1</Label>
+                    <Label htmlFor="photo1" className="text-foreground/90">Partner 1 Photo</Label>
                     <div className="flex items-center space-x-2">
                       {photo1Preview ? (
-                        <Image src={photo1Preview} alt="Pré-visualização Foto 1" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="união foto" />
+                        <Image src={photo1Preview} alt="Photo 1 Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
                       ) : (
                         <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
                           <Camera size={32} />
@@ -393,16 +391,16 @@ export default function SignupPage() {
                       )}
                       <Input id="photo1" type="file" accept="image/*" onChange={(e) => handlePhotoChange(e, 1)} className="sr-only" disabled={isLoading} />
                       <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('photo1')?.click()} disabled={isLoading}>
-                        {photo1 ? "Trocar Foto" : "Escolher Foto"}
+                        {photo1 ? "Change Photo" : "Choose Photo"}
                       </Button>
                     </div>
                     {photo1 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo1.name}>{photo1.name}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="photo2" className="text-foreground/90">Foto Parceiro/a 2</Label>
+                    <Label htmlFor="photo2" className="text-foreground/90">Partner 2 Photo</Label>
                      <div className="flex items-center space-x-2">
                       {photo2Preview ? (
-                        <Image src={photo2Preview} alt="Pré-visualização Foto 2" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="união foto" />
+                        <Image src={photo2Preview} alt="Photo 2 Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
                       ) : (
                         <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
                           <Camera size={32} />
@@ -410,7 +408,7 @@ export default function SignupPage() {
                       )}
                       <Input id="photo2" type="file" accept="image/*" onChange={(e) => handlePhotoChange(e, 2)} className="sr-only" disabled={isLoading} />
                        <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('photo2')?.click()} disabled={isLoading}>
-                        {photo2 ? "Trocar Foto" : "Escolher Foto"}
+                        {photo2 ? "Change Photo" : "Choose Photo"}
                       </Button>
                     </div>
                     {photo2 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo2.name}>{photo2.name}</p>}
@@ -419,31 +417,31 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 7 && ( // Etapa 7: Acordos Iniciais
+            {currentStep === 7 && ( // Step 7: Initial Agreements
               <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Acordos Iniciais do Registro</Label>
-                <CardDescription className="text-muted-foreground">Defina as cláusulas iniciais do seu registro. Você poderá editá-las depois.</CardDescription>
+                <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Initial Record Agreements</Label>
+                <CardDescription className="text-muted-foreground">Define the initial clauses of your record. You can edit them later.</CardDescription>
                 
                 <div className="space-y-2">
                   <Label htmlFor="clause-text-area" className="text-foreground/90">
-                    {editingClause ? 'Editar Cláusula' : 'Nova Cláusula'}
+                    {editingClause ? 'Edit Clause' : 'New Clause'}
                   </Label>
                   <Textarea
                     id="clause-text-area"
                     value={editingClause ? editingClause.text : newClauseText}
                     onChange={(e) => editingClause ? setEditingClause({...editingClause, text: e.target.value}) : setNewClauseText(e.target.value)}
-                    placeholder="Digite o texto da cláusula aqui..."
+                    placeholder="Enter clause text here..."
                     className="min-h-[80px] bg-input text-foreground placeholder:text-muted-foreground"
                     rows={3}
                     disabled={isLoading}
                   />
                   <div className="mt-2 flex gap-2">
                     <Button type="button" onClick={handleAddOrUpdateClause} className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading || !(editingClause ? editingClause.text.trim() : newClauseText.trim())}>
-                      {editingClause ? <><Save size={16} className="mr-2" /> Salvar Alterações</> : <><PlusCircle size={16} className="mr-2" /> Adicionar Cláusula</>}
+                      {editingClause ? <><Save size={16} className="mr-2" /> Save Changes</> : <><PlusCircle size={16} className="mr-2" /> Add Clause</>}
                     </Button>
                     {editingClause && (
                       <Button type="button" variant="outline" onClick={handleCancelEdit} className="text-foreground/90 border-border hover:bg-muted/80" disabled={isLoading}>
-                        Cancelar Edição
+                        Cancel Edit
                       </Button>
                     )}
                   </div>
@@ -451,7 +449,7 @@ export default function SignupPage() {
 
                 {contractClauses.length > 0 && (
                   <div className="space-y-3">
-                    <h4 className="text-md font-medium text-foreground/80 pt-2">Cláusulas Adicionadas:</h4>
+                    <h4 className="text-md font-medium text-foreground/80 pt-2">Added Clauses:</h4>
                     <ScrollArea className="h-40 border rounded-md p-3 bg-muted/30">
                       <ul className="space-y-2">
                         {contractClauses.map((clause) => (
@@ -474,23 +472,23 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 8 && ( // Etapa 8: Termos e Condições
+            {currentStep === 8 && ( // Step 8: Terms and Conditions
               <div className="space-y-4">
-                <Label className="text-lg font-semibold text-foreground/90">Termos de Serviço - Ipê Acta</Label>
+                <Label className="text-lg font-semibold text-foreground/90">Terms of Service - Ipê Acta</Label>
                 <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground">
-                  <p className="mb-2">Ao criar um registro no Ipê Acta, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
-                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o Ipê Acta apenas para fins legais e de acordo com estes termos. O serviço é fornecido para criação e gestão de registros de união e patrimônio.</p>
-                  <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia. Você concede ao Ipê Acta uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
-                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> Ipê Acta é uma ferramenta de planejamento e gestão visual. Não fornece aconselhamento legal, financeiro ou contábil. A responsabilidade pela validade e aconselhamento profissional é sua.</p>
-                  <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade.</p>
-                  <p><strong>5. Limitação de Responsabilidade:</strong> O Ipê Acta não se responsabiliza por perdas ou danos resultantes do uso do serviço.</p>
-                  <p className="mt-2"><strong>6. Conexão de Carteira (Simulada):</strong> A funcionalidade de conexão de carteira é atualmente simulada. Nenhum dado real da sua carteira é acessado ou armazenado.</p>
-                  <p className="mt-2"><strong>7. Cláusulas Contratuais:</strong> As cláusulas definidas por você são para seu registro e planejamento. O Ipê Acta não valida ou endossa a legalidade ou aplicabilidade dessas cláusulas.</p>
+                  <p className="mb-2">By creating an account with Ipê Acta, you agree to our Terms of Service and Privacy Policy.</p>
+                  <p className="mb-2"><strong>1. Use of Service:</strong> You agree to use Ipê Acta only for lawful purposes and in accordance with these terms. The service is provided for creating and managing union and asset records.</p>
+                  <p className="mb-2"><strong>2. User Content:</strong> You are responsible for all content you submit. You grant Ipê Acta a license to use this content in the context of providing the service.</p>
+                  <p className="mb-2"><strong>3. Nature of Service:</strong> Ipê Acta is a visual planning and management tool. It does not provide legal, financial, or accounting advice. Responsibility for validity and professional advice is yours.</p>
+                  <p className="mb-2"><strong>4. Privacy:</strong> Your data will be handled according to our Privacy Policy.</p>
+                  <p><strong>5. Limitation of Liability:</strong> Ipê Acta is not liable for losses or damages resulting from the use of the service.</p>
+                  <p className="mt-2"><strong>6. Wallet Connection (Simulated):</strong> The wallet connection feature is currently simulated. No real data from your wallet is accessed or stored.</p>
+                  <p className="mt-2"><strong>7. Contractual Clauses:</strong> The clauses you define are for your record and planning. Ipê Acta does not validate or endorse the legality or applicability of these clauses.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" checked={acceptedContract} onCheckedChange={(checked) => setAcceptedContract(Boolean(checked))} disabled={isLoading} className="border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"/>
                   <Label htmlFor="terms" className="text-sm font-normal text-foreground/90">
-                    Eu li e aceito os Termos de Serviço e a Política de Privacidade do Ipê Acta.
+                    I have read and accept the Ipê Acta Terms of Service and Privacy Policy.
                   </Label>
                 </div>
               </div>
@@ -501,7 +499,7 @@ export default function SignupPage() {
             <div className="flex justify-between items-center pt-4">
               {currentStep > 1 ? (
                 <Button type="button" variant="outline" onClick={handlePreviousStep} disabled={isLoading} className="text-foreground/90 border-border hover:bg-muted/80">
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
               ) : (
                 <div /> 
@@ -509,7 +507,7 @@ export default function SignupPage() {
 
               {currentStep < TOTAL_STEPS ? (
                 <Button type="button" className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleNextStep} disabled={isLoading}>
-                  Próximo <ArrowRight className="ml-2 h-4 w-4" />
+                  Next <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ) : (
                 <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading || !acceptedContract}>
@@ -518,7 +516,7 @@ export default function SignupPage() {
                   ) : (
                     <UserPlus className="mr-2 h-4 w-4" />
                   )}
-                  Criar Contrato
+                  Create Contract
                 </Button>
               )}
             </div>
@@ -526,9 +524,9 @@ export default function SignupPage() {
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Já possui um registro?{' '}
+            Already have a record?{' '}
             <Button variant="link" asChild className="p-0 h-auto text-accent hover:text-accent/80">
-              <Link href="/login">Acesse aqui</Link>
+              <Link href="/login">Access here</Link>
             </Button>
           </p>
         </CardFooter>
@@ -536,12 +534,3 @@ export default function SignupPage() {
     </div>
   );
 }
-    
-    
-  
-
-  
-
-    
-
-    

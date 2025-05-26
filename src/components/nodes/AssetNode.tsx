@@ -8,24 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DollarSign, Coins, Landmark, BuildingIcon, Clock, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { AssetTransaction } from '@/types/asset';
+import type { AssetTransaction, ExtendedAssetNodeData } from '@/types/asset'; // Ensure ExtendedAssetNodeData is imported
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-
-export interface ExtendedAssetNodeData {
-  id: string;
-  userId: string;
-  nomeAtivo: string;
-  tipo: 'digital' | 'fisico';
-  quantidadeTotalDigital?: number;
-  tipoImovelBemFisico?: string;
-  enderecoLocalizacaoFisico?: string;
-  transactions: AssetTransaction[];
-  assignedToMemberId?: string;
-  releaseCondition?: { type: 'age'; targetAge: number };
-  observacoes?: string;
-  isAutoLoaded?: boolean;
-  onOpenDetails?: () => void;
-}
 
 const BitcoinIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
@@ -66,16 +50,16 @@ const getIconForAsset = (data: ExtendedAssetNodeData) => {
     if (nameLower.includes('bitcoin') || nameLower.includes('btc')) return <BitcoinIcon />;
     if (nameLower.includes('ethereum') || nameLower.includes('eth')) return <EthereumIcon />;
     if (nameLower.includes('solana') || nameLower.includes('sol')) return <SolanaIcon />;
-    if (nameLower.includes('usdc')) return <Coins size={18} className="text-green-400 mr-2" />; // Example for USDC
+    if (nameLower.includes('usdc')) return <Coins size={18} className="text-green-400 mr-2" />;
     return <Coins size={18} className="text-primary mr-2" />;
   }
   if (data.tipo === 'fisico') {
     const tipoBemLower = data.tipoImovelBemFisico?.toLowerCase() || '';
-    if (tipoBemLower.includes('casa') || tipoBemLower.includes('apartamento') || tipoBemLower.includes('imóvel')) {
+    if (tipoBemLower.includes('house') || tipoBemLower.includes('apartment') || tipoBemLower.includes('property')) {
       return <Landmark size={18} className="text-primary mr-2" />;
     }
-    if (tipoBemLower.includes('veículo') || tipoBemLower.includes('carro') || tipoBemLower.includes('automóvel')) {
-      return <BuildingIcon size={18} className="text-primary mr-2" />;
+    if (tipoBemLower.includes('vehicle') || tipoBemLower.includes('car')) {
+      return <BuildingIcon size={18} className="text-primary mr-2" />; // Using BuildingIcon as a generic vehicle icon
     }
     return <Landmark size={18} className="text-primary mr-2" />;
   }
@@ -88,10 +72,10 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
   const { toast } = useToast();
 
   const handleClockClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent card click when clicking the clock
     toast({
-      title: 'Configurar Liberação',
-      description: `Em breve: configurar liberação do ativo "${data.nomeAtivo}" ${data.releaseCondition?.targetAge ? `aos ${data.releaseCondition.targetAge} anos` : ''}.`,
+      title: 'Configure Release',
+      description: `Coming soon: configure release for asset "${data.nomeAtivo}" ${data.releaseCondition?.targetAge ? `at age ${data.releaseCondition.targetAge}` : ''}.`,
     });
   };
 
@@ -99,9 +83,10 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
     if (data.onOpenDetails) {
       data.onOpenDetails();
     } else {
+      // Fallback if onOpenDetails is not provided, though it should be
       toast({
-        title: 'Detalhes do Ativo',
-        description: `Visualizando detalhes de "${data.nomeAtivo}".`,
+        title: 'Asset Details',
+        description: `Viewing details for "${data.nomeAtivo}". History: ${data.transactions?.length || 0} transactions.`,
       });
     }
   };
@@ -129,7 +114,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
                 size="icon"
                 className="h-6 w-6 text-accent hover:bg-accent/10"
                 onClick={handleClockClick}
-                aria-label="Configurar condição de liberação"
+                aria-label="Configure release condition"
               >
                 <Clock size={14} />
               </Button>
@@ -140,7 +125,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
         <CardContent className="p-3 text-xs space-y-1">
           {data.tipo === 'digital' && data.quantidadeTotalDigital !== undefined && (
               <Badge variant="outline" className="text-xs whitespace-normal text-left border-primary/50 text-primary bg-card">
-                  Qtd Total: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
+                  Total Qty: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
               </Badge>
           )}
           {data.tipo === 'fisico' && data.tipoImovelBemFisico && (
@@ -150,7 +135,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
           )}
           {data.releaseCondition?.targetAge && (
              <p className="text-muted-foreground text-[0.7rem] italic mt-1">
-              Libera aos: {data.releaseCondition.targetAge} anos
+              Releases at: {data.releaseCondition.targetAge} yrs
             </p>
           )}
           {data.isAutoLoaded && (
@@ -158,11 +143,11 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
               <TooltipTrigger asChild>
                 <div className="flex items-center space-x-1 text-xs text-accent mt-1 cursor-default">
                   <Info size={13} />
-                  <span>Informação da carteira</span>
+                  <span>Wallet Information</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-popover text-popover-foreground text-xs p-2">
-                <p>Carregado da carteira conectada (simulado).</p>
+                <p>Loaded from connected wallet (simulated).</p>
               </TooltipContent>
             </Tooltip>
           )}

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Loader2, Network, Settings, DollarSign, Users, PlusCircle, Info, FileText, Briefcase } from 'lucide-react'; // Adicionado Briefcase
+import { Loader2, Network, Settings, DollarSign, Users, PlusCircle, Info, FileText, Briefcase } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData, AssetTransaction } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -34,7 +34,7 @@ import { ContractSettingsDialog, type ContractClause } from '@/components/contra
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale'; // Changed to enUS
 import { Label } from '@/components/ui/label';
 
 
@@ -86,10 +86,9 @@ export default function AssetManagementDashboard() {
   );
 
   const handleOpenContractSettings = useCallback(() => {
-    // Carregar cláusulas do usuário se existirem, senão usar as padrão
     const userClauses = user?.contractClauses || [
-      { id: 'initial-1', text: 'Todos os bens adquiridos durante a união serão divididos igualmente (50/50) em caso de separação.' },
-      { id: 'initial-2', text: 'As despesas ordinárias do lar serão custeadas por ambos os cônjuges, na proporção de seus respectivos rendimentos.' },
+      { id: 'initial-1', text: 'All assets acquired during the union will be divided equally (50/50) in case of separation.' },
+      { id: 'initial-2', text: 'Ordinary household expenses will be borne by both spouses, in proportion to their respective incomes.' },
     ];
     setContractClauses(userClauses);
     setIsContractSettingsModalOpen(true);
@@ -101,17 +100,17 @@ export default function AssetManagementDashboard() {
       text,
     };
     setContractClauses(prev => [...prev, newClause]);
-    toast({ title: 'Cláusula Adicionada', description: 'Nova cláusula salva nos acordos.' });
+    toast({ title: 'Clause Added', description: 'New clause saved to the agreements.' });
   };
 
   const handleRemoveClause = (id: string) => {
     setContractClauses(prev => prev.filter(clause => clause.id !== id));
-    toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida dos acordos.' });
+    toast({ title: 'Clause Removed', description: 'The clause has been removed from the agreements.' });
   };
 
   const handleUpdateContractClause = (id: string, newText: string) => {
     setContractClauses(prev => prev.map(clause => clause.id === id ? { ...clause, text: newText } : clause));
-    toast({ title: 'Cláusula Atualizada', description: 'A cláusula foi modificada com sucesso.' });
+    toast({ title: 'Clause Updated', description: 'The clause has been successfully modified.' });
   };
 
   const handleOpenAssetModalForUnion = useCallback(() => {
@@ -143,7 +142,7 @@ export default function AssetManagementDashboard() {
 
   const effectiveUser = user || {
     uid: 'mock-uid-default',
-    displayName: 'Minha União (Mock)',
+    displayName: 'My Union (Mock)',
     email: 'mock@example.com',
     relationshipStructure: '',
     religion: '',
@@ -165,7 +164,7 @@ export default function AssetManagementDashboard() {
         type: 'unionNode',
         position: { x: 400, y: 100 },
         data: {
-          label: effectiveUser.displayName || 'Minha União',
+          label: effectiveUser.displayName || 'My Union',
           onSettingsClick: handleOpenContractSettings,
           onOpenAssetModal: handleOpenAssetModalForUnion,
           onAddMember: handleOpenAddMemberModal,
@@ -188,8 +187,8 @@ export default function AssetManagementDashboard() {
 
     if (user?.isWalletConnected && (currentUnionNode || unionNodeCreatedThisRun) && !authLoading) {
         const mockDigitalAssetsData: Omit<ExtendedAssetNodeData, 'id' | 'userId' | 'onOpenDetails' | 'assignedToMemberId' | 'releaseCondition' | 'tipoImovelBemFisico' | 'enderecoLocalizacaoFisico' | 'observacoes'>[] = [
-            { nomeAtivo: 'Bitcoin', tipo: 'digital', quantidadeTotalDigital: 0.5, transactions: [{ id: 'tx-btc-1', dataAquisicao: new Date(), quantidadeDigital: 0.5, quemComprou: 'Carteira Conectada'}], isAutoLoaded: true },
-            { nomeAtivo: 'Ethereum', tipo: 'digital', quantidadeTotalDigital: 10, transactions: [{ id: 'tx-eth-1', dataAquisicao: new Date(), quantidadeDigital: 10, quemComprou: 'Carteira Conectada'}], isAutoLoaded: true },
+            { nomeAtivo: 'Bitcoin', tipo: 'digital', quantidadeTotalDigital: 0.5, transactions: [{ id: 'tx-btc-1', dataAquisicao: new Date(), quantidadeDigital: 0.5, quemComprou: 'Connected Wallet'}], isAutoLoaded: true },
+            { nomeAtivo: 'Ethereum', tipo: 'digital', quantidadeTotalDigital: 10, transactions: [{ id: 'tx-eth-1', dataAquisicao: new Date(), quantidadeDigital: 10, quemComprou: 'Connected Wallet'}], isAutoLoaded: true },
         ];
 
         const nodesToAddThisRun: Node<ExtendedAssetNodeData>[] = [];
@@ -208,7 +207,7 @@ export default function AssetManagementDashboard() {
                     transactions: mockAsset.transactions || [],
                     isAutoLoaded: mockAsset.isAutoLoaded,
                     onOpenDetails: () => {},
-                    observacoes: `Ativo ${mockAsset.nomeAtivo} carregado automaticamente.`
+                    observacoes: `Asset ${mockAsset.nomeAtivo} automatically loaded.`
                 };
                 assetDataForDetails.onOpenDetails = () => handleOpenAssetDetailsModal(assetDataForDetails);
 
@@ -247,15 +246,15 @@ export default function AssetManagementDashboard() {
             const usdcAssetData: ExtendedAssetNodeData = {
               id: usdcAssetId,
               userId: effectiveUser.uid,
-              nomeAtivo: 'USDC Reserva',
+              nomeAtivo: 'USDC Reserve',
               tipo: 'digital',
               quantidadeTotalDigital: 5000,
-              transactions: [{ id: `tx-usdc-${childId}`, dataAquisicao: new Date(), quantidadeDigital: 5000, quemComprou: 'Carteira Conectada' }],
+              transactions: [{ id: `tx-usdc-${childId}`, dataAquisicao: new Date(), quantidadeDigital: 5000, quemComprou: 'Connected Wallet' }],
               isAutoLoaded: true,
               assignedToMemberId: childId,
               releaseCondition: { type: 'age', targetAge: 18 },
               onOpenDetails: () => {},
-              observacoes: "Reserva USDC para o filho(a)."
+              observacoes: "USDC Reserve for the child."
             };
             usdcAssetData.onOpenDetails = () => handleOpenAssetDetailsModal(usdcAssetData);
             
@@ -303,7 +302,7 @@ export default function AssetManagementDashboard() {
         }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, effectiveUser?.displayName, user?.isWalletConnected, user?.uid, allMembers, nodes, setNodes, setEdges, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal]);
+  }, [authLoading, effectiveUser?.displayName, user?.isWalletConnected, user?.uid, allMembers, setNodes, setEdges, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal]);
 
 
   const memberHasBirthDate = (memberId?: string): boolean => {
@@ -314,25 +313,26 @@ export default function AssetManagementDashboard() {
 
   const handleAddAssetSubmit = async (formData: AssetFormData) => {
     if (!effectiveUser) {
-        toast({ title: 'Erro!', description: 'Usuário não autenticado.', variant: 'destructive' });
+        toast({ title: 'Error!', description: 'User not authenticated.', variant: 'destructive' });
         return;
     }
     setIsSubmittingAsset(true);
 
+    // Simulate adding to backend (assetActions.ts)
     const result = await addAsset(formData, effectiveUser.uid);
 
     if (result.success && result.assetId && result.transactionId) {
-        toast({ title: 'Sucesso!', description: 'Ativo físico adicionado com sucesso.' });
+        toast({ title: 'Success!', description: 'Physical asset added successfully.' });
         
         const newTransaction: AssetTransaction = {
             id: result.transactionId,
             dataAquisicao: formData.dataAquisicao,
-            quemComprou: formData.quemComprou === "UNSPECIFIED_BUYER" || !formData.quemComprou ? "Entidade Principal" : formData.quemComprou,
+            quemComprou: formData.quemComprou === "UNSPECIFIED_BUYER" || !formData.quemComprou ? "Main Entity" : formData.quemComprou,
             contribuicaoParceiro1: formData.contribuicaoParceiro1,
             contribuicaoParceiro2: formData.contribuicaoParceiro2,
-            observacoes: formData.observacoes, // Observações da transação
-            tipoImovelBemFisico: formData.tipoImovelBemFisico,
-            enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
+            observacoes: formData.observacoes, // Transaction notes
+            tipoImovelBemFisico: formData.tipoImovelBemFisico, // Specific to physical asset transaction
+            enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico, // Specific
         };
         
         const processedAssignedToMemberId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" ? undefined : formData.assignedToMemberId);
@@ -341,7 +341,7 @@ export default function AssetManagementDashboard() {
         const sourceNodeInstance = nodes.find(n => n.id === sourceNodeId);
 
         if (!sourceNodeInstance) {
-            console.error("Nó de origem (União Principal ou Membro) não encontrado.", sourceNodeId);
+            console.error("Source node (Union or Member) not found.", sourceNodeId);
             setIsSubmittingAsset(false);
             setMemberContextForAssetAdd(null);
             return;
@@ -369,11 +369,11 @@ export default function AssetManagementDashboard() {
             id: result.assetId!,
             userId: effectiveUser.uid,
             nomeAtivo: formData.nomeAtivo,
-            tipo: 'fisico',
+            tipo: 'fisico', // This form is for physical assets
             tipoImovelBemFisico: formData.tipoImovelBemFisico,
             enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
             transactions: [newTransaction],
-            observacoes: formData.observacoes, // Observação geral do ativo (pode ser o mesmo da primeira transação)
+            observacoes: formData.observacoes, // General asset observation (can be same as first transaction)
             assignedToMemberId: processedAssignedToMemberId,
             releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
             isAutoLoaded: false,
@@ -405,26 +405,26 @@ export default function AssetManagementDashboard() {
         setIsAssetModalOpen(false);
         setMemberContextForAssetAdd(null);
     } else {
-        toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar o ativo físico.', variant: 'destructive' });
+        toast({ title: 'Error!', description: result.error || 'Could not add physical asset.', variant: 'destructive' });
     }
     setIsSubmittingAsset(false);
   };
 
   const handleAddMemberSubmit = async (data: MemberFormData) => {
     if (!effectiveUser) {
-      toast({ title: 'Erro!', description: 'Usuário não autenticado.', variant: 'destructive' });
+      toast({ title: 'Error!', description: 'User not authenticated.', variant: 'destructive' });
       return;
     }
     setIsSubmittingMember(true);
-    const result = await addMember(data, UNION_NODE_ID);
+    const result = await addMember(data, UNION_NODE_ID); // Pass UNION_NODE_ID as unionId
     if (result.success && result.memberId) {
-      toast({ title: 'Sucesso!', description: 'Filho(a) adicionado com sucesso.' });
+      toast({ title: 'Success!', description: 'Child added successfully.' });
 
        const newMemberData: MemberWithBirthDate = {
         id: result.memberId,
         unionId: UNION_NODE_ID,
         nome: data.nome,
-        tipoRelacao: data.tipoRelacao, 
+        tipoRelacao: data.tipoRelacao, // 'filho_a' is set by AddMemberForm
         dataNascimento: data.dataNascimento,
       };
       setAllMembers(prev => [...prev, newMemberData]); 
@@ -450,7 +450,7 @@ export default function AssetManagementDashboard() {
       const nodeDataPayload: MemberNodeData = {
         id: result.memberId,
         name: data.nome,
-        relationshipType: data.tipoRelacao,
+        relationshipType: data.tipoRelacao, // 'filho_a'
         onAddAssetClick: (memberId) => handleOpenAssetModalForMember(memberId),
       };
 
@@ -476,7 +476,7 @@ export default function AssetManagementDashboard() {
 
       setIsAddMemberModalOpen(false);
     } else {
-      toast({ title: 'Erro!', description: result.error || 'Não foi possível adicionar o filho(a).', variant: 'destructive' });
+      toast({ title: 'Error!', description: result.error || 'Could not add child.', variant: 'destructive' });
     }
     setIsSubmittingMember(false);
   };
@@ -496,9 +496,9 @@ export default function AssetManagementDashboard() {
   }
 
   const getMemberNameById = (memberId?: string) => {
-    if (!memberId || memberId === "Entidade Principal" || memberId === "Carteira Conectada") return 'União Principal (Ipê Acta)';
+    if (!memberId || memberId === "Main Entity" || memberId === "Connected Wallet") return 'Main Union (Ipê Acta)';
     const member = allMembers.find(m => m.id === memberId);
-    return member ? member.nome : 'Membro Desconhecido';
+    return member ? member.nome : 'Unknown Member';
   };
 
 
@@ -513,8 +513,8 @@ export default function AssetManagementDashboard() {
       }}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo Físico</DialogTitle>
-            <DialogDescription className="text-muted-foreground">Preencha os detalhes do seu ativo físico.</DialogDescription>
+            <DialogTitle className="text-2xl text-primary">Add New Physical Asset</DialogTitle>
+            <DialogDescription className="text-muted-foreground">Fill in the details of your physical asset.</DialogDescription>
           </DialogHeader>
           <AssetForm
             onSubmit={handleAddAssetSubmit}
@@ -535,8 +535,8 @@ export default function AssetManagementDashboard() {
       <Dialog open={isAddMemberModalOpen} onOpenChange={setIsAddMemberModalOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">Adicionar Novo Filho(a)</DialogTitle>
-            <DialogDescription className="text-muted-foreground">Insira os dados do novo filho(a) da sua união.</DialogDescription>
+            <DialogTitle className="text-2xl text-primary">Add New Child</DialogTitle>
+            <DialogDescription className="text-muted-foreground">Enter the details of the new child in your union.</DialogDescription>
           </DialogHeader>
           <AddMemberForm onSubmit={handleAddMemberSubmit} isLoading={isSubmittingMember} onClose={() => setIsAddMemberModalOpen(false)} />
         </DialogContent>
@@ -545,37 +545,37 @@ export default function AssetManagementDashboard() {
        <Dialog open={isAssetDetailsModalOpen} onOpenChange={handleCloseAssetDetailsModal}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">Detalhes do Ativo: {selectedAssetForDetails?.nomeAtivo}</DialogTitle>
+            <DialogTitle className="text-2xl text-primary">Asset Details: {selectedAssetForDetails?.nomeAtivo}</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Informações sobre o ativo e histórico de aquisições.
+              Information about the asset and acquisition history.
             </DialogDescription>
           </DialogHeader>
           {selectedAssetForDetails && (
             <div className="space-y-4 py-4 text-sm">
               <div>
-                <Label className="text-xs font-medium text-muted-foreground">Nome do Ativo</Label>
+                <Label className="text-xs font-medium text-muted-foreground">Asset Name</Label>
                 <p className="font-semibold text-foreground">{selectedAssetForDetails.nomeAtivo}</p>
               </div>
               <div>
-                <Label className="text-xs font-medium text-muted-foreground">Tipo Principal</Label>
+                <Label className="text-xs font-medium text-muted-foreground">Main Type</Label>
                 <p className="text-foreground capitalize">{selectedAssetForDetails.tipo}</p>
               </div>
 
               {selectedAssetForDetails.tipo === 'digital' && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Quantidade Total</Label>
+                  <Label className="text-xs font-medium text-muted-foreground">Total Quantity</Label>
                   <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData).quantidadeTotalDigital?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) || 'N/A'}</p>
                 </div>
               )}
               {selectedAssetForDetails.tipo === 'fisico' && (
                 <>
                   <div>
-                    <Label className="text-xs font-medium text-muted-foreground">Tipo de Bem Físico</Label>
-                    <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData).tipoImovelBemFisico || 'Não especificado'}</p>
+                    <Label className="text-xs font-medium text-muted-foreground">Type of Physical Good</Label>
+                    <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData).tipoImovelBemFisico || 'Not specified'}</p>
                   </div>
                   {(selectedAssetForDetails as ExtendedAssetNodeData).enderecoLocalizacaoFisico && (
                     <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Endereço/Localização</Label>
+                        <Label className="text-xs font-medium text-muted-foreground">Address/Location</Label>
                         <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData).enderecoLocalizacaoFisico}</p>
                     </div>
                   )}
@@ -584,71 +584,71 @@ export default function AssetManagementDashboard() {
 
               {selectedAssetForDetails.assignedToMemberId && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Designado para</Label>
+                  <Label className="text-xs font-medium text-muted-foreground">Assigned to</Label>
                   <p className="text-foreground">{getMemberNameById(selectedAssetForDetails.assignedToMemberId)}</p>
                 </div>
               )}
               {selectedAssetForDetails.releaseCondition?.type === 'age' && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Condição de Liberação</Label>
-                  <p className="text-foreground">Liberar aos {selectedAssetForDetails.releaseCondition.targetAge} anos</p>
+                  <Label className="text-xs font-medium text-muted-foreground">Release Condition</Label>
+                  <p className="text-foreground">Release at {selectedAssetForDetails.releaseCondition.targetAge} years old</p>
                 </div>
               )}
               {selectedAssetForDetails.observacoes && (
                 <div>
-                  <Label className="text-xs font-medium text-muted-foreground">Observações Gerais do Ativo</Label>
+                  <Label className="text-xs font-medium text-muted-foreground">General Asset Notes</Label>
                   <p className="text-foreground whitespace-pre-wrap">{selectedAssetForDetails.observacoes}</p>
                 </div>
               )}
               {selectedAssetForDetails.isAutoLoaded && (
                  <div className="flex items-center space-x-1 text-xs text-accent pt-1">
                     <Info size={14} />
-                    <span>Carregado automaticamente da carteira conectada (simulado).</span>
+                    <span>Automatically loaded from connected wallet (simulated).</span>
                 </div>
               )}
 
 
               <div className="space-y-3 pt-3 mt-3 border-t border-border/50">
-                <h4 className="text-md font-semibold text-primary">Histórico de Aquisições/Transações</h4>
+                <h4 className="text-md font-semibold text-primary">Acquisition/Transaction History</h4>
                  {selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 0 ? (
                   <div className="max-h-60 overflow-y-auto space-y-4 pr-2">
                     {selectedAssetForDetails.transactions.map((tx, index) => (
                       <Card key={tx.id || index} className="p-3 bg-muted/50 border-border/30">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                           <div>
-                            <Label className="text-xs font-medium text-muted-foreground">Data da Aquisição</Label>
-                            <p className="text-foreground">{format(new Date(tx.dataAquisicao), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
+                            <Label className="text-xs font-medium text-muted-foreground">Acquisition Date</Label>
+                            <p className="text-foreground">{format(new Date(tx.dataAquisicao), "MM/dd/yyyy 'at' HH:mm", { locale: enUS })}</p>
                           </div>
                           {tx.quantidadeDigital !== undefined && selectedAssetForDetails.tipo === 'digital' && (
                             <div>
-                              <Label className="text-xs font-medium text-muted-foreground">Quantidade Adquirida</Label>
+                              <Label className="text-xs font-medium text-muted-foreground">Quantity Acquired</Label>
                               <p className="text-foreground">{tx.quantidadeDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}</p>
                             </div>
                           )}
                           {tx.valorPagoEpoca !== undefined && (
                             <div>
-                              <Label className="text-xs font-medium text-muted-foreground">Valor Pago na Época</Label>
-                              <p className="text-foreground">{typeof tx.valorPagoEpoca === 'number' ? tx.valorPagoEpoca.toLocaleString(undefined, { style: 'currency', currency: 'BRL' }) : tx.valorPagoEpoca}</p>
+                              <Label className="text-xs font-medium text-muted-foreground">Value Paid at the Time</Label>
+                              <p className="text-foreground">{typeof tx.valorPagoEpoca === 'number' ? tx.valorPagoEpoca.toLocaleString(undefined, { style: 'currency', currency: 'USD' }) : tx.valorPagoEpoca}</p>
                             </div>
                           )}
                            {tx.quemComprou && (
                             <div>
-                              <Label className="text-xs font-medium text-muted-foreground">Adquirido por</Label>
-                              <p className="text-foreground">{tx.quemComprou === "Entidade Principal" ? "União Principal (Ipê Acta)" : tx.quemComprou === "Carteira Conectada" ? "Carteira Conectada (Simulado)" : getMemberNameById(tx.quemComprou)}</p>
+                              <Label className="text-xs font-medium text-muted-foreground">Acquired by</Label>
+                              <p className="text-foreground">{tx.quemComprou === "Main Entity" ? "Main Union (Ipê Acta)" : tx.quemComprou === "Connected Wallet" ? "Connected Wallet (Simulated)" : getMemberNameById(tx.quemComprou)}</p>
                             </div>
                           )}
-                          {tx.quemComprou === 'Ambos' && effectiveUser?.displayName && (
+                          {tx.quemComprou === 'Ambos' && effectiveUser?.displayName && ( // Assuming "Ambos" means both partners
                             <>
                               {tx.contribuicaoParceiro1 !== undefined && (
                                 <div>
-                                  <Label className="text-xs font-medium text-muted-foreground">Contrib. ({effectiveUser.displayName.split('&')[0]?.trim() || 'Parte 1'})</Label>
-                                  <p className="text-foreground">{tx.contribuicaoParceiro1.toLocaleString(undefined, { style: 'currency', currency: 'BRL' })}</p>
+                                  <Label className="text-xs font-medium text-muted-foreground">Contrib. ({effectiveUser.displayName.split('&')[0]?.trim() || 'Partner 1'})</Label>
+                                  <p className="text-foreground">{tx.contribuicaoParceiro1.toLocaleString(undefined, { style: 'currency', currency: 'USD' })}</p>
                                 </div>
                               )}
                               {tx.contribuicaoParceiro2 !== undefined && (
                                 <div>
-                                  <Label className="text-xs font-medium text-muted-foreground">Contrib. ({effectiveUser.displayName.split('&')[1]?.trim() || 'Parte 2'})</Label>
-                                  <p className="text-foreground">{tx.contribuicaoParceiro2.toLocaleString(undefined, { style: 'currency', currency: 'BRL' })}</p>
+                                  <Label className="text-xs font-medium text-muted-foreground">Contrib. ({effectiveUser.displayName.split('&')[1]?.trim() || 'Partner 2'})</Label>
+                                  <p className="text-foreground">{tx.contribuicaoParceiro2.toLocaleString(undefined, { style: 'currency', currency: 'USD' })}</p>
                                 </div>
                               )}
                             </>
@@ -656,7 +656,7 @@ export default function AssetManagementDashboard() {
                         </div>
                         {tx.observacoes && (
                           <div className="mt-2 pt-2 border-t border-dashed border-border/30">
-                            <Label className="text-xs font-medium text-muted-foreground">Observações da Transação</Label>
+                            <Label className="text-xs font-medium text-muted-foreground">Transaction Notes</Label>
                             <p className="text-foreground whitespace-pre-wrap text-xs">{tx.observacoes}</p>
                           </div>
                         )}
@@ -664,17 +664,17 @@ export default function AssetManagementDashboard() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">Nenhuma transação registrada para este ativo.</p>
+                  <p className="text-muted-foreground">No transactions recorded for this asset.</p>
                 )}
                  {selectedAssetForDetails.tipo === 'digital' && selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 1 &&(
                    <CardDescription className="text-xs text-muted-foreground mt-2">
-                    Nota: A "Quantidade Total" do ativo reflete a soma de todas as transações. As "Observações Gerais" e "Designado para" são referentes ao ativo como um todo. Consulte o histórico para detalhes de cada aquisição.
+                    Note: The "Total Quantity" of the asset reflects the sum of all transactions. "General Notes" and "Assigned to" refer to the asset as a whole. Refer to the history for details of each acquisition.
                   </CardDescription>
                 )}
               </div>
 
               <div className="pt-4">
-                <Button onClick={handleCloseAssetDetailsModal} className="w-full" variant="outline">Fechar</Button>
+                <Button onClick={handleCloseAssetDetailsModal} className="w-full" variant="outline">Close</Button>
               </div>
             </div>
           )}
@@ -689,8 +689,8 @@ export default function AssetManagementDashboard() {
         onAddClause={handleAddContractClause}
         onRemoveClause={handleRemoveClause}
         onUpdateClause={handleUpdateContractClause}
-        dialogTitle="Configurações dos Acordos do Registro"
-        dialogDescription="Adicione, visualize, edite e gerencie as cláusulas dos seus acordos. Lembre-se que o Ipê Acta é uma ferramenta de planejamento e não substitui aconselhamento jurídico."
+        dialogTitle="Record Agreement Settings"
+        dialogDescription="Add, view, edit, and manage the clauses of your agreements. Remember that Ipê Acta is a planning tool and does not replace legal advice."
       />
 
       <div className="flex-grow shadow-lg relative overflow-hidden rounded-md border-2 border-dashed border-border bg-background">
@@ -715,19 +715,19 @@ export default function AssetManagementDashboard() {
       <div className="mt-6 flex justify-center gap-4">
         <Button 
             variant="outline" 
-            onClick={() => toast({ title: "Em Breve!", description: "Funcionalidade de gerar certidão de casamento será implementada."})}
+            onClick={() => toast({ title: "Coming Soon!", description: "Functionality to generate marriage certificate will be implemented."})}
             className="border-primary text-primary hover:bg-primary/10 hover:text-primary"
         >
             <FileText className="mr-2 h-5 w-5" />
-            Gerar Certidão de Casamento
+            Generate Marriage Certificate
         </Button>
         <Button 
             variant="outline" 
-            onClick={() => toast({ title: "Em Breve!", description: "Funcionalidade de gerar relatório da holding será implementada."})}
+            onClick={() => toast({ title: "Coming Soon!", description: "Functionality to generate holding report will be implemented."})}
             className="border-accent text-accent hover:bg-accent/10 hover:text-accent"
         >
             <Briefcase className="mr-2 h-5 w-5" />
-            Relatório da Holding
+            Holding Report
         </Button>
       </div>
     </div>
@@ -765,6 +765,3 @@ declare module 'reactflow' {
     onOpenDetails?: () => void;
   }
 }
-
-
-    

@@ -5,8 +5,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/components/auth-provider';
 
 export const metadata: Metadata = {
-  title: 'Ipê Acta - Contratos de Casamento e Holding Familiar',
-  description: 'Crie seu contrato de casamento personalizado e organize sua holding familiar, incluindo ativos digitais e físicos.',
+  title: 'Ipê Acta - Marriage Contracts and Family Holding Management',
+  description: 'Create your personalized marriage contract and organize your family holding, including digital and physical assets.',
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

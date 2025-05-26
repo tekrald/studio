@@ -9,8 +9,8 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Registros', icon: Briefcase },
-  { href: '/profile', label: 'Meu Registro', icon: UserCircle },
+  { href: '/dashboard', label: 'Records', icon: Briefcase },
+  { href: '/profile', label: 'My Record', icon: UserCircle },
 ];
 
 export function Header() {
@@ -22,9 +22,9 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/logo.svg" // Caminho atualizado
+            src="/logo.svg"
             alt="Ipê Acta Logo"
-            width={150}
+            width={250}
             height={83}
             className="h-auto"
             priority
@@ -60,7 +60,7 @@ export function Header() {
           ) : user ? (
             <>
               <Button variant="ghost" size="sm" onClick={logout} className="text-foreground/80 hover:text-destructive">
-                <LogOut className="mr-2 h-4 w-4" /> Sair
+                <LogOut className="mr-2 h-4 w-4" /> Sign Out
               </Button>
             </>
           ) : (
@@ -68,14 +68,14 @@ export function Header() {
               {!pathname.includes('/login') && !pathname.includes('/signup') && (
                 <Button variant="ghost" size="sm" asChild className="text-foreground/80 hover:text-primary">
                   <Link href="/login">
-                    <LogIn className="mr-2 h-4 w-4" /> Entrar
+                    <LogIn className="mr-2 h-4 w-4" /> Sign In
                   </Link>
                 </Button>
               )}
               {!pathname.includes('/signup') && !pathname.includes('/login') &&(
                  <Button size="sm" asChild className="bg-gradient-to-r from-gradient-green to-gradient-blue text-black font-semibold hover:opacity-90">
                   <Link href="/signup">
-                    Cadastrar
+                    Register
                   </Link>
                 </Button>
               )}
@@ -87,7 +87,7 @@ export function Header() {
       {user && (
         <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
            {navLinks.map((link) => {
-              const label = link.href === '/profile' && user?.displayName ? user.displayName.split('&')[0]?.trim() || user.displayName.split('E')[0]?.trim() : link.label;
+              const label = link.href === '/profile' && user?.displayName ? user.displayName.split('&')[0]?.trim() || user.displayName.split('And')[0]?.trim() || 'Profile' : link.label;
               return (
                 <Button key={link.href} variant="ghost" size="sm" asChild
                   className={cn(

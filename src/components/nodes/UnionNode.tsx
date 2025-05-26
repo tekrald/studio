@@ -54,13 +54,13 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
       <Handle type="target" position={Position.Top} id={`t-${id}-top`} className="!opacity-0" />
 
       <div className="bg-gradient-to-r from-gradient-green to-gradient-blue p-2 rounded-t-md flex justify-between items-center">
-        <span className="text-xs font-semibold text-black">Contrato</span>
+        <span className="text-xs font-semibold text-black">Contract</span>
         <Button
           variant="ghost"
           size="icon"
           className="h-6 w-6 text-black hover:bg-white/20 hover:text-black/80"
           onClick={data.onSettingsClick}
-          aria-label="Configurações do Contrato"
+          aria-label="Contract Settings"
         >
           <Settings size={16} />
         </Button>
@@ -78,7 +78,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
           id={`handle-plus-${id}`}
           onClick={toggleActions}
           className="p-1.5 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center justify-center"
-          aria-label="Adicionar"
+          aria-label="Add"
           style={{ width: '32px', height: '32px' }}
         >
           <PlusCircle size={20} />
@@ -99,7 +99,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
               }}
             >
               <DollarSign size={16} className="mr-2" />
-              Adicionar Ativo
+              Add Asset
             </Button>
             <Button
               variant="ghost"
@@ -111,7 +111,7 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
               }}
             >
               <Users size={16} className="mr-2" />
-              Adicionar Filho(a)
+              Add Child
             </Button>
           </div>
         )}

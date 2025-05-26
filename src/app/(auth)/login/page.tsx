@@ -23,17 +23,17 @@ export default function LoginPage() {
     setError(null);
     try {
       if (!email || !password) {
-        setError("Por favor, insira email e senha.");
+        setError("Please enter email and password.");
         setIsLoading(false);
         return;
       }
-      // Simulação de login
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula atraso de rede
-      // Em uma aplicação real, aqui você chamaria sua função de login do Firebase/Auth
-      login(email); // Usando o mock do AuthProvider
+      // Login simulation
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulates network delay
+      // In a real application, here you would call your Firebase/Auth login function
+      login(email); // Using the AuthProvider mock
     } catch (err) {
-      setError('Falha ao fazer login. Verifique suas credenciais.');
-      // Normalmente, aqui você trataria erros específicos do Firebase Auth
+      setError('Failed to log in. Check your credentials.');
+      // Typically, you would handle specific Firebase Auth errors here
       setIsLoading(false);
     }
   };
@@ -45,17 +45,17 @@ export default function LoginPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
              <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" className="rounded-full" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardTitle className="text-3xl font-sans text-foreground">Acesse sua Conta Ipê Acta</CardTitle>
-          <CardDescription className="font-sans text-muted-foreground">Faça login para gerenciar seus contratos e holding.</CardDescription>
+          <CardTitle className="text-3xl font-sans text-foreground">Access Your Ipê Acta Account</CardTitle>
+          <CardDescription className="font-sans text-muted-foreground">Log in to manage your contracts and holding.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground/90">Endereço de Email</Label>
+              <Label htmlFor="email" className="text-foreground/90">Email Address</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="voce@exemplo.com"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -64,7 +64,7 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground/90">Senha</Label>
+              <Label htmlFor="password" className="text-foreground/90">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -82,15 +82,15 @@ export default function LoginPage() {
               ) : (
                 <LogInIcon className="mr-2 h-4 w-4" />
               )}
-              Entrar
+              Sign In
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Não tem uma conta?{' '}
+            Don't have an account?{' '}
             <Button variant="link" asChild className="p-0 h-auto text-accent hover:text-accent/80">
-              <Link href="/signup">Cadastre-se aqui</Link>
+              <Link href="/signup">Sign up here</Link>
             </Button>
           </p>
         </CardFooter>
