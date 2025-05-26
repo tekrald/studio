@@ -38,7 +38,7 @@ const suggestedClausesTemplates = {
     { id: 'sug_pb_2', text: "Ativos adquiridos individualmente antes do acordo permanecerão como propriedade individual de cada parte." },
     { id: 'sug_pb_3', text: "Em caso de aquisição do ativo [NOME DO ATIVO ESPECÍFICO], a propriedade será dividida em X% para Parte A e Z% para Parte B." },
   ],
-  regrasConvivencia: [ // Rebatizado para "Regras da Sociedade"
+  regrasConvivencia: [
     { id: 'sug_rc_1', text: "As despesas operacionais (ex: custos de manutenção, taxas) serão divididas da seguinte forma: [Descrever a divisão]." },
     { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de [VALOR/MOEDA]) deverão ser discutidas e aprovadas por todas as partes envolvidas no acordo." },
     { id: 'sug_rc_3', text: "Contribuições e responsabilidades: [Definir regras para aportes, trabalho, etc.]." },
@@ -96,11 +96,11 @@ export function ContractSettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[90vh] flex flex-col bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-2xl text-primary">Configurações dos Acordos</DialogTitle>
-          <DialogDescription>
-            Adicione, visualize, edite e gerencie as cláusulas dos seus acordos e registros em Ipê City.
+          <DialogDescription className="text-muted-foreground">
+            Adicione, visualize, edite e gerencie as cláusulas dos seus acordos e registros em Ipê City. Este sistema é flexível para acomodar diversas configurações familiares e crenças.
           </DialogDescription>
         </DialogHeader>
 
@@ -110,10 +110,10 @@ export function ContractSettingsDialog({
             {clauses.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-10">Nenhuma cláusula adicionada ainda. Comece adicionando uma nova ou usando uma sugestão.</p>
             ) : (
-              <ScrollArea className="flex-grow border rounded-md p-4 bg-muted/30 max-h-[calc(90vh-350px)] md:max-h-none">
+              <ScrollArea className="flex-grow border border-border rounded-md p-4 bg-background max-h-[calc(90vh-350px)] md:max-h-none">
                 <ul className="space-y-3">
                   {clauses.map((clause) => (
-                    <li key={clause.id} className="p-3 bg-card shadow rounded-md text-sm text-card-foreground">
+                    <li key={clause.id} className="p-3 bg-card shadow rounded-md text-sm text-card-foreground border border-border/50">
                       <p className="whitespace-pre-wrap flex-grow mb-2">{clause.text}</p>
                       <div className="flex justify-end space-x-2">
                         <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => handleEditClick(clause)}>
@@ -140,22 +140,22 @@ export function ContractSettingsDialog({
                 value={newClauseText}
                 onChange={(e) => setNewClauseText(e.target.value)}
                 placeholder="Digite o texto da cláusula aqui..."
-                className="min-h-[100px]"
+                className="min-h-[100px] bg-input text-foreground placeholder:text-muted-foreground"
                 rows={5}
               />
               <div className="mt-3 flex flex-col sm:flex-row gap-2">
-                <Button onClick={handleSaveOrAddClause} className="w-full sm:flex-1" disabled={!newClauseText.trim()}>
+                <Button onClick={handleSaveOrAddClause} className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!newClauseText.trim()}>
                   {editingClauseId ? <><Save size={18} className="mr-2" /> Salvar Alterações</> : <><PlusCircle size={18} className="mr-2" /> Adicionar Cláusula</>}
                 </Button>
                 {editingClauseId && (
-                  <Button variant="outline" onClick={handleCancelEdit} className="w-full sm:w-auto">
+                  <Button variant="outline" onClick={handleCancelEdit} className="w-full sm:w-auto text-foreground/90 border-border hover:bg-muted/80">
                     Cancelar Edição
                   </Button>
                 )}
               </div>
             </div>
             
-            <Separator />
+            <Separator className="bg-border"/>
 
             <div>
               <h3 className="text-lg font-semibold mb-3 text-foreground">Sugestões de Cláusulas</h3>
@@ -164,7 +164,7 @@ export function ContractSettingsDialog({
                   <div>
                     <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Landmark size={18} className="mr-2"/>Partilha de Ativos</h4>
                     {suggestedClausesTemplates.partilhaBens.map(sug => (
-                        <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5" onClick={() => handleAddSuggestion(sug.text)}>
+                        <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5 text-foreground/90 border-border hover:bg-muted/80" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}
                         </Button>
                     ))}
@@ -172,7 +172,7 @@ export function ContractSettingsDialog({
                   <div>
                     <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras da Sociedade</h4>
                      {suggestedClausesTemplates.regrasConvivencia.map(sug => (
-                        <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5" onClick={() => handleAddSuggestion(sug.text)}>
+                        <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5 text-foreground/90 border-border hover:bg-muted/80" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}
                         </Button>
                     ))}
@@ -183,9 +183,9 @@ export function ContractSettingsDialog({
           </div>
         </div>
 
-        <DialogFooter className="mt-auto pt-4 border-t">
+        <DialogFooter className="mt-auto pt-4 border-t border-border">
           <DialogClose asChild>
-            <Button type="button" variant="outline">
+            <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80">
               Fechar
             </Button>
           </DialogClose>

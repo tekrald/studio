@@ -18,11 +18,10 @@ export interface ExtendedAssetNodeData {
   quantidadeTotalDigital?: number;
   tipoImovelBemFisico?: string;
   enderecoLocalizacaoFisico?: string;
-  documentacaoFisico?: string; // Mantido, embora o formulário não o colete mais diretamente assim
   transactions: AssetTransaction[];
   assignedToMemberId?: string;
   releaseCondition?: { type: 'age'; targetAge: number };
-  observacoesGerais?: string; // Observações gerais do ativo, não da transação
+  observacoesGerais?: string;
   onOpenDetails?: () => void;
 }
 
@@ -35,27 +34,26 @@ const BitcoinIcon = () => (
 
 const EthereumIcon = () => (
  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-    <path d="M12.023 2.68701L11.531 3.32701V11.56L12.023 11.829L12.516 11.56V3.32701L12.023 2.68701Z" fill="#3C3C3B"/>
-    <path d="M12.023 2.68701L6.78101 9.40401L12.023 11.829V2.68701Z" fill="#343434"/>
-    <path d="M12.023 2.68701L17.265 9.40401L12.023 11.829V2.68701Z" fill="#8C8C8C"/>
-    <path d="M12.023 12.76L11.555 12.981V16.844L12.023 17.13L12.492 16.844V12.981L12.023 12.76Z" fill="#3C3C3B"/>
-    <path d="M12.023 17.13V12.76L6.78101 10.352L12.023 17.13Z" fill="#343434"/>
-    <path d="M12.023 17.13V12.76L17.265 10.352L12.023 17.13Z" fill="#8C8C8C"/>
-    <path d="M12.023 11.829L17.265 9.40401L12.023 6.99701L6.78101 9.40401L12.023 11.829Z" fill="#141414"/>
+    <path d="M12.023 2.68701L11.531 3.32701V11.56L12.023 11.829L12.516 11.56V3.32701L12.023 2.68701Z" fill="#627EEA"/>
+    <path d="M12.023 2.68701L6.78101 9.40401L12.023 11.829V2.68701Z" fill="#8AA1F2"/>
+    <path d="M12.023 2.68701L17.265 9.40401L12.023 11.829V2.68701Z" fill="#627EEA"/>
+    <path d="M12.023 12.76L11.555 12.981V16.844L12.023 17.13L12.492 16.844V12.981L12.023 12.76Z" fill="#627EEA"/>
+    <path d="M12.023 17.13V12.76L6.78101 10.352L12.023 17.13Z" fill="#8AA1F2"/>
+    <path d="M12.023 17.13V12.76L17.265 10.352L12.023 17.13Z" fill="#627EEA"/>
+    <path d="M12.023 11.829L17.265 9.40401L12.023 6.99701L6.78101 9.40401L12.023 11.829Z" fill="#45578E"/>
   </svg>
 );
 
-// Adicionando um ícone para Solana
 const SolanaIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
     <defs>
-      <linearGradient id="solanaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <linearGradient id="solanaGradientNode" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style={{stopColor: "#9945FF"}} />
         <stop offset="100%" style={{stopColor: "#14F195"}} />
       </linearGradient>
     </defs>
-    <circle cx="12" cy="12" r="10" fill="url(#solanaGradient)"/>
-    <path d="M8.06006 6.5L6.5 8.06006L10.44 12L6.5 15.94L8.06006 17.5L12 13.56L15.94 17.5L17.5 15.94L13.56 12L17.5 8.06006L15.94 6.5L12 10.44L8.06006 6.5Z" fill="white" transform="scale(0.8) translate(3,3)"/>
+    <circle cx="12" cy="12" r="10" fill="url(#solanaGradientNode)"/>
+    <path d="M8.06006 6.5L6.5 8.06006L10.44 12L6.5 15.94L8.06006 17.5L12 13.56L15.94 17.5L17.5 15.94L13.56 12L17.5 8.06006L15.94 6.5L12 10.44L8.06006 6.5Z" fill="black" transform="scale(0.8) translate(3,3)"/>
   </svg>
 );
 
@@ -103,17 +101,16 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
     if (data.onOpenDetails) {
       data.onOpenDetails();
     } else {
-      // Fallback, caso onOpenDetails não esteja definido (não deveria acontecer se configurado no dashboard)
       toast({
         title: 'Detalhes do Ativo',
-        description: `Visualizando detalhes de "${data.nomeAtivo}". (Callback onOpenDetails não encontrado)`,
+        description: `Visualizando detalhes de "${data.nomeAtivo}".`,
       });
     }
   };
 
   return (
     <Card
-      className={`w-auto min-w-[180px] max-w-[240px] shadow-lg border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-border'} bg-card relative rounded-lg cursor-pointer hover:shadow-md transition-shadow`}
+      className={`w-auto min-w-[200px] max-w-[280px] shadow-lg border-2 ${selected ? 'border-primary shadow-primary/30' : 'border-border'} bg-card relative rounded-lg cursor-pointer hover:shadow-md transition-shadow`}
       style={{ overflow: 'visible' }}
       onClick={handleCardClick}
     >
@@ -132,7 +129,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-blue-500 hover:bg-blue-500/10"
+              className="h-6 w-6 text-blue-400 hover:bg-blue-400/10"
               onClick={handleClockClick}
               aria-label="Configurar condição de liberação"
             >
@@ -144,12 +141,12 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
 
       <CardContent className="p-3 text-xs space-y-1">
         {data.tipo === 'digital' && data.quantidadeTotalDigital !== undefined && (
-            <Badge variant="outline" className="text-xs whitespace-normal text-left">
+            <Badge variant="outline" className="text-xs whitespace-normal text-left border-primary/50 text-primary">
                 Qtd Total: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
             </Badge>
         )}
         {data.tipo === 'fisico' && data.tipoImovelBemFisico && (
-          <Badge variant="secondary" className="text-xs whitespace-normal text-left">
+          <Badge variant="secondary" className="text-xs whitespace-normal text-left bg-secondary/80 text-secondary-foreground">
             {data.tipoImovelBemFisico}
           </Badge>
         )}

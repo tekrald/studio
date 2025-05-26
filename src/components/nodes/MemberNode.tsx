@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 import { User, Users, Baby, PersonStanding, PlusCircle } from 'lucide-react';
 
 export type MemberNodeData = {
-  id: string; // Adicionado id para passar para onAddAssetClick
+  id: string;
   name: string;
   relationshipType: string;
-  onAddAssetClick?: (memberId: string) => void; // Callback para adicionar ativo a este membro
+  onAddAssetClick?: (memberId: string) => void;
 };
 
 const getIconForMember = (data: MemberNodeData) => {
@@ -23,12 +23,12 @@ const getIconForMember = (data: MemberNodeData) => {
   return <User size={18} className="text-accent mr-2" />;
 };
 
-export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeData>) { // Renomeado id para nodeId para evitar conflito com data.id
+export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeData>) {
   const icon = getIconForMember(data);
 
   const handleAddAsset = () => {
     if (data.onAddAssetClick) {
-      data.onAddAssetClick(data.id); // Passa o ID do membro dos dados do nó
+      data.onAddAssetClick(data.id); 
     }
   };
 
@@ -37,7 +37,7 @@ export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeD
       className={`w-56 shadow-lg border-2 ${selected ? 'border-accent shadow-accent/40' : 'border-border'} bg-card relative rounded-lg`}
       style={{ overflow: 'visible' }}
     >
-      <Handle type="target" position={Position.Top} className="!opacity-50 !bg-ring" />
+      <Handle type="target" position={Position.Top} id={`t-${nodeId}-top`} className="!opacity-50 !bg-ring" />
 
       <CardHeader className="p-3 border-b border-border">
         <div className="flex items-center">
@@ -49,7 +49,7 @@ export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeD
       </CardHeader>
 
       <CardContent className="p-3 text-xs">
-        <Badge variant="outline" className="border-accent text-accent text-xs">
+        <Badge variant="outline" className="border-accent/50 text-accent text-xs">
           {data.relationshipType}
         </Badge>
       </CardContent>
@@ -67,9 +67,8 @@ export function MemberNode({ id: nodeId, data, selected }: NodeProps<MemberNodeD
             </Button>
         </div>
       )}
-      {/* Assegurando que os IDs dos Handles são únicos por nó, mas consistentes */}
-      <Handle type="source" position={Position.Bottom} id={`s-${nodeId}`} className="!opacity-50 !bg-ring" />
-      <Handle type="target" position={Position.Bottom} id={`t-${nodeId}`} className="!opacity-50 !bg-ring !bottom-[-4px]" />
+      <Handle type="source" position={Position.Bottom} id={`s-${nodeId}-bottom`} className="!opacity-50 !bg-ring" />
+      <Handle type="target" position={Position.Bottom} id={`t-${nodeId}-bottom`} className="!opacity-50 !bg-ring !bottom-[-4px]" />
     </Card>
   );
 }

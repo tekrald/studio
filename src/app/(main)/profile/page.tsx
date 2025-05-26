@@ -119,7 +119,7 @@ export default function ProfilePage() {
   if (!user) {
     return (
        <div className="flex flex-col min-h-[calc(100vh-var(--header-height,100px)-2rem)] items-center justify-center">
-        <p>Registro não encontrado. Faça login para acessar seu perfil.</p>
+        <p className="text-muted-foreground">Registro não encontrado. Faça login para acessar seu perfil.</p>
       </div>
     );
   }
@@ -127,11 +127,11 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8 max-w-2xl mx-auto">
       <form onSubmit={handleSubmit}>
-        <Card className="shadow-xl mb-8">
+        <Card className="shadow-xl mb-8 bg-card border-border">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl">Meu Registro em Ipê City</CardTitle> 
-            <CardDescription>
+            <CardTitle className="text-3xl text-foreground">Meu Registro em Ipê City</CardTitle> 
+            <CardDescription className="text-muted-foreground">
               Gerencie suas informações e preferências aqui.
             </CardDescription>
           </CardHeader>
@@ -139,7 +139,7 @@ export default function ProfilePage() {
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24 text-3xl ring-4 ring-primary ring-offset-background ring-offset-2">
                 <AvatarImage src={`https://placehold.co/150x150.png?text=${avatarText}`} alt={displayName} data-ai-hint="entity avatar" />
-                <AvatarFallback className="bg-gradient-to-br from-[hsl(var(--gradient-pink))] to-[hsl(var(--gradient-orange))] text-white">
+                <AvatarFallback className="bg-gradient-to-br from-gradient-green to-gradient-blue text-black">
                   {avatarText || '??'}
                 </AvatarFallback>
               </Avatar>
@@ -147,7 +147,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="displayName">Nome da Entidade/Registro (ex: Família Silva, Projeto Ipê Verde)</Label>
+              <Label htmlFor="displayName" className="text-foreground/90">Nome da Entidade/Registro (ex: Família Silva, Projeto Ipê Verde)</Label>
               <Input
                 id="displayName"
                 type="text"
@@ -155,46 +155,47 @@ export default function ProfilePage() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 disabled={isLoading}
+                className="bg-input text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Endereço de Email Principal</Label>
+              <Label htmlFor="email" className="text-foreground/90">Endereço de Email Principal</Label>
               <Input
                 id="email"
                 type="email"
                 value={user?.email || ''}
                 disabled 
-                className="cursor-not-allowed bg-muted/50"
+                className="cursor-not-allowed bg-muted/50 text-muted-foreground"
               />
               <p className="text-xs text-muted-foreground">O endereço de email não pode ser alterado aqui.</p>
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="relationshipStructure" className="flex items-center"><Users size={18} className="mr-2 text-primary" />Estrutura da Sociedade/Relação</Label>
+                <Label htmlFor="relationshipStructure" className="flex items-center text-foreground/90"><Users size={18} className="mr-2 text-primary" />Estrutura da Sociedade/Relação</Label>
                 <RadioGroup 
                     value={relationshipStructure} 
-                    onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous')}
+                    onValueChange={(value: 'monogamous' | 'polygamous') => setRelationshipStructure(value as 'monogamous' | 'polygamous')}
                     className="space-y-2 pt-1"
                     disabled={isLoading}
                 >
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="monogamous" id="profile-rel-monogamous" />
-                        <Label htmlFor="profile-rel-monogamous" className="font-normal">Individual/Monogâmica</Label>
+                        <RadioGroupItem value="monogamous" id="profile-rel-monogamous" className="border-primary checked:bg-primary" />
+                        <Label htmlFor="profile-rel-monogamous" className="font-normal text-foreground/90">Monogâmica</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="polygamous" id="profile-rel-polygamous" />
-                        <Label htmlFor="profile-rel-polygamous" className="font-normal">Coletiva/Poligâmica</Label>
+                        <RadioGroupItem value="polygamous" id="profile-rel-polygamous" className="border-primary checked:bg-primary"/>
+                        <Label htmlFor="profile-rel-polygamous" className="font-normal text-foreground/90">Poligâmica</Label>
                     </div>
                 </RadioGroup>
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="religion" className="flex items-center"><BookOpen size={18} className="mr-2 text-primary" />Crença / Filosofia (Opcional)</Label>
+                <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Crença / Filosofia (Opcional)</Label>
                 <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
-                    <SelectTrigger id="religion">
+                    <SelectTrigger id="religion" className="bg-input text-foreground">
                         <SelectValue placeholder="Selecione uma opção" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover text-popover-foreground">
                         {religionOptions.map(opt => (
                             <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                         ))}
@@ -205,16 +206,16 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-xl">
+        <Card className="shadow-xl bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center"><Landmark className="mr-3 text-primary h-7 w-7" />Formalização da Entidade</CardTitle> 
-            <CardDescription>
+            <CardTitle className="text-2xl flex items-center text-foreground"><Landmark className="mr-3 text-primary h-7 w-7" />Formalização da Entidade</CardTitle> 
+            <CardDescription className="text-muted-foreground">
               Indique como sua entidade é ou será formalizada.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-base">Como esta entidade está ou será estruturada legalmente?</Label>
+              <Label className="text-base text-foreground/90">Como esta entidade está ou será estruturada legalmente?</Label>
               <RadioGroup 
                 value={holdingType} 
                 onValueChange={(value: 'physical' | '') => {
@@ -224,23 +225,23 @@ export default function ProfilePage() {
                 disabled={isLoading}
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="" id="profile-holding-undefined" />
-                  <Label htmlFor="profile-holding-undefined" className="font-normal">Ainda não definido / Não formalizado</Label>
+                  <RadioGroupItem value="" id="profile-holding-undefined" className="border-primary checked:bg-primary"/>
+                  <Label htmlFor="profile-holding-undefined" className="font-normal text-foreground/90">Ainda não definido / Não formalizado</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="physical" id="profile-holding-physical" />
-                  <Label htmlFor="profile-holding-physical" className="font-normal">Entidade Física ou Mista (com ativos físicos)</Label>
+                  <RadioGroupItem value="physical" id="profile-holding-physical" className="border-primary checked:bg-primary"/>
+                  <Label htmlFor="profile-holding-physical" className="font-normal text-foreground/90">Física ou Mista (com ativos físicos)</Label>
                 </div>
               </RadioGroup>
             </div>
 
             {holdingType === 'physical' && (
-              <Card className="p-4 bg-muted/30 space-y-4">
-                <p className="text-sm text-foreground font-medium">
+              <Card className="p-4 bg-muted/30 space-y-4 border-border">
+                <p className="text-sm text-foreground/80 font-medium">
                   A formalização de entidades com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
                 </p>
                 <div className="space-y-2">
-                  <Label htmlFor="cnpjHolding">CNPJ da Entidade (Opcional)</Label>
+                  <Label htmlFor="cnpjHolding" className="text-foreground/90">CNPJ da Entidade (Opcional)</Label>
                   <Input
                     id="cnpjHolding"
                     type="text"
@@ -248,17 +249,18 @@ export default function ProfilePage() {
                     value={cnpjHolding}
                     onChange={(e) => setCnpjHolding(e.target.value)}
                     disabled={isLoading}
+                    className="bg-input text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
               </Card>
             )}
-             <CardDescription className="text-xs pt-2">
+             <CardDescription className="text-xs pt-2 text-muted-foreground">
               Lembre-se: Acta Ipê oferece uma gestão visual para seu planejamento. A formalização legal da sua entidade e questões tributárias devem ser tratadas com profissionais qualificados.
             </CardDescription>
           </CardContent>
         </Card>
             
-        <Button type="submit" className="w-full bg-primary hover:bg-primary/90 mt-8" disabled={isLoading}>
+        <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mt-8" disabled={isLoading}>
           {isLoading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (

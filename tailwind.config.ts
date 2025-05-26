@@ -3,7 +3,7 @@ import type { Config } from "tailwindcss";
 import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
-    darkMode: ["class"],
+    darkMode: ["class"], // Mantido caso um theme switcher seja adicionado no futuro
     content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,7 +12,6 @@ export default {
   theme: {
   	extend: {
       fontFamily: {
-        // Lato será a fonte sans padrão
         sans: ['Lato', ...defaultTheme.fontFamily.sans],
       },
   		colors: {
@@ -66,8 +65,8 @@ export default {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			},
-        'gradient-pink': 'hsl(var(--gradient-pink))',
-        'gradient-orange': 'hsl(var(--gradient-orange))',
+        'gradient-green': 'hsl(var(--gradient-green-hsl))',
+        'gradient-blue': 'hsl(var(--gradient-blue-hsl))',
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

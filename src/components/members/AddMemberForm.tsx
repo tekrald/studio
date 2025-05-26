@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, Save, UserPlus } from 'lucide-react';
+import { CalendarIcon, Loader2, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -42,7 +42,6 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
     { value: "filho_a", label: "Filho(a)" },
     { value: "pai_mae", label: "Pai/Mãe" },
     { value: "conjuge_parceiro_a", label: "Cônjuge/Parceiro(a)" },
-    // { value: "esposa", label: "Esposa" }, // Adicionar condicionalmente no futuro
     { value: "outro_parente", label: "Outro Parente" },
     { value: "nao_parente", label: "Não Parente/Associado" },
   ];
@@ -50,22 +49,22 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-1.5">
-        <Label htmlFor="nome">Nome Completo do Membro</Label>
-        <Input id="nome" {...form.register('nome')} placeholder="Ex: Nome Sobrenome" disabled={isLoading} autoFocus/>
+        <Label htmlFor="nome" className="text-foreground/90">Nome Completo do Membro</Label>
+        <Input id="nome" {...form.register('nome')} placeholder="Ex: Nome Sobrenome" disabled={isLoading} autoFocus className="bg-input text-foreground placeholder:text-muted-foreground"/>
         {form.formState.errors.nome && <p className="text-sm text-destructive">{form.formState.errors.nome.message}</p>}
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="tipoRelacao">Tipo de Relação com a União/Família</Label>
+        <Label htmlFor="tipoRelacao" className="text-foreground/90">Tipo de Relação com a Entidade</Label>
         <Controller
           name="tipoRelacao"
           control={form.control}
           render={({ field }) => (
             <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
-              <SelectTrigger id="tipoRelacao">
+              <SelectTrigger id="tipoRelacao" className="bg-input text-foreground">
                 <SelectValue placeholder="Selecione o tipo de relação" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover text-popover-foreground">
                 {relationshipTypes.map(type => (
                   <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                 ))}
@@ -77,7 +76,7 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
       </div>
       
       <div className="space-y-1.5">
-        <Label htmlFor="dataNascimento">Data de Nascimento (Opcional)</Label>
+        <Label htmlFor="dataNascimento" className="text-foreground/90">Data de Nascimento (Opcional)</Label>
         <Controller
           name="dataNascimento"
           control={form.control}
@@ -87,7 +86,7 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal bg-input text-foreground hover:bg-input/80",
                     !field.value && "text-muted-foreground"
                   )}
                   disabled={isLoading}
@@ -96,7 +95,7 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
                   {field.value ? format(new Date(field.value), "PPP", { locale: ptBR }) : <span>Escolha uma data</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0 bg-popover border-border">
                 <Calendar
                   mode="single"
                   selected={field.value ? new Date(field.value) : undefined}
@@ -116,10 +115,10 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
       </div>
 
       <div className="flex justify-end space-x-3 pt-4">
-        <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
+        <Button type="button" variant="outline" onClick={onClose} disabled={isLoading} className="text-foreground/90 border-border hover:bg-muted/80">
           Cancelar
         </Button>
-        <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isLoading}>
+        <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
           Adicionar Membro
         </Button>

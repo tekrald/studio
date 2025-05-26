@@ -1,11 +1,10 @@
-
 "use client";
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Loader2, PlusCircle, Users, DollarSign, Settings, Network } from 'lucide-react'; 
+import { Loader2, Network, Settings, PlusCircle, DollarSign, Users, LayoutGrid, Plus } from 'lucide-react'; 
 import { AssetForm } from '@/components/assets/AssetForm';
-import type { AssetFormData, AssetTransaction } from '@/types/asset'; // Renomeado DigitalAsset para Asset
+import type { AssetFormData, AssetTransaction } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
 import { AddMemberForm } from '@/components/members/AddMemberForm';
 import type { MemberFormData, Member } from '@/types/member';
@@ -29,7 +28,7 @@ import 'reactflow/dist/style.css';
 
 import { UnionNode, type UnionNodeData } from '@/components/nodes/UnionNode';
 import { AssetNode, type ExtendedAssetNodeData } from '@/components/nodes/AssetNode';
-import { MemberNode, type MemberNodeData } from '@/components/nodes/MemberNode';
+import { MemberNode, type MemberNodeData as MemberNodeDataType } from '@/components/nodes/MemberNode'; // Renomeado para evitar conflito
 import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -38,7 +37,7 @@ import { ptBR } from 'date-fns/locale';
 import { Label } from '@/components/ui/label';
 
 
-const UNION_NODE_ID = 'union-node'; // ID do nó principal da entidade/registro
+const UNION_NODE_ID = 'union-node';
 const nodeOrigin: NodeOrigin = [0.5, 0.5];
 
 const initialNodes: Node[] = [];
@@ -67,7 +66,7 @@ export default function AssetManagementDashboard() {
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<UnionNodeData | ExtendedAssetNodeData | MemberNodeData>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<UnionNodeData | ExtendedAssetNodeData | MemberNodeDataType>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [allMembers, setAllMembers] = useState<MemberWithBirthDate[]>([]);
 
@@ -98,7 +97,7 @@ export default function AssetManagementDashboard() {
     setContractClauses(prev => [...prev, newClause]);
     toast({ title: 'Cláusula Adicionada', description: 'Nova cláusula salva nos acordos.' });
   };
-
+  
   const handleRemoveClause = (id: string) => {
     setContractClauses(prev => prev.filter(clause => clause.id !== id));
     toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida dos acordos.' });
@@ -136,13 +135,13 @@ export default function AssetManagementDashboard() {
 
   const effectiveUser = user || {
     uid: 'mock-uid-default',
-    displayName: 'Meu Registro em Ipê City (Mock)', // Nome Padrão da Entidade
+    displayName: 'Meu Registro em Ipê City (Mock)',
     email: 'mock@example.com',
-    holdingType: '',
     relationshipStructure: '',
     religion: '',
     isWalletConnected: false,
     connectedWalletAddress: null,
+    holdingType: '',
     cnpjHolding: '',
   };
 
@@ -179,49 +178,52 @@ export default function AssetManagementDashboard() {
     }
 
     if (user?.isWalletConnected && (currentUnionNode || unionNodeCreated) && !authLoading) {
-        const mockDigitalAssets: Node<ExtendedAssetNodeData>[] = [
-            {
-                id: 'mock-btc', type: 'assetNode', position: { x: 250, y: 350 }, draggable: true, nodeOrigin,
-                data: {
-                    id: 'mock-btc', userId: effectiveUser.uid, nomeAtivo: 'Bitcoin', tipo: 'digital',
-                    transactions: [{id: 'tx-btc-1', dataAquisicao: new Date(2023,0,1), quantidadeDigital: 0.5, valorPagoEpoca: 150000, quemComprou: 'Entidade Principal'}],
-                    quantidadeTotalDigital: 0.5,
-                    onOpenDetails: () => {}
-                }
-            },
-            {
-                id: 'mock-eth', type: 'assetNode', position: { x: 550, y: 350 }, draggable: true, nodeOrigin,
-                data: {
-                    id: 'mock-eth', userId: effectiveUser.uid, nomeAtivo: 'Ethereum', tipo: 'digital',
-                    transactions: [{id: 'tx-eth-1', dataAquisicao: new Date(2023,5,10), quantidadeDigital: 10, valorPagoEpoca: 10000, quemComprou: 'Entidade Principal'}],
-                    quantidadeTotalDigital: 10,
-                    onOpenDetails: () => {}
-                }
-            },
+        const mockDigitalAssetsData: Omit<ExtendedAssetNodeData, 'id' | 'userId' | 'onOpenDetails' | 'transactions'>[] = [
+            { nomeAtivo: 'Bitcoin', tipo: 'digital', quantidadeTotalDigital: 0.5 },
+            { nomeAtivo: 'Ethereum', tipo: 'digital', quantidadeTotalDigital: 10 },
         ];
 
         const nodesToAddThisRun: Node<ExtendedAssetNodeData>[] = [];
         const edgesToAddThisRun: Edge[] = [];
 
-        mockDigitalAssets.forEach((mockAssetNode) => {
-            const nodeExists = nodes.some(n => n.id === mockAssetNode.id);
-            const edgeId = `e-${UNION_NODE_ID}-${mockAssetNode.id}`;
-            const edgeAlreadyExistsInState = edges.some(e => e.id === edgeId);
+        mockDigitalAssetsData.forEach((mockAsset, index) => {
+            const assetId = `mock-${mockAsset.nomeAtivo.toLowerCase()}`;
+            const nodeExists = nodes.some(n => n.id === assetId);
+             if (!nodeExists) {
+                const assetDataForDetails: ExtendedAssetNodeData = {
+                    id: assetId,
+                    userId: effectiveUser.uid,
+                    nomeAtivo: mockAsset.nomeAtivo,
+                    tipo: 'digital',
+                    quantidadeTotalDigital: mockAsset.quantidadeTotalDigital,
+                    transactions: [{ 
+                        id: `tx-${assetId}-1`, 
+                        dataAquisicao: new Date(), 
+                        quantidadeDigital: mockAsset.quantidadeTotalDigital, 
+                        quemComprou: "Carteira Conectada" 
+                    }],
+                    onOpenDetails: () => {} // Será preenchido abaixo
+                };
+                assetDataForDetails.onOpenDetails = () => handleOpenAssetDetailsModal(assetDataForDetails);
 
-            if (!nodeExists) {
-                const assetDataForDetails = { ...mockAssetNode.data }; 
-                mockAssetNode.data.onOpenDetails = () => handleOpenAssetDetailsModal(assetDataForDetails);
-                nodesToAddThisRun.push(mockAssetNode);
-                if (!edgeAlreadyExistsInState) {
-                    edgesToAddThisRun.push({
-                        id: edgeId,
-                        source: UNION_NODE_ID,
-                        target: mockAssetNode.id,
-                        type: 'smoothstep',
-                        markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
-                        style: { stroke: 'hsl(var(--primary))', strokeWidth: 1.5 },
-                    });
-                }
+                const angleStep = Math.PI / 4;
+                const radius = 250;
+                const sourceX = nodes.find(n => n.id === UNION_NODE_ID)?.position?.x ?? 400;
+                const sourceY = nodes.find(n => n.id === UNION_NODE_ID)?.position?.y ?? 100;
+                const angle = (Math.PI / 2) - ( (mockDigitalAssetsData.length > 0 ? mockDigitalAssetsData.length -1 : 0) * angleStep / 2) + (index * angleStep);
+
+                nodesToAddThisRun.push({
+                    id: assetId, type: 'assetNode', position: { x: sourceX + radius * Math.cos(angle), y: sourceY + (nodes.find(n => n.id === UNION_NODE_ID)?.height ?? 100) + 50 + radius * Math.sin(angle) }, draggable: true, nodeOrigin,
+                    data: assetDataForDetails
+                });
+                edgesToAddThisRun.push({
+                    id: `e-${UNION_NODE_ID}-${assetId}`,
+                    source: UNION_NODE_ID,
+                    target: assetId,
+                    type: 'smoothstep',
+                    markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
+                    style: { stroke: 'hsl(var(--primary))', strokeWidth: 1.5 },
+                });
             }
         });
 
@@ -241,7 +243,7 @@ export default function AssetManagementDashboard() {
         }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, effectiveUser, user?.isWalletConnected, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal]);
+  }, [authLoading, effectiveUser, user?.isWalletConnected, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal, nodes, edges]); // Adicionado nodes e edges como dependências
 
 
   const memberHasBirthDate = (memberId?: string): boolean => {
@@ -256,7 +258,7 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingAsset(true);
-    const result = await addAsset(formData, effectiveUser.uid); // Esta action agora é para ativos físicos
+    const result = await addAsset(formData, effectiveUser.uid);
 
     if (result.success && result.assetId && result.transactionId) {
       toast({ title: 'Sucesso!', description: 'Ativo físico adicionado com sucesso.' });
@@ -282,7 +284,7 @@ export default function AssetManagementDashboard() {
       }
       
       const assetNodesLinkedToSource = nodes.filter(n => {
-        const nodeData = n.data as ExtendedAssetNodeData | MemberNodeData | UnionNodeData;
+        const nodeData = n.data as ExtendedAssetNodeData | MemberNodeDataType | UnionNodeData;
         if (n.type !== 'assetNode') return false;
         let isLinked = false;
         if (sourceNodeId === UNION_NODE_ID) {
@@ -318,7 +320,6 @@ export default function AssetManagementDashboard() {
           transactions: [newTransaction],
           assignedToMemberId: processedAssignedToMemberId,
           releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
-          quantidadeTotalDigital: 0, // Não aplicável para físico
           onOpenDetails: () => {}
       };
       nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
@@ -394,19 +395,19 @@ export default function AssetManagementDashboard() {
       const radius = 250 + Math.floor(memberNodesCount / 6) * 100;
       const unionNodeX = unionNodeInstance.position?.x ?? 400;
       const unionNodeY = unionNodeInstance.position?.y ?? 100;
-      let angleStart = Math.PI + Math.PI / 2; // Inicia abaixo do nó principal
+      let angleStart = Math.PI + Math.PI / 2; 
       const angle = angleStart + (memberNodesCount * angleStep);
       const newMemberNodeX = unionNodeX + radius * Math.cos(angle);
       const newMemberNodeY = unionNodeY + (unionNodeInstance.height ?? 100) + 50 + radius * Math.sin(angle);
 
-      const nodeDataPayload: MemberNodeData = {
+      const nodeDataPayload: MemberNodeDataType = {
         id: result.memberId,
         name: data.nome,
         relationshipType: data.tipoRelacao,
         onAddAssetClick: (memberId) => handleOpenAssetModalForMember(memberId),
       };
 
-      const newMemberNodeReactFlow: Node<MemberNodeData> = {
+      const newMemberNodeReactFlow: Node<MemberNodeDataType> = {
         id: result.memberId,
         type: 'memberNode',
         data: nodeDataPayload,
@@ -462,10 +463,10 @@ export default function AssetManagementDashboard() {
             setMemberContextForAssetAdd(null);
         }
       }}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-2xl text-primary">Adicionar Novo Ativo Físico</DialogTitle>
-            <DialogDescription>Preencha os detalhes do seu ativo físico.</DialogDescription>
+            <DialogDescription className="text-muted-foreground">Preencha os detalhes do seu ativo físico.</DialogDescription>
           </DialogHeader>
           <AssetForm
             onSubmit={handleAddAssetSubmit}
@@ -482,20 +483,20 @@ export default function AssetManagementDashboard() {
       </Dialog>
 
       <Dialog open={isAddMemberModalOpen} onOpenChange={setIsAddMemberModalOpen}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-2xl text-primary">Adicionar Novo Membro</DialogTitle>
-            <DialogDescription>Insira os dados do novo membro da sua sociedade/registro.</DialogDescription>
+            <DialogDescription className="text-muted-foreground">Insira os dados do novo membro da sua entidade.</DialogDescription>
           </DialogHeader>
           <AddMemberForm onSubmit={handleAddMemberSubmit} isLoading={isSubmittingMember} onClose={() => setIsAddMemberModalOpen(false)} />
         </DialogContent>
       </Dialog>
 
        <Dialog open={isAssetDetailsModalOpen} onOpenChange={handleCloseAssetDetailsModal}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-2xl text-primary">Detalhes do Ativo: {selectedAssetForDetails?.nomeAtivo}</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-muted-foreground">
               Informações sobre o ativo e histórico de aquisições.
             </DialogDescription>
           </DialogHeader>
@@ -550,12 +551,12 @@ export default function AssetManagementDashboard() {
                 </div>
               )}
 
-              <div className="space-y-3 pt-3 mt-3 border-t">
+              <div className="space-y-3 pt-3 mt-3 border-t border-border/50">
                 <h4 className="text-md font-semibold text-primary">Histórico de Aquisições/Transações</h4>
                  {selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 0 ? (
                   <div className="max-h-60 overflow-y-auto space-y-4 pr-2">
                     {selectedAssetForDetails.transactions.map((tx, index) => (
-                      <Card key={tx.id || index} className="p-3 bg-muted/50">
+                      <Card key={tx.id || index} className="p-3 bg-muted/50 border-border/30">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                           <div>
                             <Label className="text-xs font-medium text-muted-foreground">Data da Aquisição</Label>
@@ -573,13 +574,13 @@ export default function AssetManagementDashboard() {
                               <p className="text-foreground">{typeof tx.valorPagoEpoca === 'number' ? tx.valorPagoEpoca.toLocaleString(undefined, { style: 'currency', currency: 'BRL' }) : tx.valorPagoEpoca}</p>
                             </div>
                           )}
-                           {tx.quemComprou && ( // Ajustado para exibir corretamente quem comprou
+                           {tx.quemComprou && (
                             <div>
                               <Label className="text-xs font-medium text-muted-foreground">Adquirido por</Label>
                               <p className="text-foreground">{tx.quemComprou === "Entidade Principal" ? "Registro Principal" : getMemberNameById(tx.quemComprou)}</p>
                             </div>
                           )}
-                          {tx.quemComprou === 'Ambos' && effectiveUser?.displayName && ( // Ajustado para nomes da Acta Ipê
+                          {tx.quemComprou === 'Ambos' && effectiveUser?.displayName && (
                             <>
                               {tx.contribuicaoParceiro1 !== undefined && (
                                 <div>
@@ -597,7 +598,7 @@ export default function AssetManagementDashboard() {
                           )}
                         </div>
                         {tx.observacoes && (
-                          <div className="mt-2 pt-2 border-t border-dashed">
+                          <div className="mt-2 pt-2 border-t border-dashed border-border/30">
                             <Label className="text-xs font-medium text-muted-foreground">Observações da Transação</Label>
                             <p className="text-foreground whitespace-pre-wrap text-xs">{tx.observacoes}</p>
                           </div>
@@ -608,9 +609,9 @@ export default function AssetManagementDashboard() {
                 ) : (
                   <p className="text-muted-foreground">Nenhuma transação registrada para este ativo.</p>
                 )}
-                {selectedAssetForDetails.tipo === 'digital' && selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 1 &&(
+                 {selectedAssetForDetails.tipo === 'digital' && selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 1 &&(
                   <p className="text-xs text-muted-foreground mt-2">
-                    Nota: O campo "Valor Pago na Época" no cabeçalho do ativo reflete a última transação.
+                    Nota: Detalhes como "Data de Aquisição" e "Valor Pago" no cabeçalho do ativo refletem a última transação. Consulte o histórico para todas as entradas.
                   </p>
                 )}
               </div>
@@ -633,7 +634,7 @@ export default function AssetManagementDashboard() {
         onUpdateClause={handleUpdateContractClause}
       />
 
-      <div className="flex-grow shadow-lg relative overflow-hidden rounded-md border-2 border-dashed border-border bg-muted/30">
+      <div className="flex-grow shadow-lg relative overflow-hidden rounded-md border-2 border-dashed border-border bg-background">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -657,5 +658,5 @@ export default function AssetManagementDashboard() {
 }
 
 declare module 'reactflow' {
-  interface NodeData extends Partial<UnionNodeData>, Partial<ExtendedAssetNodeData>, Partial<MemberNodeData> {}
+  interface NodeData extends Partial<UnionNodeData>, Partial<ExtendedAssetNodeData>, Partial<MemberNodeDataType> {}
 }

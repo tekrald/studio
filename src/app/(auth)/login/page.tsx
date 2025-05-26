@@ -36,19 +36,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-orange-50 to-yellow-50 p-4">
-      <Card className="w-full max-w-md shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gradient-green/20 via-gradient-blue/20 to-background p-4">
+      <Card className="w-full max-w-md shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="/acta-ipe-logo.svg" alt="Acta Ipê Logo" width={250} height={83} data-ai-hint="logo ActaIpê" className="rounded-full"/>
+             <Image src="/acta-ipe-logo.svg" alt="Acta Ipê Logo" width={250} height={83} data-ai-hint="logo ActaIpê" className="rounded-full" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardTitle className="text-3xl font-lato">Acesse sua Conta Acta Ipê</CardTitle>
-          <CardDescription className="font-lato">Faça login para gerenciar seus registros em Ipê City.</CardDescription>
+          <CardTitle className="text-3xl font-lato text-foreground">Acesse sua Conta Acta Ipê</CardTitle>
+          <CardDescription className="font-lato text-muted-foreground">Faça login para gerenciar seus registros em Ipê City.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Endereço de Email</Label>
+              <Label htmlFor="email" className="text-foreground/90">Endereço de Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -57,10 +57,11 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password" className="text-foreground/90">Senha</Label>
               <Input
                 id="password"
                 type="password"
@@ -69,10 +70,11 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary"
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -85,7 +87,7 @@ export default function LoginPage() {
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
             Não tem uma conta?{' '}
-            <Button variant="link" asChild className="p-0 h-auto text-primary">
+            <Button variant="link" asChild className="p-0 h-auto text-accent hover:text-accent/80">
               <Link href="/signup">Cadastre-se aqui</Link>
             </Button>
           </p>

@@ -1,6 +1,6 @@
 
 "use client";
-import { useState, type FormEvent, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -11,19 +11,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, UserCheck, Clock, Coins, RefreshCw, Building, WalletCards } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, UserCheck, Clock, RefreshCw, Building, WalletCards, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format, isValid } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { AssetFormData } from '@/types/asset';
 import type { AuthContextType } from '@/components/auth-provider';
 import Image from 'next/image';
 
+const BitcoinIconSvg = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline mr-2"><circle cx="12" cy="12" r="10" fill="#F7931A"/><path d="M10.05 16.64H12.32C14.66 16.64 16.31 15.32 16.31 12.91C16.31 10.5 14.66 9.17999 12.32 9.17999H10.05V7.35999H12.4C15.43 7.35999 17.5 8.95999 17.5 11.82C17.5 13.48 16.73 14.91 15.38 15.79V15.83C17.06 16.57 18 17.97 18 19.76C18 22.79 15.67 24.48 12.54 24.48H8V7.35999H10.05V16.64ZM10.05 11.6H12.22C13.6 11.6 14.51 12.31 14.51 13.59C14.51 14.87 13.6 15.58 12.22 15.58H10.05V11.6ZM10.05 17.68H12.4C13.98 17.68 15.03 18.46 15.03 19.79C15.03 21.12 13.98 21.9 12.4 21.9H10.05V17.68Z" fill="white" transform="scale(0.75) translate(2, -4)"/></svg>;
+const EthereumIconSvg = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline mr-2"><path d="M12.023 2.68701L11.531 3.32701V11.56L12.023 11.829L12.516 11.56V3.32701L12.023 2.68701Z" fill="#627EEA"/><path d="M12.023 2.68701L6.78101 9.40401L12.023 11.829V2.68701Z" fill="#8AA1F2"/><path d="M12.023 2.68701L17.265 9.40401L12.023 11.829V2.68701Z" fill="#627EEA"/><path d="M12.023 12.76L11.555 12.981V16.844L12.023 17.13L12.492 16.844V12.981L12.023 12.76Z" fill="#627EEA"/><path d="M12.023 17.13V12.76L6.78101 10.352L12.023 17.13Z" fill="#8AA1F2"/><path d="M12.023 17.13V12.76L17.265 10.352L12.023 17.13Z" fill="#627EEA"/><path d="M12.023 11.829L17.265 9.40401L12.023 6.99701L6.78101 9.40401L12.023 11.829Z" fill="#45578E"/></svg>;
+const SolanaIconSvg = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline mr-2"><defs><linearGradient id="solanaFormGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style={{stopColor:"#9945FF"}}/><stop offset="100%" style={{stopColor:"#14F195"}}/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#solanaFormGradient)"/><path d="M8.06006 6.5L6.5 8.06006L10.44 12L6.5 15.94L8.06006 17.5L12 13.56L15.94 17.5L17.5 15.94L13.56 12L17.5 8.06006L15.94 6.5L12 10.44L8.06006 6.5Z" fill="black" transform="scale(0.8) translate(3,3)"/></svg>;
+
+
 const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
   return z.object({
+    // tipo: z.enum(['digital', 'fisico'], { required_error: "O tipo de ativo é obrigatório." }), // Removido, será implícito
     nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'),
     dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }),
-    observacoes: z.string().optional(),
+    observacoes: z.string().optional(), // Anteriormente 'descricaoDetalhada', agora 'observacoes'
     quemComprou: z.string().min(1, "É necessário indicar quem adquiriu o ativo.").optional(),
     contribuicaoParceiro1: z.preprocess(
       (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
@@ -33,9 +39,12 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
       (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
       z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
     ),
+    
+    // Campos específicos para ativo físico (agora os únicos campos específicos do tipo)
     tipoImovelBemFisico: z.string().min(1, "O tipo do bem físico é obrigatório."),
     enderecoLocalizacaoFisico: z.string().optional(),
     documentacaoFisicoFile: z.any().optional(),
+
     assignedToMemberId: z.string().optional().nullable(),
     setReleaseCondition: z.boolean().optional(),
     releaseTargetAge: z.preprocess(
@@ -50,14 +59,6 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
         path: ['releaseTargetAge']
       });
     }
-    if (data.quemComprou === 'Ambos' && (data.contribuicaoParceiro1 === undefined || data.contribuicaoParceiro2 === undefined)) {
-      // Tornando contribuições opcionais mesmo se "Ambos" for selecionado
-      // ctx.addIssue({
-      //   code: z.ZodIssueCode.custom,
-      //   message: 'As contribuições de ambas as partes são obrigatórias se "Ambos" for selecionado.',
-      //   path: ['contribuicaoParceiro1'] // Ou um caminho mais genérico
-      // });
-    }
   });
 };
 
@@ -68,7 +69,6 @@ interface AssetFormProps {
   availableMembers: { id: string; name: string; birthDate?: Date | string }[];
   targetMemberId?: string | null;
   user: AuthContextType['user']; 
-  existingAssetToUpdate?: { name: string; type: 'digital' | 'fisico' } | null; // Para modo de adição de transação
 }
 
 const TOTAL_STEPS_PHYSICAL = 3; 
@@ -79,16 +79,17 @@ export function AssetForm({
   onClose,
   availableMembers = [],
   targetMemberId,
-  user,
-  existingAssetToUpdate
+  user
 }: AssetFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
+  const [isFetchingPrice, setIsFetchingPrice] = useState(false);
   const [priceError, setPriceError] = useState<string | null>(null);
+  const [fetchedCurrency, setFetchedCurrency] = useState<'BRL' | 'USD' | null>(null);
 
-  const localCurrentAssignedToMemberId = useForm().watch('assignedToMemberId');
+  const localCurrentAssignedToMemberId = useForm().watch('assignedToMemberId'); // Helper para schema
   const selectedMemberForRelease = availableMembers.find(m => m.id === localCurrentAssignedToMemberId);
   const memberHasBirthDateForSchema = !!selectedMemberForRelease?.birthDate;
 
@@ -97,7 +98,7 @@ export function AssetForm({
   const form = useForm<AssetFormData>({
     resolver: zodResolver(currentAssetFormSchema),
     defaultValues: {
-      nomeAtivo: existingAssetToUpdate?.name || '',
+      nomeAtivo: '',
       dataAquisicao: new Date(),
       observacoes: '',
       quemComprou: '',
@@ -121,8 +122,8 @@ export function AssetForm({
   const memberHasBirthDate = !!actualSelectedMember?.birthDate;
 
   useEffect(() => {
-    const initialValues: AssetFormData = {
-      nomeAtivo: existingAssetToUpdate?.name || '',
+    const defaultVals: AssetFormData = {
+      nomeAtivo: '',
       dataAquisicao: new Date(),
       observacoes: '',
       quemComprou: '',
@@ -134,9 +135,10 @@ export function AssetForm({
       setReleaseCondition: false,
       releaseTargetAge: undefined,
     };
-    form.reset(initialValues);
+    form.reset(defaultVals);
     setCurrentStep(1);
-  }, [targetMemberId, existingAssetToUpdate, form]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetMemberId, form.reset]); // Removido form de dependências
 
 
   useEffect(() => {
@@ -172,7 +174,7 @@ export function AssetForm({
     } else if (step === 2) { 
       fieldsToValidate = ['quemComprou'];
       if (currentValues.quemComprou === 'Ambos') {
-        // Contribuições são opcionais, não validar aqui para avançar
+        // Contribuições são opcionais
       }
     } else if (step === 3) { 
       fieldsToValidate.push('tipoImovelBemFisico'); 
@@ -229,15 +231,16 @@ export function AssetForm({
 
   const handlePreviousStep = () => {
     setFormError(null);
+    setPriceError(null);
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
 
   const isNextButtonDisabled = () => {
-    if (isSubmittingForm) return true;
+    if (isSubmittingForm || isFetchingPrice) return true;
     if (currentStep === 1) {
-        return !watchedNomeAtivo; 
+        return !watchedNomeAtivo; // Apenas nome é obrigatório para ativos físicos aqui
     }
     return false;
   };
@@ -245,24 +248,25 @@ export function AssetForm({
   return (
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <p className="text-sm text-center text-muted-foreground">
-        {existingAssetToUpdate ? `Adicionar Transação a ${existingAssetToUpdate.name}` : `Adicionar Novo Ativo Físico`} (Etapa {currentStep} de {TOTAL_STEPS_PHYSICAL})
+        Adicionar Novo Ativo Físico (Etapa {currentStep} de {TOTAL_STEPS_PHYSICAL})
       </p>
 
       {currentStep === 1 && (
         <>
           <div className="space-y-1.5">
-            <Label htmlFor="nomeAtivoFisicoInput">Nome do Ativo Físico</Label>
+            <Label htmlFor="nomeAtivoFisicoInput" className="text-foreground/90">Nome do Ativo Físico</Label>
             <Input
                 id="nomeAtivoFisicoInput"
                 {...form.register('nomeAtivo')}
                 placeholder={"Ex: Casa da Praia, Carro SUV, Obra de Arte"}
-                disabled={isSubmittingForm || !!existingAssetToUpdate}
+                disabled={isSubmittingForm}
                 autoFocus
+                className="bg-input text-foreground placeholder:text-muted-foreground"
             />
             {form.formState.errors.nomeAtivo && <p className="text-sm text-destructive">{form.formState.errors.nomeAtivo.message}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="dataAquisicao">Data de Aquisição</Label>
+            <Label htmlFor="dataAquisicao" className="text-foreground/90">Data de Aquisição</Label>
             <Controller
               name="dataAquisicao"
               control={form.control}
@@ -271,14 +275,14 @@ export function AssetForm({
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
-                      className={cn("w-full justify-start text-left font-normal",!field.value && "text-muted-foreground")}
+                      className={cn("w-full justify-start text-left font-normal bg-input text-foreground hover:bg-input/80",!field.value && "text-muted-foreground")}
                       disabled={isSubmittingForm}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {field.value && isValid(new Date(field.value)) ? format(new Date(field.value), "PPP 'às' HH:mm", { locale: ptBR }) : <span>Escolha uma data e hora</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent className="w-auto p-0 bg-popover border-border">
                     <Calendar
                       mode="single"
                       selected={field.value && isValid(new Date(field.value)) ? new Date(field.value) : undefined}
@@ -297,8 +301,8 @@ export function AssetForm({
                       locale={ptBR}
                       disabled={(date) => date > new Date() || date < new Date("1900-01-01") || isSubmittingForm}
                     />
-                    <div className="p-2 border-t">
-                      <Label htmlFor="time" className="text-sm">Hora da Aquisição</Label>
+                    <div className="p-2 border-t border-border">
+                      <Label htmlFor="time" className="text-sm text-foreground/90">Hora da Aquisição</Label>
                        <Input
                         id="time"
                         type="time"
@@ -312,7 +316,7 @@ export function AssetForm({
                                 field.onChange(new Date(currentTime));
                             }
                         }}
-                        className="w-full mt-1"
+                        className="w-full mt-1 bg-input text-foreground"
                         disabled={isSubmittingForm}
                        />
                     </div>
@@ -323,8 +327,8 @@ export function AssetForm({
             {form.formState.errors.dataAquisicao && <p className="text-sm text-destructive">{form.formState.errors.dataAquisicao.message}</p>}
           </div>
            <div className="space-y-1.5">
-            <Label htmlFor="observacoes">Observações (Opcional)</Label>
-            <Input id="observacoes" {...form.register('observacoes')} placeholder="Alguma observação sobre esta ação" disabled={isSubmittingForm} />
+            <Label htmlFor="observacoes" className="text-foreground/90">Observações (Opcional)</Label>
+            <Input id="observacoes" {...form.register('observacoes')} placeholder="Alguma observação sobre esta ação" disabled={isSubmittingForm} className="bg-input text-foreground placeholder:text-muted-foreground"/>
             {form.formState.errors.observacoes && <p className="text-sm text-destructive">{form.formState.errors.observacoes.message}</p>}
           </div>
         </>
@@ -333,7 +337,7 @@ export function AssetForm({
       {currentStep === 2 && (
         <>
           <div className="space-y-1.5">
-            <Label htmlFor="quemComprou">Quem Adquiriu/Contribuiu? (Opcional)</Label>
+            <Label htmlFor="quemComprou" className="text-foreground/90">Quem Adquiriu/Contribuiu? (Opcional)</Label>
             <Controller
               name="quemComprou"
               control={form.control}
@@ -343,10 +347,10 @@ export function AssetForm({
                   value={field.value === "" || field.value === undefined ? "UNSPECIFIED_BUYER" : field.value}
                   disabled={isSubmittingForm}
                 >
-                  <SelectTrigger id="quemComprou">
+                  <SelectTrigger id="quemComprou" className="bg-input text-foreground">
                     <SelectValue placeholder="Selecione quem adquiriu" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover text-popover-foreground">
                     <SelectItem value="UNSPECIFIED_BUYER">Não especificado</SelectItem>
                     <SelectItem value="Entidade Principal">Registro Principal (Acta Ipê)</SelectItem>
                     {partnerNames.length === 1 && (
@@ -367,10 +371,10 @@ export function AssetForm({
           </div>
 
           {quemComprouWatch === 'Ambos' && (
-            <div className="space-y-4 mt-4 p-4 border rounded-md bg-muted/30">
+            <div className="space-y-4 mt-4 p-4 border rounded-md bg-muted/50">
               <h4 className="text-md font-semibold text-primary">Detalhes da Contribuição (Opcional)</h4>
               <div className="space-y-1.5">
-                <Label htmlFor="contribuicaoParceiro1">Valor Contribuído por {partnerLabels[0]} (R$)</Label>
+                <Label htmlFor="contribuicaoParceiro1" className="text-foreground/90">Valor Contribuído por {partnerLabels[0]} (R$)</Label>
                 <Input
                   id="contribuicaoParceiro1"
                   type="number"
@@ -378,11 +382,12 @@ export function AssetForm({
                   placeholder="0,00"
                   disabled={isSubmittingForm}
                   step="0.01"
+                  className="bg-input text-foreground placeholder:text-muted-foreground"
                 />
                 {form.formState.errors.contribuicaoParceiro1 && <p className="text-sm text-destructive">{form.formState.errors.contribuicaoParceiro1.message}</p>}
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="contribuicaoParceiro2">Valor Contribuído por {partnerLabels[1]} (R$)</Label>
+                <Label htmlFor="contribuicaoParceiro2" className="text-foreground/90">Valor Contribuído por {partnerLabels[1]} (R$)</Label>
                 <Input
                   id="contribuicaoParceiro2"
                   type="number"
@@ -390,6 +395,7 @@ export function AssetForm({
                   placeholder="0,00"
                   disabled={isSubmittingForm}
                   step="0.01"
+                  className="bg-input text-foreground placeholder:text-muted-foreground"
                 />
                 {form.formState.errors.contribuicaoParceiro2 && <p className="text-sm text-destructive">{form.formState.errors.contribuicaoParceiro2.message}</p>}
               </div>
@@ -403,32 +409,34 @@ export function AssetForm({
           <div className="space-y-4 p-4 border rounded-md bg-muted/30 mb-4">
             <h4 className="text-md font-semibold text-primary">Detalhes do Ativo Físico</h4>
             <div className="space-y-1.5">
-              <Label htmlFor="tipoImovelBemFisico">Tipo de Bem Físico</Label>
+              <Label htmlFor="tipoImovelBemFisico" className="text-foreground/90">Tipo de Bem Físico</Label>
               <Input
                   id="tipoImovelBemFisico"
                   {...form.register('tipoImovelBemFisico')}
                   placeholder="Ex: Imóvel Residencial, Veículo, Obra de Arte"
                   disabled={isSubmittingForm}
+                  className="bg-input text-foreground placeholder:text-muted-foreground"
               />
               {form.formState.errors.tipoImovelBemFisico && <p className="text-sm text-destructive">{form.formState.errors.tipoImovelBemFisico.message}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="enderecoLocalizacaoFisico">Endereço/Localização (Opcional)</Label>
+              <Label htmlFor="enderecoLocalizacaoFisico" className="text-foreground/90">Endereço/Localização (Opcional)</Label>
               <Input
                   id="enderecoLocalizacaoFisico"
                   {...form.register('enderecoLocalizacaoFisico')}
                   placeholder="Ex: Rua Exemplo, 123, Cidade - UF"
                   disabled={isSubmittingForm}
+                  className="bg-input text-foreground placeholder:text-muted-foreground"
               />
               {form.formState.errors.enderecoLocalizacaoFisico && <p className="text-sm text-destructive">{form.formState.errors.enderecoLocalizacaoFisico.message}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="documentacaoFisicoFile">Documentação (Opcional)</Label>
+              <Label htmlFor="documentacaoFisicoFile" className="text-foreground/90">Documentação (Opcional)</Label>
               <Input
                   id="documentacaoFisicoFile"
                   type="file" {...form.register('documentacaoFisicoFile')}
                   disabled={isSubmittingForm}
-                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/20 file:text-primary-foreground hover:file:bg-primary/30 text-foreground/90"
               />
               <p className="text-xs text-muted-foreground">Max 5MB. Tipos: JPG, PNG, PDF.</p>
               {form.formState.errors.documentacaoFisicoFile && <p className="text-sm text-destructive">{String(form.formState.errors.documentacaoFisicoFile.message)}</p>}
@@ -439,7 +447,7 @@ export function AssetForm({
             <div className="space-y-4 p-4 border rounded-md bg-card">
                 <h4 className="text-md font-semibold text-primary flex items-center"><UserCheck size={18} className="mr-2"/> Designação e Liberação do Ativo (Opcional)</h4>
                 <div className="space-y-1.5">
-                <Label htmlFor="assignedToMemberId">Designar Ativo para Membro</Label>
+                <Label htmlFor="assignedToMemberId" className="text-foreground/90">Designar Ativo para Membro</Label>
                 <Controller
                     name="assignedToMemberId"
                     control={form.control}
@@ -449,10 +457,10 @@ export function AssetForm({
                         value={field.value === null || field.value === undefined ? "UNASSIGNED" : field.value}
                         disabled={isSubmittingForm || !!targetMemberId}
                     >
-                        <SelectTrigger id="assignedToMemberId">
+                        <SelectTrigger id="assignedToMemberId" className="bg-input text-foreground">
                         <SelectValue placeholder="Selecione um membro" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-popover text-popover-foreground">
                         <SelectItem value="UNASSIGNED">Não Designar / Manter com o Registro Principal</SelectItem>
                         {availableMembers.map(member => (
                             <SelectItem key={member.id} value={member.id}>{member.name}</SelectItem>
@@ -465,7 +473,7 @@ export function AssetForm({
                 </div>
 
                 {localAssignedToMemberIdWatch && localAssignedToMemberIdWatch !== "UNASSIGNED" && memberHasBirthDate && (
-                <div className="space-y-3 mt-3 p-3 border-t">
+                <div className="space-y-3 mt-3 p-3 border-t border-border">
                     <div className="flex items-center space-x-2">
                         <Controller
                             name="setReleaseCondition"
@@ -476,16 +484,17 @@ export function AssetForm({
                                     checked={Boolean(field.value)}
                                     onCheckedChange={field.onChange}
                                     disabled={isSubmittingForm}
+                                    className="border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                                 />
                             )}
                         />
-                        <Label htmlFor="setReleaseCondition" className="font-normal flex items-center">
-                        <Clock size={16} className="mr-2 text-blue-500"/> Definir Condição de Liberação por Idade para {actualSelectedMember?.name}?
+                        <Label htmlFor="setReleaseCondition" className="font-normal flex items-center text-foreground/90">
+                        <Clock size={16} className="mr-2 text-blue-400"/> Definir Condição de Liberação por Idade para {actualSelectedMember?.name}?
                         </Label>
                     </div>
                     {setReleaseConditionWatch && (
                     <div className="space-y-1.5 pl-6">
-                        <Label htmlFor="releaseTargetAge">Liberar aos (idade)</Label>
+                        <Label htmlFor="releaseTargetAge" className="text-foreground/90">Liberar aos (idade)</Label>
                         <Input
                         id="releaseTargetAge"
                         type="number"
@@ -493,6 +502,7 @@ export function AssetForm({
                         placeholder="Ex: 18"
                         min="1"
                         disabled={isSubmittingForm}
+                        className="bg-input text-foreground placeholder:text-muted-foreground"
                         />
                         {form.formState.errors.releaseTargetAge && <p className="text-sm text-destructive">{form.formState.errors.releaseTargetAge.message}</p>}
                     </div>
@@ -515,23 +525,25 @@ export function AssetForm({
 
       <div className="flex justify-between items-center pt-4">
         {currentStep > 1 ? (
-          <Button type="button" variant="outline" onClick={handlePreviousStep} disabled={isSubmittingForm}>
+          <Button type="button" variant="outline" onClick={handlePreviousStep} disabled={isSubmittingForm} className="text-foreground/90 border-border hover:bg-muted/80">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Button>
         ) : (
-          <Button type="button" variant="outline" onClick={onClose} disabled={isSubmittingForm}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={isSubmittingForm} className="text-foreground/90 border-border hover:bg-muted/80">
             Cancelar
           </Button>
         )}
 
         {currentStep < TOTAL_STEPS_PHYSICAL ? (
-          <Button type="button" onClick={handleNextStep} disabled={isNextButtonDisabled()}>
-            Próximo <ArrowRight className="ml-2 h-4 w-4" />
+          <Button type="button" onClick={handleNextStep} disabled={isNextButtonDisabled()} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+             {isFetchingPrice ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+             {isFetchingPrice ? "Buscando..." : "Próximo"} 
+             {!isFetchingPrice && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         ) : (
-          <Button type="submit" disabled={isSubmittingForm}>
+          <Button type="submit" disabled={isSubmittingForm} className="bg-primary hover:bg-primary/90 text-primary-foreground">
             {isSubmittingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            {existingAssetToUpdate ? "Adicionar Transação" : "Salvar Ativo Físico"}
+            Salvar Ativo Físico
           </Button>
         )}
       </div>
