@@ -166,7 +166,7 @@ export default function ProfilePage() {
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24 text-3xl ring-4 ring-primary ring-offset-background ring-offset-2">
                 <AvatarImage src={`https://placehold.co/150x150.png?text=${avatarText}`} alt={displayName} data-ai-hint="couple avatar"/>
-                <AvatarFallback className="bg-gradient-to-br from-gradient-green to-gradient-blue text-black">
+                <AvatarFallback className="bg-gradient-to-r from-gradient-green to-gradient-blue text-black">
                   {avatarText || '??'}
                 </AvatarFallback>
               </Avatar>
@@ -257,12 +257,12 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle className="text-2xl flex items-center text-foreground"><Landmark className="mr-3 text-primary h-7 w-7" />Entity Formalization</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Indicate how your entity is or will be formalized.
+              Indicate how your entity is formalized.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-base text-foreground/90">How is this entity legally structured or to be structured?</Label>
+              {/* Removido: <Label className="text-base text-foreground/90">How is this entity legally structured or to be structured?</Label> */}
               <RadioGroup
                 value={holdingType}
                 onValueChange={(value: 'physical' | '') => {
@@ -330,3 +330,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+
