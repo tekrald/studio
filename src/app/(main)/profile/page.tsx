@@ -11,7 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { UserCircle, Save, Loader2, Users, BookOpen, Landmark, FileText, Edit3 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; 
+import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const initialReligionOptions = [
     { value: "agnosticism", label: "Agnosticism" },
@@ -36,15 +37,18 @@ export default function ProfilePage() {
   const { user, updateProfile, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  const [displayName, setDisplayName] = useState('');
+  // Initialize state directly from user object if available
+  const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [avatarText, setAvatarText] = useState('');
-  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
-  const [religion, setReligion] = useState('');
+  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>(user?.relationshipStructure || '');
+  const [religion, setReligion] = useState<string | undefined>(user?.religion);
   
-  const [holdingType, setHoldingType] = useState<'physical' | ''>('');
-  const [cnpjHolding, setCnpjHolding] = useState('');
+  const [holdingType, setHoldingType] = useState<'physical' | ''>(user?.holdingType || '');
+  const [cnpjHolding, setCnpjHolding] = useState(user?.cnpjHolding || '');
+  const [acknowledgedPhysicalInfoProfile, setAcknowledgedPhysicalInfoProfile] = useState(false);
 
-  const [contractClauses, setContractClauses] = useState<ContractClause[]>([]);
+
+  const [contractClauses, setContractClauses] = useState<ContractClause[]>(user?.contractClauses || []);
   const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -53,10 +57,16 @@ export default function ProfilePage() {
     if (user) {
       setDisplayName(user.displayName || '');
       setRelationshipStructure(user.relationshipStructure || '');
-      setReligion(user.religion || ''); 
+      setReligion(user.religion); 
       setHoldingType(user.holdingType || '');
       setCnpjHolding(user.cnpjHolding || '');
       setContractClauses(user.contractClauses || []);
+      // If holding type is physical, check the acknowledgement state (though it's not stored in User object)
+      if (user.holdingType === 'physical') {
+        setAcknowledgedPhysicalInfoProfile(true); // Assume acknowledged if it was set previously
+      } else {
+        setAcknowledgedPhysicalInfoProfile(false);
+      }
     }
   }, [user]);
 
@@ -104,6 +114,14 @@ export default function ProfilePage() {
         toast({
         title: 'Required Field',
         description: 'Please select your union structure.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (holdingType === 'physical' && !acknowledgedPhysicalInfoProfile) {
+      toast({
+        title: 'Acknowledgement Required',
+        description: 'Please acknowledge the information regarding physical entity formalization.',
         variant: 'destructive',
       });
       return;
@@ -157,8 +175,8 @@ export default function ProfilePage() {
         <Card className="shadow-xl mb-8 bg-card border-border">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl text-foreground font-lato">Union Profile</CardTitle>
-            <CardDescription className="text-muted-foreground font-lato">
+            <CardTitle className="text-3xl text-foreground">Union Profile</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Manage your information and preferences here.
             </CardDescription>
           </CardHeader>
@@ -218,7 +236,12 @@ export default function ProfilePage() {
 
             <div className="space-y-2">
                 <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Union Belief</Label>
-                <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
+                <Select
+                  value={religion}
+                  onValueChange={setReligion}
+                  disabled={isLoading}
+                  key={String(user?.religion)} // Force re-render if user.religion changes
+                >
                     <SelectTrigger id="religion" className="bg-input text-foreground">
                         <SelectValue placeholder="Select an option" />
                     </SelectTrigger>
@@ -262,13 +285,13 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              {/* Removido: <Label className="text-base text-foreground/90">How is this entity legally structured or to be structured?</Label> */}
               <RadioGroup
                 value={holdingType}
                 onValueChange={(value: 'physical' | '') => {
                   setHoldingType(value);
                   if (value === '') { 
                     setCnpjHolding('');
+                    setAcknowledgedPhysicalInfoProfile(false);
                   }
                 }}
                 className="space-y-2 pt-1"
@@ -290,7 +313,19 @@ export default function ProfilePage() {
                  <p className="text-sm text-foreground/80 font-medium">
                   The formalization of physical assets (real estate, vehicles) requires consulting an accountant or lawyer to open a company and ensure legality for succession.
                 </p>
-                <div className="space-y-2">
+                <div className="flex items-center space-x-2 mt-2">
+                    <Checkbox
+                        id="acknowledgedPhysicalInfoProfile"
+                        checked={acknowledgedPhysicalInfoProfile}
+                        onCheckedChange={(checked) => setAcknowledgedPhysicalInfoProfile(Boolean(checked))}
+                        disabled={isLoading}
+                        className="border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                    />
+                    <Label htmlFor="acknowledgedPhysicalInfoProfile" className="text-sm font-normal text-foreground/90">
+                        I am aware that the formalization of a physical or mixed holding requires professional consultation.
+                    </Label>
+                </div>
+                <div className="space-y-2 mt-4">
                   <Label htmlFor="cnpjHolding" className="text-foreground/90">Entity CNPJ (Optional)</Label>
                   <Input
                     id="cnpjHolding"
@@ -331,3 +366,4 @@ export default function ProfilePage() {
   );
 }
 
+    
