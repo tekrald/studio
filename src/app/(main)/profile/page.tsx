@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { UserCircle, Save, Loader2, Users, BookOpen, Landmark, FileText, Edit3 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { ContractClause } from '@/components/contract/ContractSettingsDialog'; 
+import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; 
 
 const initialReligionOptions = [
     { value: "agnosticism", label: "Agnosticism" },
@@ -304,7 +304,6 @@ export default function ProfilePage() {
                 </div>
               </Card>
             )}
-            {/* CardDescription removida daqui */}
           </CardContent>
         </Card>
 
@@ -331,7 +330,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-    
-
-    
