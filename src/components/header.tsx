@@ -2,7 +2,7 @@
 "use client";
 import Link from 'next/link';
 import Image from 'next/image';
-import { Briefcase, UserCircle, LogIn, LogOut } from 'lucide-react';
+import { Briefcase, UserCircle, LogIn, LogOut, Wallet } from 'lucide-react'; // Added Wallet
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth-provider';
 import { usePathname } from 'next/navigation';
@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 const navLinks = [
   { href: '/dashboard', label: 'Contract', icon: Briefcase },
   { href: '/profile', label: 'My Record', icon: UserCircle },
+  { href: '/wallet', label: 'Wallet', icon: Wallet }, // New Wallet Link
 ];
 
 export function Header() {
@@ -22,10 +23,10 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/logo.svg"
+            src="/logo.svg" // Updated to logo.svg as per previous changes
             alt="Ipê Acta Logo"
-            width={150}
-            height={83}
+            width={150} // Adjusted as per recent logo size change
+            height={50} // Adjusted for a 3:1 aspect ratio with width 150
             className="h-auto"
             priority
             data-ai-hint="logo IpêActa"
@@ -37,6 +38,12 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => {
               const label = link.href === '/profile' && user?.displayName ? user.displayName : link.label;
+              const isWalletLink = link.href === '/wallet';
+              
+              if (isWalletLink && !user?.isWalletConnected) {
+                return null; // Don't show wallet link if no wallet is connected
+              }
+
               return (
                 <Button key={link.href} variant="ghost" asChild
                   className={cn(
@@ -87,7 +94,15 @@ export function Header() {
       {user && (
         <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
            {navLinks.map((link) => {
-              const label = link.href === '/profile' && user?.displayName ? user.displayName.split('&')[0]?.trim() || user.displayName.split('And')[0]?.trim() || 'Profile' : link.label;
+              const label = link.href === '/profile' && user?.displayName 
+                ? user.displayName.split('&')[0]?.trim() || user.displayName.split('And')[0]?.trim() || 'Profile' 
+                : link.label;
+
+              const isWalletLink = link.href === '/wallet';
+              if (isWalletLink && !user?.isWalletConnected) {
+                return null; // Don't show wallet link if no wallet is connected
+              }
+
               return (
                 <Button key={link.href} variant="ghost" size="sm" asChild
                   className={cn(
@@ -107,3 +122,5 @@ export function Header() {
     </header>
   );
 }
+
+    
