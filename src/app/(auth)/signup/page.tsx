@@ -138,7 +138,7 @@ export default function SignupPage() {
         setError("Please select your union structure.");
         return false;
       }
-    } else if (currentStep === 2) { // Union Belief
+    } else if (currentStep === 2) { // Union Belief - optional
       // No mandatory validation here
     } else if (currentStep === 3) { // Union Name
       if (!unionName.trim()) {
@@ -162,7 +162,7 @@ export default function SignupPage() {
         setError('Password must be at least 6 characters long.');
         return false;
       }
-    } else if (currentStep === 5) { // Connect Wallet
+    } else if (currentStep === 5) { // Connect Wallet - optional
         // No mandatory validation here
     } else if (currentStep === 6) { // Photos - Optional
     } else if (currentStep === 7) { // Initial Agreements - Optional (can be empty)
@@ -256,9 +256,9 @@ export default function SignupPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleFinalSubmit} className="space-y-6">
+          <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col mx-auto max-w-md">
+              <div className="space-y-4 flex flex-col w-full max-w-md">
                 <div className="w-full">
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
@@ -281,7 +281,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col mx-auto max-w-md">
+                 <div className="space-y-4 flex flex-col w-full max-w-md">
                     <div className="w-full">
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
@@ -299,7 +299,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 3 && ( 
-              <div className="space-y-2 flex flex-col mx-auto max-w-md">
+              <div className="space-y-2 flex flex-col w-full max-w-md">
                 <Label htmlFor="unionName" className="text-foreground/90 w-full text-left">Union Name</Label>
                 <Input
                   id="unionName"
@@ -315,7 +315,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 4 && ( 
-              <div className="space-y-6 flex flex-col mx-auto max-w-md">
+              <div className="space-y-6 flex flex-col w-full max-w-md">
                 <div className="space-y-2 w-full">
                   <Label htmlFor="email" className="text-foreground/90 text-left">Main Email Address</Label>
                   <Input
@@ -378,7 +378,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 5 && ( 
-              <div className="space-y-4 flex flex-col mx-auto max-w-md">
+              <div className="space-y-4 flex flex-col w-full max-w-md">
                 <Label className="text-lg font-semibold flex items-center justify-start text-foreground/90 w-full"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
                 <CardDescription className="text-muted-foreground w-full text-left">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
@@ -407,7 +407,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 6 && ( 
-              <div className="space-y-4 flex flex-col mx-auto max-w-lg">
+              <div className="space-y-4 flex flex-col w-full max-w-lg">
                 <p className="text-sm text-muted-foreground w-full text-left">Add photos of the union (optional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start w-full">
                   <div className="space-y-2 flex flex-col items-start text-left w-full">
@@ -449,7 +449,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 7 && ( 
-              <div className="space-y-4 flex flex-col mx-auto max-w-lg">
+              <div className="space-y-4 flex flex-col w-full max-w-lg">
                 <Label className="text-lg font-semibold flex items-center justify-start text-foreground/90 w-full"><FileText size={20} className="mr-2 text-primary"/>Initial Contract Agreements</Label>
                 <CardDescription className="text-muted-foreground w-full text-left">Define the initial clauses of your contract. You can edit them later.</CardDescription>
                 
@@ -504,7 +504,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 8 && ( 
-              <div className="space-y-4 flex flex-col mx-auto max-w-lg">
+              <div className="space-y-4 flex flex-col w-full max-w-lg">
                 <Label className="text-lg font-semibold text-foreground/90 w-full text-left">Terms of Service - Ipê Acta</Label>
                 <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground w-full text-left">
                   <p className="mb-2">By creating an account with Ipê Acta, you agree to our Terms of Service and Privacy Policy.</p>
@@ -526,9 +526,9 @@ export default function SignupPage() {
               </div>
             )}
 
-            {error && <p className="text-sm text-destructive text-center">{error}</p>}
+            {error && <p className="text-sm text-destructive text-center w-full max-w-lg">{error}</p>}
 
-            <div className="flex justify-between items-center pt-4">
+            <div className="flex justify-between items-center pt-4 w-full max-w-lg">
               {currentStep > 1 ? (
                 <Button type="button" variant="outline" onClick={handlePreviousStep} disabled={isLoading} className="text-foreground/90 border-border hover:bg-muted/80">
                   <ArrowLeft className="mr-2 h-4 w-4" /> Back
@@ -566,4 +566,6 @@ export default function SignupPage() {
     </div>
   );
 }
+    
+
     
