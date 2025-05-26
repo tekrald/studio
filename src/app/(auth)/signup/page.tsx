@@ -3,6 +3,7 @@
 import React, { useState, type FormEvent, type ChangeEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye, Building, Landmark } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye, Building, Landmark, HomeIcon } from 'lucide-react';
 import type { ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -38,6 +39,7 @@ const defaultContractClauses: ContractClause[] = [
 ];
 
 export default function SignupPage() {
+  const router = useRouter(); // Initialize useRouter
   const [currentStep, setCurrentStep] = useState(1);
 
   // Step 1 & 2: Union Details
@@ -216,13 +218,13 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gradient-green/20 via-gradient-blue/20 to-background p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <Card className="w-full max-w-2xl shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
+            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpeActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-           <CardDescription className="font-sans text-muted-foreground mb-3">
+           <CardDescription className="font-lato text-muted-foreground mb-3">
              Follow the steps to create your contract.
           </CardDescription>
           <div className="flex items-center justify-center w-full my-4 px-4 sm:px-8">
@@ -258,7 +260,7 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-md">
+              <div className="space-y-4 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
                 <div className="w-full">
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
@@ -281,7 +283,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col w-full max-w-md">
+                 <div className="space-y-4 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
                     <div className="w-full">
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
@@ -299,7 +301,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 3 && ( 
-              <div className="space-y-2 flex flex-col w-full max-w-md">
+              <div className="space-y-2 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
                 <Label htmlFor="unionName" className="text-foreground/90 w-full text-left">Union Name</Label>
                 <Input
                   id="unionName"
@@ -315,7 +317,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 4 && ( 
-              <div className="space-y-6 flex flex-col w-full max-w-md">
+              <div className="space-y-6 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
                 <div className="space-y-2 w-full">
                   <Label htmlFor="email" className="text-foreground/90 text-left">Main Email Address</Label>
                   <Input
@@ -378,7 +380,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 5 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-md">
+              <div className="space-y-4 flex flex-col w-full max-w-lg">
                 <Label className="text-lg font-semibold flex items-center justify-start text-foreground/90 w-full"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
                 <CardDescription className="text-muted-foreground w-full text-left">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
@@ -529,7 +531,11 @@ export default function SignupPage() {
             {error && <p className="text-sm text-destructive text-center w-full max-w-lg">{error}</p>}
 
             <div className="flex justify-between items-center pt-4 w-full max-w-lg">
-              {currentStep > 1 ? (
+              {currentStep === 1 ? (
+                 <Button type="button" variant="outline" onClick={() => router.push('/')} disabled={isLoading} className="text-foreground/90 border-border hover:bg-muted/80">
+                    <HomeIcon className="mr-2 h-4 w-4" /> Back to Home
+                </Button>
+              ) : currentStep > 1 ? (
                 <Button type="button" variant="outline" onClick={handlePreviousStep} disabled={isLoading} className="text-foreground/90 border-border hover:bg-muted/80">
                   <ArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
@@ -566,6 +572,4 @@ export default function SignupPage() {
     </div>
   );
 }
-    
-
     
