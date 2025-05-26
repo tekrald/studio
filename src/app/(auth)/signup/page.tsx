@@ -3,7 +3,7 @@
 import React, { useState, type FormEvent, type ChangeEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,11 +39,12 @@ const defaultContractClauses: ContractClause[] = [
 ];
 
 export default function SignupPage() {
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Step 1 & 2: Union Details
+  // Step 1: Union Structure
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
+  // Step 2: Union Belief
   const [religion, setReligion] = useState('');
   
   // Step 3: Union Name
@@ -59,7 +60,7 @@ export default function SignupPage() {
   // Step 5: Connect Joint Wallet
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [connectedWalletAddress, setConnectedWalletAddress] = useState<string | null>(null);
-
+  
   // Step 6: Photos
   const [photo1, setPhoto1] = useState<File | null>(null);
   const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
@@ -260,13 +261,13 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
+              <div className="space-y-4 flex flex-col w-full max-w-lg">
                 <div className="w-full">
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
                         value={relationshipStructure}
                         onValueChange={(value: 'monogamous' | 'polygamous') => setRelationshipStructure(value)}
-                        className="space-y-2 flex flex-col items-start" 
+                        className="space-y-2 flex flex-col items-start w-full" 
                         disabled={isLoading}
                     >
                         <div className="flex items-center space-x-2">
@@ -283,7 +284,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
+                 <div className="space-y-4 flex flex-col w-full max-w-lg">
                     <div className="w-full">
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
@@ -301,7 +302,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 3 && ( 
-              <div className="space-y-2 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
+              <div className="space-y-2 flex flex-col w-full max-w-lg">
                 <Label htmlFor="unionName" className="text-foreground/90 w-full text-left">Union Name</Label>
                 <Input
                   id="unionName"
@@ -317,7 +318,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 4 && ( 
-              <div className="space-y-6 flex flex-col w-full max-w-lg"> {/* Changed to max-w-lg */}
+              <div className="space-y-6 flex flex-col w-full max-w-lg">
                 <div className="space-y-2 w-full">
                   <Label htmlFor="email" className="text-foreground/90 text-left">Main Email Address</Label>
                   <Input
@@ -572,4 +573,6 @@ export default function SignupPage() {
     </div>
   );
 }
+    
+
     
