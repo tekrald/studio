@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/co
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, Edit3, PlusCircle, Save, Trash2, FileText } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye } from 'lucide-react';
 import type { ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -52,6 +52,9 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   // Etapa 5: Conectar Carteira
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -139,7 +142,7 @@ export default function SignupPage() {
         return false;
       }
     } else if (currentStep === 2) { // Crença
-      // Nenhuma validação obrigatória aqui, pois o campo em si é opcional
+      // Nenhuma validação obrigatória aqui
     } else if (currentStep === 3) { // Nome da União
       if (!unionName.trim()) {
         setError("Por favor, insira o nome da união.");
@@ -299,26 +302,48 @@ export default function SignupPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-foreground/90">Senha</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isLoading}
-                    className="bg-input text-foreground border-border focus:ring-primary"
-                  />
+                  <div className="relative">
+                    <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={isLoading}
+                        className="bg-input text-foreground border-border focus:ring-primary pr-10"
+                    />
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-7 px-2 text-muted-foreground hover:text-primary"
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        <Eye size={16} />
+                    </Button>
+                  </div>
                    <p className="text-xs text-muted-foreground">Mínimo 6 caracteres.</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-foreground/90">Confirmar Senha</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    disabled={isLoading}
-                    className="bg-input text-foreground border-border focus:ring-primary"
-                  />
+                   <div className="relative">
+                    <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        disabled={isLoading}
+                        className="bg-input text-foreground border-border focus:ring-primary pr-10"
+                    />
+                     <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-7 px-2 text-muted-foreground hover:text-primary"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                        <Eye size={16} />
+                    </Button>
+                   </div>
                 </div>
               </>
             )}
@@ -357,7 +382,7 @@ export default function SignupPage() {
                 <p className="text-sm text-muted-foreground">Adicione fotos da união (opcional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <div className="space-y-2">
-                    <Label htmlFor="photo1" className="text-foreground/90">Foto 1 (Parceiro/a 1 ou União)</Label>
+                    <Label htmlFor="photo1" className="text-foreground/90">Foto Parceiro/a 1</Label>
                     <div className="flex items-center space-x-2">
                       {photo1Preview ? (
                         <Image src={photo1Preview} alt="Pré-visualização Foto 1" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="união foto" />
@@ -374,7 +399,7 @@ export default function SignupPage() {
                     {photo1 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo1.name}>{photo1.name}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="photo2" className="text-foreground/90">Foto 2 (Parceiro/a 2 ou União, Opcional)</Label>
+                    <Label htmlFor="photo2" className="text-foreground/90">Foto Parceiro/a 2</Label>
                      <div className="flex items-center space-x-2">
                       {photo2Preview ? (
                         <Image src={photo2Preview} alt="Pré-visualização Foto 2" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="união foto" />
