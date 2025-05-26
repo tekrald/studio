@@ -8,9 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { UserCircle, Save, Loader2, Briefcase, ExternalLink, Users, BookOpen } from 'lucide-react';
+import { UserCircle, Save, Loader2, Briefcase, Users, BookOpen } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
@@ -34,8 +33,9 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [avatarText, setAvatarText] = useState('');
   
-  const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
-  const [acknowledgedPhysicalInfoProfile, setAcknowledgedPhysicalInfoProfile] = useState(false);
+  const [holdingType, setHoldingType] = useState<'physical' | ''>('');
+  const [cnpjHolding, setCnpjHolding] = useState('');
+
 
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
   const [religion, setReligion] = useState('');
@@ -48,12 +48,8 @@ export default function ProfilePage() {
       setHoldingType(user.holdingType || '');
       setRelationshipStructure(user.relationshipStructure || '');
       setReligion(user.religion || '');
+      setCnpjHolding(user.cnpjHolding || '');
       
-      if (user.holdingType === 'physical') {
-        // setAcknowledgedPhysicalInfoProfile(true); // Default to false to re-confirm
-      } else {
-        setAcknowledgedPhysicalInfoProfile(false);
-      }
     }
   }, [user]);
 
@@ -78,14 +74,6 @@ export default function ProfilePage() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     
-    if (holdingType === 'physical' && !acknowledgedPhysicalInfoProfile) {
-      toast({
-        title: 'Confirmação Necessária',
-        description: 'Você deve confirmar que está ciente sobre a necessidade de consulta profissional para holding física/mista.',
-        variant: 'destructive',
-      });
-      return;
-    }
     if (!relationshipStructure) {
         toast({
         title: 'Campo Obrigatório',
@@ -104,6 +92,7 @@ export default function ProfilePage() {
         holdingType,
         relationshipStructure,
         religion,
+        cnpjHolding: holdingType === 'physical' ? cnpjHolding : '', // Salva CNPJ apenas se holding for física
       });
       toast({
         title: 'Perfil Atualizado',
@@ -185,7 +174,7 @@ export default function ProfilePage() {
                 <Label htmlFor="relationshipStructure" className="flex items-center"><Users size={18} className="mr-2 text-primary" />Estrutura da Relação</Label>
                 <RadioGroup 
                     value={relationshipStructure} 
-                    onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous' | '')}
+                    onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous')}
                     className="space-y-2 pt-1"
                     disabled={isLoading}
                 >
@@ -229,64 +218,38 @@ export default function ProfilePage() {
               <Label className="text-base">Como vocês pretendem estruturar/formalizar a holding?</Label>
               <RadioGroup 
                 value={holdingType} 
-                onValueChange={(value: 'digital' | 'physical' | '') => {
+                onValueChange={(value: 'physical' | '') => {
                   setHoldingType(value);
-                  if (value !== 'physical') {
-                    setAcknowledgedPhysicalInfoProfile(false); 
-                  }
                 }} 
                 className="space-y-2 pt-1" 
                 disabled={isLoading}
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="digital" id="profile-holding-digital" />
-                  <Label htmlFor="profile-holding-digital" className="font-normal">Digital</Label>
+                  <RadioGroupItem value="" id="profile-holding-undefined" />
+                  <Label htmlFor="profile-holding-undefined" className="font-normal">Ainda não definido / Não formalizado</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="profile-holding-physical" />
-                  <Label htmlFor="profile-holding-physical" className="font-normal">Física ou Mista (incluindo imóveis, veículos, empresas tradicionais)</Label>
-                </div>
-                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="" id="profile-holding-undefined" />
-                  <Label htmlFor="profile-holding-undefined" className="font-normal">Ainda não definido / Não formalizado</Label>
+                  <Label htmlFor="profile-holding-physical" className="font-normal">Física ou Mista (com ativos físicos)</Label>
                 </div>
               </RadioGroup>
             </div>
 
-            {holdingType === 'digital' && (
-              <Card className="p-4 bg-muted/30 space-y-3">
-                <p className="text-sm text-foreground">
-                  Para holdings com foco digital, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
-                </p>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => window.open('https://toolsforthecommons.com/', '_blank')}
-                  className="w-full sm:w-auto"
-                >
-                  Consultar Tools for The Commons <ExternalLink size={16} className="ml-2" />
-                </Button>
-                <p className="text-xs text-muted-foreground">
-                  A formalização de holdings digitais pode ocorrer via empresas em países específicos ou através de estruturas digitais vinculadas a carteiras/empresas em zonas econômicas digitais. Pesquise as opções.
-                </p>
-              </Card>
-            )}
-
             {holdingType === 'physical' && (
               <Card className="p-4 bg-muted/30 space-y-4">
                 <p className="text-sm text-foreground font-medium">
-                  Atenção: A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
+                  A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
                 </p>
-                <div className="flex items-start space-x-2 pt-2">
-                  <Checkbox 
-                      id="acknowledgedPhysicalInfoProfile" 
-                      checked={acknowledgedPhysicalInfoProfile} 
-                      onCheckedChange={(checked) => setAcknowledgedPhysicalInfoProfile(Boolean(checked))}
-                      disabled={isLoading}
+                <div className="space-y-2">
+                  <Label htmlFor="cnpjHolding">CNPJ da Holding (Opcional)</Label>
+                  <Input
+                    id="cnpjHolding"
+                    type="text"
+                    placeholder="00.000.000/0000-00"
+                    value={cnpjHolding}
+                    onChange={(e) => setCnpjHolding(e.target.value)}
+                    disabled={isLoading}
                   />
-                  <Label htmlFor="acknowledgedPhysicalInfoProfile" className="text-sm font-normal text-foreground leading-snug">
-                      Estou ciente de que a formalização de uma holding física ou mista requer consulta profissional e que domedome não fornece aconselhamento legal ou contábil.
-                  </Label>
                 </div>
               </Card>
             )}
@@ -308,5 +271,6 @@ export default function ProfilePage() {
     </div>
   );
 }
+    
 
     

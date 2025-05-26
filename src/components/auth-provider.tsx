@@ -8,20 +8,22 @@ interface User {
   email: string;
   uid: string;
   displayName?: string;
-  holdingType?: 'digital' | 'physical' | '';
+  holdingType?: 'physical' | ''; // 'digital' removido
   relationshipStructure?: 'monogamous' | 'polygamous' | '';
   religion?: string;
   isWalletConnected?: boolean;
   connectedWalletAddress?: string | null;
+  cnpjHolding?: string; // Novo campo para CNPJ
 }
 
 interface UpdateProfileData {
   displayName?: string;
-  holdingType?: 'digital' | 'physical' | '';
+  holdingType?: 'physical' | '';
   relationshipStructure?: 'monogamous' | 'polygamous' | '';
   religion?: string;
   isWalletConnected?: boolean;
   connectedWalletAddress?: string | null;
+  cnpjHolding?: string;
 }
 
 interface AuthContextType {
@@ -30,7 +32,6 @@ interface AuthContextType {
   signup: (
     email: string,
     name: string,
-    holdingTypeParam?: 'digital' | 'physical' | '',
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
     religionParam?: string,
     isWalletConnectedParam?: boolean,
@@ -45,21 +46,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Alterado para false para desabilitar redirecionamentos
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('domedomeMockUser');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser) as User);
-      }
-    } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem('domedomeMockUser');
-    }
-    setLoading(false);
+    // Lógica de carregamento do localStorage comentada para desabilitar auth
+    // try {
+    //   const storedUser = localStorage.getItem('domedomeMockUser');
+    //   if (storedUser) {
+    //     setUser(JSON.parse(storedUser) as User);
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to parse user from localStorage", error);
+    //   localStorage.removeItem('domedomeMockUser');
+    // }
+    // setLoading(false);
   }, []);
 
   const handleAuthChange = useCallback((newUser: User | null) => {
@@ -72,58 +74,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = useCallback((email: string, name?: string) => {
-    let existingUser: Partial<User> = {};
-    try {
-      const storedUser = localStorage.getItem('domedomeMockUser');
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser) as User;
-        if (parsedUser.email === email) {
-            existingUser = parsedUser;
-        }
-      }
-    } catch (error) {
-      // ignore
-    }
+    console.log("Login attempt (auth disabled):", email);
+    // Simulação de login sem definir usuário para evitar redirecionamentos
+    // let existingUser: Partial<User> = {};
+    // try {
+    //   const storedUser = localStorage.getItem('domedomeMockUser');
+    //   if (storedUser) {
+    //     const parsedUser = JSON.parse(storedUser) as User;
+    //     if (parsedUser.email === email) {
+    //         existingUser = parsedUser;
+    //     }
+    //   }
+    // } catch (error) {
+    //   // ignore
+    // }
 
     const mockUser: User = {
-      ...existingUser,
+    //   ...existingUser,
       email,
       uid: `mock-${email}`,
-      displayName: name || existingUser.displayName || email.split('@')[0],
-      holdingType: existingUser.holdingType || '',
-      relationshipStructure: existingUser.relationshipStructure || '',
-      religion: existingUser.religion || '',
-      isWalletConnected: existingUser.isWalletConnected || false,
-      connectedWalletAddress: existingUser.connectedWalletAddress || null,
+      displayName: name || email.split('@')[0],
+      holdingType: '', // Padrão para não definido
+      relationshipStructure: '',
+      religion: '',
+      isWalletConnected: false,
+      connectedWalletAddress: null,
+      cnpjHolding: '',
     };
-    handleAuthChange(mockUser);
+    handleAuthChange(mockUser); // Ainda salva para persistir dados para o perfil
     router.push('/dashboard');
   }, [handleAuthChange, router]);
 
   const signup = useCallback((
     email: string,
     name: string,
-    holdingTypeParam?: 'digital' | 'physical' | '',
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
     religionParam?: string,
     isWalletConnectedParam?: boolean,
     connectedWalletAddressParam?: string | null,
   ) => {
+    console.log("Signup attempt (auth disabled):", email);
     const mockUser: User = {
       email,
       uid: `mock-${email}-signup`,
       displayName: name,
-      holdingType: holdingTypeParam || '',
+      holdingType: '', // Padrão para não definido
       relationshipStructure: relationshipStructureParam || '',
       religion: religionParam || '',
       isWalletConnected: isWalletConnectedParam || false,
       connectedWalletAddress: connectedWalletAddressParam || null,
+      cnpjHolding: '',
     };
-    handleAuthChange(mockUser);
+    handleAuthChange(mockUser); // Ainda salva para persistir dados para o perfil
     router.push('/dashboard');
   }, [handleAuthChange, router]);
 
   const logout = useCallback(() => {
+    console.log("Logout (auth disabled)");
     handleAuthChange(null);
     router.push('/'); 
   }, [handleAuthChange, router]);
@@ -139,24 +146,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [user, handleAuthChange]);
 
 
-  useEffect(() => {
-    if (loading) {
-      return; 
-    }
+  // useEffect(() => { // Lógica de proteção de rotas comentada
+    // if (loading) {
+    //   return; 
+    // }
 
-    const isAuthRoute = pathname === '/login' || pathname === '/signup';
-    const isPublicRoute = pathname === '/'; 
+    // const isAuthRoute = pathname === '/login' || pathname === '/signup';
+    // const isPublicRoute = pathname === '/'; 
 
-    if (!user) { 
-      if (!isAuthRoute && !isPublicRoute) {
-        router.push('/login'); 
-      }
-    } else { 
-      if (isAuthRoute) {
-        router.push('/dashboard'); 
-      }
-    }
-  }, [user, loading, pathname, router]);
+    // if (!user) { 
+    //   if (!isAuthRoute && !isPublicRoute) {
+    //     router.push('/login'); 
+    //   }
+    // } else { 
+    //   if (isAuthRoute) {
+    //     router.push('/dashboard'); 
+    //   }
+    // }
+  // }, [user, loading, pathname, router]);
 
 
   return (
@@ -173,4 +180,6 @@ export const useAuth = () => {
   }
   return context;
 };
+    
+
     

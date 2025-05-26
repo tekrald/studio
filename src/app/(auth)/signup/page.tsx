@@ -11,9 +11,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/co
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Briefcase, ExternalLink, Users, BookOpen, Wallet } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen } from 'lucide-react';
 
-const TOTAL_STEPS = 7; // Aumentado para incluir a etapa da carteira
+const TOTAL_STEPS = 6; // Reduzido, pois a etapa de formalização da holding foi removida do cadastro
 
 const religionOptions = [
     { value: "cristianismo", label: "Cristianismo" },
@@ -46,9 +46,6 @@ export default function SignupPage() {
   const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
   const [photo2, setPhoto2] = useState<File | null>(null);
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
-
-  const [holdingType, setHoldingType] = useState<'digital' | 'physical' | ''>('');
-  const [acknowledgedPhysicalInfo, setAcknowledgedPhysicalInfo] = useState(false);
   
   const [acceptedContract, setAcceptedContract] = useState(false);
   
@@ -71,7 +68,6 @@ export default function SignupPage() {
   };
 
   const handleConnectWallet = () => {
-    // Simulação de conexão de carteira
     setIsLoading(true);
     setError(null);
     setTimeout(() => {
@@ -112,19 +108,10 @@ export default function SignupPage() {
         return false;
       }
     } else if (currentStep === 4) { // Conectar Carteira
-      // Esta etapa é opcional, então não há validação bloqueante
+      // Esta etapa é opcional
     } else if (currentStep === 5) { // Fotos do Casal
       // Upload de fotos é opcional
-    } else if (currentStep === 6) { // Formalização da Holding
-      if (!holdingType) {
-        setError("Por favor, selecione como vocês pretendem estruturar a holding.");
-        return false;
-      }
-      if (holdingType === 'physical' && !acknowledgedPhysicalInfo) {
-        setError("Você deve confirmar que está ciente sobre a necessidade de consulta profissional para holding física/mista.");
-        return false;
-      }
-    } else if (currentStep === 7) { // Termos e Condições
+    } else if (currentStep === 6) { // Termos e Condições
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos e Condições para continuar.');
         return false;
@@ -162,7 +149,7 @@ export default function SignupPage() {
       signup(
         email,
         name,
-        holdingType,
+        // holdingType removido daqui
         relationshipStructure,
         religion,
         isWalletConnected,
@@ -193,7 +180,7 @@ export default function SignupPage() {
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2"><Users size={20} className="mr-2 text-primary" />Estrutura da Relação</Label>
                     <RadioGroup 
                         value={relationshipStructure} 
-                        onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous' | '')}
+                        onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous')}
                         className="space-y-2"
                         disabled={isLoading}
                     >
@@ -348,66 +335,9 @@ export default function SignupPage() {
               </div>
             )}
 
+            {/* Etapa de Formalização da Holding foi removida */}
+
             {currentStep === 6 && ( 
-              <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center"><Briefcase size={20} className="mr-2 text-primary" />Formalização da Holding Familiar</Label>
-                <CardDescription>Como vocês pretendem estruturar a holding para seus ativos?</CardDescription>
-                
-                <RadioGroup value={holdingType} onValueChange={(value: 'digital' | 'physical' | '') => { setHoldingType(value); setAcknowledgedPhysicalInfo(false); }} className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="digital" id="holding-digital" />
-                    <Label htmlFor="holding-digital" className="font-normal">Digital</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="physical" id="holding-physical" />
-                    <Label htmlFor="holding-physical" className="font-normal">Física ou Mista (incluindo imóveis, veículos, etc.)</Label>
-                  </div>
-                </RadioGroup>
-
-                {holdingType === 'digital' && (
-                  <Card className="p-4 bg-muted/30 space-y-3">
-                    <p className="text-sm text-foreground">
-                      Para holdings com foco digital, considere a criação de uma empresa em uma Zona Econômica Especial como as da 'Tools for The Commons' para vincular suas carteiras cripto de forma transparente e eficiente.
-                    </p>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => window.open('https://toolsforthecommons.com/', '_blank')}
-                      className="w-full sm:w-auto"
-                    >
-                      Consultar Tools for The Commons <ExternalLink size={16} className="ml-2" />
-                    </Button>
-                    <p className="text-xs text-muted-foreground">
-                      A formalização de holdings digitais pode ocorrer via empresas em países específicos ou através de estruturas digitais vinculadas a carteiras/empresas em zonas econômicas digitais. Pesquise as opções que melhor se adequam ao seu perfil.
-                    </p>
-                  </Card>
-                )}
-
-                {holdingType === 'physical' && (
-                  <Card className="p-4 bg-muted/30 space-y-4">
-                    <p className="text-sm text-foreground font-medium">
-                      Atenção: A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
-                    </p>
-                     <div className="flex items-start space-x-2 pt-2">
-                        <Checkbox 
-                            id="acknowledgedPhysicalInfo" 
-                            checked={acknowledgedPhysicalInfo} 
-                            onCheckedChange={(checked) => setAcknowledgedPhysicalInfo(Boolean(checked))}
-                            disabled={isLoading}
-                        />
-                        <Label htmlFor="acknowledgedPhysicalInfo" className="text-sm font-normal text-foreground leading-snug">
-                            Estou ciente de que a formalização de uma holding física ou mista requer consulta profissional e que domedome não fornece aconselhamento legal ou contábil.
-                        </Label>
-                    </div>
-                  </Card>
-                )}
-                 <CardDescription className="text-xs pt-2">
-                  Lembre-se: domedome oferece uma gestão visual para o seu planejamento. A formalização legal da sua holding e questões tributárias devem ser tratadas com profissionais qualificados (contadores, advogados).
-                </CardDescription>
-              </div>
-            )}
-
-            {currentStep === 7 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold">Termos e Condições do Aplicativo</Label>
                 <div className="p-4 border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm">
@@ -468,4 +398,6 @@ export default function SignupPage() {
     </div>
   );
 }
+    
+
     
