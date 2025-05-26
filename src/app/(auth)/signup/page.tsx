@@ -27,7 +27,6 @@ const religionOptions = [
     { value: "hinduismo", label: "Hinduísmo" },
     { value: "islamismo", label: "Islamismo" },
     { value: "judaismo", label: "Judaísmo" },
-    // { value: "nao_dizer", label: "Prefiro não dizer" }, // Removido
     { value: "outra", label: "Outra" },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
@@ -143,7 +142,7 @@ export default function SignupPage() {
       // Nenhuma validação obrigatória aqui, pois o campo em si é opcional
     } else if (currentStep === 3) { // Nome da União
       if (!unionName.trim()) {
-        setError("Por favor, insira o nome da união (Ex: Alex & Jamie).");
+        setError("Por favor, insira o nome da união.");
         return false;
       }
     } else if (currentStep === 4) { // Detalhes da Conta
@@ -269,11 +268,11 @@ export default function SignupPage() {
 
             {currentStep === 3 && ( // Etapa 3: Nome da União
               <div className="space-y-2">
-                <Label htmlFor="unionName" className="text-foreground/90">Nome da União (Ex: Alex &amp; Jamie)</Label>
+                <Label htmlFor="unionName" className="text-foreground/90">Nome da União</Label>
                 <Input
                   id="unionName"
                   type="text"
-                  placeholder="Ex: Alex & Jamie"
+                  placeholder="Ex: Alex & Jamie Holding"
                   value={unionName}
                   onChange={(e) => setUnionName(e.target.value)}
                   disabled={isLoading}
@@ -518,3 +517,4 @@ export default function SignupPage() {
     
 
   
+
