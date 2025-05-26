@@ -150,15 +150,17 @@ export default function SignupPage() {
     try {
       // Simulação de signup
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simula atraso de rede
-      // Em uma aplicação real, aqui você chamaria sua função de signup do Firebase/Auth
+      
       signup(
         email,
         unionName, // Passando unionName como displayName
         relationshipStructure,
         religion,
         isWalletConnected,
-        connectedWalletAddress
-      ); // Usando o mock do AuthProvider
+        connectedWalletAddress,
+        '', // holdingType - não é mais coletado no cadastro
+        undefined // cnpjHolding - não é mais coletado no cadastro
+      ); 
       // O redirecionamento para /dashboard será feito pelo AuthProvider
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
@@ -174,9 +176,9 @@ export default function SignupPage() {
       <Card className="w-full max-w-lg shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/ipe-acta-logo.svg" alt="Ipê Acta Logo" width={250} height={83} priority data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
+            <Image src="/ipe-acta-logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardDescription className="text-lg font-lato text-muted-foreground">Siga as etapas para criar seu contrato e holding. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
+          <CardDescription className="text-lg font-sans text-muted-foreground">Siga as etapas para criar seu contrato e holding. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
@@ -304,13 +306,13 @@ export default function SignupPage() {
 
             {currentStep === 5 && (
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Adicione fotos do casal (opcional).</p>
+                <p className="text-sm text-muted-foreground">Adicione fotos da união (opcional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <div className="space-y-2">
-                    <Label htmlFor="photo1" className="text-foreground/90">Foto 1 (Parceiro/a 1 ou Casal)</Label>
+                    <Label htmlFor="photo1" className="text-foreground/90">Foto 1 (Parceiro/a 1 ou União)</Label>
                     <div className="flex items-center space-x-2">
                       {photo1Preview ? (
-                        <Image src={photo1Preview} alt="Pré-visualização Foto 1" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="casal foto" />
+                        <Image src={photo1Preview} alt="Pré-visualização Foto 1" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="união foto" />
                       ) : (
                         <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
                           <Camera size={32} />
@@ -324,10 +326,10 @@ export default function SignupPage() {
                     {photo1 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo1.name}>{photo1.name}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="photo2" className="text-foreground/90">Foto 2 (Parceiro/a 2, Opcional)</Label>
+                    <Label htmlFor="photo2" className="text-foreground/90">Foto 2 (Parceiro/a 2 ou União, Opcional)</Label>
                      <div className="flex items-center space-x-2">
                       {photo2Preview ? (
-                        <Image src={photo2Preview} alt="Pré-visualização Foto 2" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="casal foto" />
+                        <Image src={photo2Preview} alt="Pré-visualização Foto 2" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="união foto" />
                       ) : (
                         <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
                           <Camera size={32} />
@@ -349,9 +351,9 @@ export default function SignupPage() {
                 <Label className="text-lg font-semibold text-foreground/90">Termos de Serviço - Ipê Acta</Label>
                 <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground">
                   <p className="mb-2">Ao criar uma conta no Ipê Acta, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
-                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o Ipê Acta apenas para fins legais e de acordo com estes termos. O serviço é fornecido para criação de contratos de casamento e gestão visual de holdings familiares.</p>
+                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o Ipê Acta apenas para fins legais e de acordo com estes termos. O serviço é fornecido para criação de contratos de união e gestão visual de patrimônio.</p>
                   <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia (fotos, textos, dados de ativos). Você concede ao Ipê Acta uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
-                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> Ipê Acta é uma ferramenta de planejamento e gestão visual. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de casamentos ou holdings. A responsabilidade pela validade e aconselhamento profissional é inteiramente sua.</p>
+                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> Ipê Acta é uma ferramenta de planejamento e gestão visual. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de uniões ou holdings. A responsabilidade pela validade e aconselhamento profissional é inteiramente sua.</p>
                   <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade.</p>
                   <p><strong>5. Limitação de Responsabilidade:</strong> O Ipê Acta não se responsabiliza por perdas ou danos resultantes do uso do serviço, nem por decisões tomadas com base nas informações aqui apresentadas, na máxima extensão permitida por lei.</p>
                    <p className="mt-2"><strong>6. Conexão de Carteira (Simulada):</strong> A funcionalidade de conexão de carteira é atualmente simulada. Nenhum dado real da sua carteira é acessado ou armazenado.</p>

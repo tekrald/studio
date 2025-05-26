@@ -9,7 +9,7 @@ import { ArrowRight, FileSignature, Briefcase, Wallet, Users, BarChart3, ShieldC
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background font-lato">
+    <div className="flex flex-col min-h-screen bg-background font-sans">
       <Header />
       <main className="flex-grow">
         {/* Hero Section */}
@@ -31,7 +31,7 @@ export default function HomePage() {
               </div>
               <div className="flex justify-center items-center bg-transparent">
                 <Image
-                  src="/nova-hero-imagem.png"
+                  src="/nova-hero-imagem.png" // Ensure this path is correct and the file exists in /public
                   alt="Ilustração de contrato de casamento e holding familiar"
                   width={500}
                   height={400}
@@ -134,7 +134,7 @@ function FeatureCard({ icon, title, description, titleColor = "text-card-foregro
   return (
     <div className="bg-card p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-start text-left border border-border">
       <div className={`mb-5 p-3 rounded-full ${iconBg}`}>{icon}</div>
-      <h3 className={`text-3xl font-bold mb-3 ${titleColor} font-lato`}>{title}</h3>
+      <h3 className={`text-3xl font-bold mb-3 ${titleColor} font-sans`}>{title}</h3>
       <p className={`${descriptionColor} text-base leading-relaxed`}>{description}</p>
     </div>
   );

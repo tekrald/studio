@@ -45,8 +45,8 @@ export default function LoginPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
              <Image src="/ipe-acta-logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" className="rounded-full" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardTitle className="text-3xl font-lato text-foreground">Acesse sua Conta Ipê Acta</CardTitle>
-          <CardDescription className="font-lato text-muted-foreground">Faça login para gerenciar seus contratos e holding.</CardDescription>
+          <CardTitle className="text-3xl font-sans text-foreground">Acesse sua Conta Ipê Acta</CardTitle>
+          <CardDescription className="font-sans text-muted-foreground">Faça login para gerenciar seus contratos e holding.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">

@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/dashboard', label: 'Registros', icon: Briefcase },
-  { href: '/profile', label: 'Perfil da União', icon: UserCircle },
+  { href: '/profile', label: 'Meu Registro', icon: UserCircle },
 ];
 
 export function Header() {
@@ -22,7 +22,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/ipe-acta-logo.svg"
+            src="/ipe-acta-logo.svg" // Ensure this path is correct and the file exists in /public
             alt="Ipê Acta Logo"
             width={250}
             height={83}
@@ -85,7 +85,7 @@ export function Header() {
       </div>
       {/* Mobile Nav */}
       {user && (
-        <div className="md:hidden bg-background border-t border-border p-2 flex justify-around">
+        <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
            {navLinks.map((link) => {
               const label = link.href === '/profile' && user?.displayName ? user.displayName.split('&')[0]?.trim() || user.displayName.split('E')[0]?.trim() : link.label;
               return (
