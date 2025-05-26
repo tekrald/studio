@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 
 const TOTAL_STEPS = 8;
 
-const religionOptions = [
+const initialReligionOptions = [
     { value: "agnosticism", label: "Agnosticism" },
     { value: "atheism", label: "Atheism" },
     { value: "buddhism", label: "Buddhism" },
@@ -30,7 +30,13 @@ const religionOptions = [
     { value: "judaism", label: "Judaism" },
     { value: "other", label: "Other" },
     { value: "spiritualism", label: "Spiritualism" },
-].sort((a, b) => a.label.localeCompare(b.label));
+];
+
+const otherOption = initialReligionOptions.find(opt => opt.value === 'other');
+const sortedReligionOptions = initialReligionOptions
+  .filter(opt => opt.value !== 'other')
+  .sort((a, b) => a.label.localeCompare(b.label));
+const religionOptions = otherOption ? [...sortedReligionOptions, otherOption] : sortedReligionOptions;
 
 
 const defaultContractClauses: ContractClause[] = [
@@ -575,5 +581,7 @@ export default function SignupPage() {
     </div>
   );
 }
+
+    
 
     

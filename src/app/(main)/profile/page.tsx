@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog';
 
-const religionOptions = [
+const initialReligionOptions = [
     { value: "agnosticism", label: "Agnosticism" },
     { value: "atheism", label: "Atheism" },
     { value: "buddhism", label: "Buddhism" },
@@ -23,7 +23,14 @@ const religionOptions = [
     { value: "judaism", label: "Judaism" },
     { value: "other", label: "Other" },
     { value: "spiritualism", label: "Spiritualism" },
-].sort((a, b) => a.label.localeCompare(b.label));
+];
+
+const otherOption = initialReligionOptions.find(opt => opt.value === 'other');
+const sortedReligionOptions = initialReligionOptions
+  .filter(opt => opt.value !== 'other')
+  .sort((a, b) => a.label.localeCompare(b.label));
+const religionOptions = otherOption ? [...sortedReligionOptions, otherOption] : sortedReligionOptions;
+
 
 export default function ProfilePage() {
   const { user, updateProfile, loading: authLoading } = useAuth();
@@ -260,6 +267,9 @@ export default function ProfilePage() {
                 value={holdingType}
                 onValueChange={(value: 'physical' | '') => {
                   setHoldingType(value);
+                  if (value === '') { // If "Digital / Not formalized" is selected, clear CNPJ
+                    setCnpjHolding('');
+                  }
                 }}
                 className="space-y-2 pt-1"
                 disabled={isLoading}
@@ -324,3 +334,5 @@ export default function ProfilePage() {
   );
 }
 
+
+    
