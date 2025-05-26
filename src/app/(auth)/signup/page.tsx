@@ -224,6 +224,9 @@ export default function SignupPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
             <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
+           <CardDescription className="font-sans text-muted-foreground mb-3">
+             Follow the steps to create your contract.
+          </CardDescription>
           <div className="flex items-center justify-center w-full my-4 px-4 sm:px-8">
             {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
               <React.Fragment key={index}>
@@ -565,3 +568,6 @@ export default function SignupPage() {
     </div>
   );
 }
+
+
+    
