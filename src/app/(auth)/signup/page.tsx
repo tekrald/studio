@@ -260,8 +260,9 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
+            
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-md">
+              <div className="space-y-4 flex flex-col w-full max-w-sm">
                 <div className="w-full">
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
@@ -284,7 +285,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col w-full max-w-md">
+                 <div className="space-y-4 flex flex-col w-full max-w-sm">
                     <div className="w-full">
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
@@ -302,7 +303,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 3 && ( 
-              <div className="space-y-2 flex flex-col w-full max-w-md">
+              <div className="space-y-2 flex flex-col w-full max-w-lg">
                 <Label htmlFor="unionName" className="text-foreground/90 w-full text-left">Union Name</Label>
                 <Input
                   id="unionName"
@@ -318,7 +319,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 4 && ( 
-              <div className="space-y-6 flex flex-col w-full max-w-md">
+              <div className="space-y-6 flex flex-col w-full max-w-lg">
                 <div className="space-y-2 w-full">
                   <Label htmlFor="email" className="text-foreground/90 text-left">Main Email Address</Label>
                   <Input
@@ -381,7 +382,7 @@ export default function SignupPage() {
             )}
 
             {currentStep === 5 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-md">
+              <div className="space-y-4 flex flex-col w-full max-w-lg">
                 <Label className="text-lg font-semibold flex items-center justify-start text-foreground/90 w-full"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
                 <CardDescription className="text-muted-foreground w-full text-left">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
@@ -573,7 +574,5 @@ export default function SignupPage() {
     </div>
   );
 }
-    
-    
 
     
