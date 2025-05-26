@@ -16,7 +16,7 @@ import type { ContractClause } from '@/components/contract/ContractSettingsDialo
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const TOTAL_STEPS = 8; // Aumentado para incluir a etapa de contrato e separar crença
+const TOTAL_STEPS = 8;
 
 const religionOptions = [
     { value: "cristianismo", label: "Cristianismo" },
@@ -139,7 +139,7 @@ export default function SignupPage() {
         return false;
       }
     } else if (currentStep === 2) { // Crença - Opcional
-      // Nenhuma validação obrigatória aqui
+      // Nenhuma validação obrigatória aqui, pois o campo em si é opcional
     } else if (currentStep === 3) { // Nome da União
       if (!unionName.trim()) {
         setError("Por favor, insira o nome da união (Ex: Alex & Jamie).");
@@ -208,7 +208,7 @@ export default function SignupPage() {
         contractClauses 
       );
     } catch (err) {
-      setError('Falha ao criar conta. Por favor, tente novamente.');
+      setError('Falha ao criar registro. Por favor, tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -251,7 +251,7 @@ export default function SignupPage() {
             {currentStep === 2 && ( // Etapa 2: Crença
                  <div className="space-y-4">
                     <div>
-                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Crença (Opcional)</Label>
+                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Crença da União</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
                             <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary">
                                 <SelectValue placeholder="Selecione uma opção" />
@@ -453,7 +453,7 @@ export default function SignupPage() {
               <div className="space-y-4">
                 <Label className="text-lg font-semibold text-foreground/90">Termos de Serviço - Ipê Acta</Label>
                 <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground">
-                  <p className="mb-2">Ao criar uma conta no Ipê Acta, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
+                  <p className="mb-2">Ao criar um registro no Ipê Acta, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
                   <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o Ipê Acta apenas para fins legais e de acordo com estes termos. O serviço é fornecido para criação e gestão de registros de união e patrimônio.</p>
                   <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia. Você concede ao Ipê Acta uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
                   <p className="mb-2"><strong>3. Natureza do Serviço:</strong> Ipê Acta é uma ferramenta de planejamento e gestão visual. Não fornece aconselhamento legal, financeiro ou contábil. A responsabilidade pela validade e aconselhamento profissional é sua.</p>
@@ -511,5 +511,7 @@ export default function SignupPage() {
     </div>
   );
 }
+
+    
 
     
