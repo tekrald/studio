@@ -22,7 +22,7 @@ const religionOptions = [
     { value: "hinduismo", label: "Hinduísmo" },
     { value: "islamismo", label: "Islamismo" },
     { value: "judaismo", label: "Judaísmo" },
-    { value: "nao_dizer", label: "Prefiro não dizer" },
+    // { value: "nao_dizer", label: "Prefiro não dizer" }, // Removido
     { value: "outra", label: "Outra" },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
