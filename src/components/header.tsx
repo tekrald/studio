@@ -24,7 +24,7 @@ export function Header() {
           <Image
             src="/logo.svg" // Caminho atualizado
             alt="Ipê Acta Logo"
-            width={250}
+            width={150}
             height={83}
             className="h-auto"
             priority

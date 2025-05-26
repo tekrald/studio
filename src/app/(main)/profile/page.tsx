@@ -8,10 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { UserCircle, Save, Loader2, Briefcase, Users, BookOpen, Landmark } from 'lucide-react';
+import { UserCircle, Save, Loader2, Briefcase, Users, BookOpen, Landmark, FileText } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
+import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; // Import dialog and type
 
 const religionOptions = [
     { value: "cristianismo", label: "Cristianismo" },
@@ -30,26 +30,27 @@ export default function ProfilePage() {
   const { user, updateProfile, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  const [displayName, setDisplayName] = useState(''); // Nome da União
+  const [displayName, setDisplayName] = useState('');
   const [avatarText, setAvatarText] = useState('');
-
+  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
+  const [religion, setReligion] = useState('');
   const [holdingType, setHoldingType] = useState<'physical' | ''>('');
   const [cnpjHolding, setCnpjHolding] = useState('');
 
-
-  const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
-  const [religion, setReligion] = useState('');
+  // State for contract clauses and dialog
+  const [contractClauses, setContractClauses] = useState<ContractClause[]>([]);
+  const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName || '');
-      setHoldingType(user.holdingType || '');
       setRelationshipStructure(user.relationshipStructure || '');
       setReligion(user.religion || '');
+      setHoldingType(user.holdingType || '');
       setCnpjHolding(user.cnpjHolding || '');
-
+      setContractClauses(user.contractClauses || []); // Load contract clauses
     }
   }, [user]);
 
@@ -70,6 +71,26 @@ export default function ProfilePage() {
     }
   }, [displayName, user?.email]);
 
+  // Clause Management Handlers
+  const handleAddContractClause = (text: string) => {
+    const newClause: ContractClause = {
+      id: `clause-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      text,
+    };
+    setContractClauses(prev => [...prev, newClause]);
+    toast({ title: 'Cláusula Adicionada', description: 'Nova cláusula pronta para ser salva.' });
+  };
+  
+  const handleRemoveClause = (id: string) => {
+    setContractClauses(prev => prev.filter(clause => clause.id !== id));
+    toast({ title: 'Cláusula Removida', description: 'A cláusula foi removida (lembre-se de salvar as alterações).' });
+  };
+
+  const handleUpdateContractClause = (id: string, newText: string) => {
+    setContractClauses(prev => prev.map(clause => clause.id === id ? { ...clause, text: newText } : clause));
+    toast({ title: 'Cláusula Atualizada', description: 'A cláusula foi modificada (lembre-se de salvar as alterações).' });
+  };
+
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -82,17 +103,27 @@ export default function ProfilePage() {
       });
       return;
     }
+     if (holdingType === 'physical' && !cnpjHolding.trim()) {
+        // Tornando CNPJ opcional, então removemos essa validação estrita.
+        // Se precisar ser obrigatório, descomente e ajuste a mensagem.
+        // toast({
+        //   title: 'Campo Obrigatório',
+        //   description: 'Por favor, insira o CNPJ da holding física/mista.',
+        //   variant: 'destructive',
+        // });
+        // return;
+    }
 
     setIsLoading(true);
     try {
-      // Simulação de atualização de perfil
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula atraso de rede
+      await new Promise(resolve => setTimeout(resolve, 1000));
       updateProfile({
         displayName,
         relationshipStructure,
         religion,
         holdingType,
         cnpjHolding: holdingType === 'physical' ? cnpjHolding : '',
+        contractClauses, // Salvar cláusulas
       });
       toast({
         title: 'Perfil Atualizado',
@@ -188,6 +219,7 @@ export default function ProfilePage() {
                         <Label htmlFor="profile-rel-polygamous" className="font-normal text-foreground/90">Poligâmica</Label>
                     </div>
                 </RadioGroup>
+                 {!relationshipStructure && <p className="text-xs text-destructive">Este campo é obrigatório.</p>}
             </div>
 
             <div className="space-y-2">
@@ -203,20 +235,40 @@ export default function ProfilePage() {
                     </SelectContent>
                 </Select>
             </div>
-
           </CardContent>
         </Card>
 
+        <Card className="shadow-xl mb-8 bg-card border-border">
+            <CardHeader>
+                <CardTitle className="text-2xl flex items-center text-foreground"><FileText className="mr-3 text-primary h-7 w-7" />Acordos do Registro</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                Visualize e gerencie as cláusulas e acordos definidos para este registro.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full text-foreground/90 border-border hover:bg-muted/80"
+                    onClick={() => setIsContractSettingsModalOpen(true)}
+                    disabled={isLoading}
+                >
+                    <Edit3 className="mr-2 h-4 w-4" /> Gerenciar Acordos ({contractClauses.length} cláusulas)
+                </Button>
+            </CardContent>
+        </Card>
+
+
         <Card className="shadow-xl bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center text-foreground"><Landmark className="mr-3 text-primary h-7 w-7" />Formalização da Holding</CardTitle>
+            <CardTitle className="text-2xl flex items-center text-foreground"><Landmark className="mr-3 text-primary h-7 w-7" />Formalização da Entidade</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Indique como sua holding familiar é ou será formalizada.
+              Indique como sua entidade está ou será formalizada.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-base text-foreground/90">Como esta holding está ou será estruturada legalmente?</Label>
+              <Label className="text-base text-foreground/90">Como esta entidade está ou será estruturada legalmente?</Label>
               <RadioGroup
                 value={holdingType}
                 onValueChange={(value: 'physical' | '') => {
@@ -239,10 +291,10 @@ export default function ProfilePage() {
             {holdingType === 'physical' && (
               <Card className="p-4 bg-muted/30 space-y-4 border-border">
                 <p className="text-sm text-foreground/80 font-medium">
-                  A formalização de holdings com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
+                  A formalização de entidades com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
                 </p>
                 <div className="space-y-2">
-                  <Label htmlFor="cnpjHolding" className="text-foreground/90">CNPJ da Holding (Opcional)</Label>
+                  <Label htmlFor="cnpjHolding" className="text-foreground/90">CNPJ da Entidade (Opcional)</Label>
                   <Input
                     id="cnpjHolding"
                     type="text"
@@ -256,7 +308,7 @@ export default function ProfilePage() {
               </Card>
             )}
              <CardDescription className="text-xs pt-2 text-muted-foreground">
-              Lembre-se: Ipê Acta oferece uma gestão visual para seu planejamento. A formalização legal da sua holding e questões tributárias devem ser tratadas com profissionais qualificados.
+              Lembre-se: Ipê Acta oferece uma gestão visual para seu planejamento. A formalização legal da sua entidade e questões tributárias devem ser tratadas com profissionais qualificados.
             </CardDescription>
           </CardContent>
         </Card>
@@ -270,6 +322,17 @@ export default function ProfilePage() {
           Salvar Todas as Alterações
         </Button>
       </form>
+
+      <ContractSettingsDialog
+        isOpen={isContractSettingsModalOpen}
+        onClose={() => setIsContractSettingsModalOpen(false)}
+        clauses={contractClauses}
+        onAddClause={handleAddContractClause}
+        onRemoveClause={handleRemoveClause}
+        onUpdateClause={handleUpdateContractClause}
+        dialogTitle="Gerenciar Acordos do Registro"
+        dialogDescription="Edite, adicione ou remova cláusulas dos seus acordos. As alterações serão salvas ao clicar em 'Salvar Todas as Alterações' no perfil."
+      />
     </div>
   );
 }

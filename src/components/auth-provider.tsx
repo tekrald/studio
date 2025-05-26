@@ -2,7 +2,9 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import type { ContractClause } from '@/components/contract/ContractSettingsDialog'; // Import ContractClause
 
+// Interface para o usuário, agora incluindo os novos campos
 interface User {
   email: string;
   uid: string;
@@ -11,29 +13,33 @@ interface User {
   religion?: string;
   isWalletConnected?: boolean;
   connectedWalletAddress?: string | null;
-  holdingType?: 'physical' | ''; // Apenas 'physical' ou '' (não definido)
+  holdingType?: 'physical' | '';
   cnpjHolding?: string;
+  contractClauses?: ContractClause[]; // Novo campo para cláusulas
 }
 
+// Interface para dados de atualização de perfil, agora incluindo religião e cláusulas
 interface UpdateProfileData {
   displayName?: string;
   relationshipStructure?: 'monogamous' | 'polygamous' | '';
-  religion?: string;
+  religion?: string; // Adicionado
   holdingType?: 'physical' | '';
   cnpjHolding?: string;
-  // isWalletConnected e connectedWalletAddress podem ser atualizados por outros fluxos, não diretamente pelo perfil
+  contractClauses?: ContractClause[]; // Novo campo para cláusulas
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, displayName?: string) => void; // displayName é o nome da união
+  login: (email: string, displayName?: string) => void;
   signup: (
     email: string,
-    displayName: string, // Nome da União
+    displayName: string,
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
     religionParam?: string,
     isWalletConnectedParam?: boolean,
     connectedWalletAddressParam?: string | null,
+    // holdingTypeParam?: 'digital' | 'physical' | '', // Removido, não mais do cadastro
+    contractClausesParam?: ContractClause[], // Novo parâmetro
   ) => void;
   logout: () => void;
   loading: boolean;
@@ -44,13 +50,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Mantido true para lógica de carregamento inicial
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    // Lógica para carregar usuário do localStorage (MOCK)
     try {
-      const storedUser = localStorage.getItem('ipeActaUser'); // Nome do item no localStorage
+      const storedUser = localStorage.getItem('ipeActaUser');
       if (storedUser) {
         setUser(JSON.parse(storedUser) as User);
       }
@@ -58,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Failed to parse user from localStorage", error);
       localStorage.removeItem('ipeActaUser');
     }
-    setLoading(false);
+    setLoading(false); // Define loading como false após tentar carregar
   }, []);
 
   const handleAuthChange = useCallback((newUser: User | null) => {
@@ -83,18 +90,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       // ignore
     }
-
     const mockUser: User = {
-      ...existingUser,
       email,
-      uid: `mock-${email}`,
-      displayName: displayName || existingUser.displayName || email.split('@')[0], // Usa o nome da união fornecido ou existente
+      uid: `mock-uid-${email}-${Date.now()}`,
+      displayName: displayName || existingUser.displayName || email.split('@')[0],
       relationshipStructure: existingUser.relationshipStructure || '',
       religion: existingUser.religion || '',
       isWalletConnected: existingUser.isWalletConnected || false,
       connectedWalletAddress: existingUser.connectedWalletAddress || null,
-      holdingType: existingUser.holdingType || '', // Padrão '' se não houver
+      holdingType: existingUser.holdingType || '',
       cnpjHolding: existingUser.cnpjHolding || '',
+      contractClauses: existingUser.contractClauses || [], // Inicializa cláusulas
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
@@ -102,15 +108,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = useCallback((
     email: string,
-    displayName: string, // Nome da União
+    displayName: string,
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
     religionParam?: string,
     isWalletConnectedParam?: boolean,
     connectedWalletAddressParam?: string | null,
+    // holdingTypeParam?: 'digital' | 'physical' | '', // Removido
+    contractClausesParam?: ContractClause[], // Novo parâmetro
   ) => {
     const mockUser: User = {
       email,
-      uid: `mock-${email}-signup`,
+      uid: `mock-uid-${email}-signup-${Date.now()}`,
       displayName,
       relationshipStructure: relationshipStructureParam || '',
       religion: religionParam || '',
@@ -118,6 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       connectedWalletAddress: connectedWalletAddressParam || null,
       holdingType: '', // Padrão para novo cadastro
       cnpjHolding: '',
+      contractClauses: contractClausesParam || [], // Armazena cláusulas
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
@@ -125,12 +134,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     handleAuthChange(null);
-    router.push('/');
+    router.push('/'); // Redireciona para a landing page
   }, [handleAuthChange, router]);
 
   const updateProfile = useCallback((data: UpdateProfileData) => {
     if (user) {
-      const updatedUser = {
+      const updatedUser: User = {
         ...user,
         ...data,
       };
@@ -140,22 +149,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
-    if (loading) {
-      return;
-    }
+    // Esta lógica de proteção de rota agora está desabilitada
+    // para permitir navegação livre e focar em outras partes.
+    // Se precisar reativar, descomente as linhas abaixo.
+    // if (loading) return;
+    // const isAuthRoute = pathname === '/login' || pathname === '/signup';
+    // const isPublicRoute = pathname === '/';
 
-    const isAuthRoute = pathname === '/login' || pathname === '/signup';
-    const isPublicRoute = pathname === '/';
-
-    if (!user) {
-      if (!isAuthRoute && !isPublicRoute) {
-        router.push('/login');
-      }
-    } else {
-      if (isAuthRoute) {
-        router.push('/dashboard');
-      }
-    }
+    // if (!user) {
+    //   if (!isAuthRoute && !isPublicRoute) {
+    //     router.push('/login');
+    //   }
+    // } else {
+    //   if (isAuthRoute) {
+    //     router.push('/dashboard');
+    //   }
+    // }
   }, [user, loading, pathname, router]);
 
 

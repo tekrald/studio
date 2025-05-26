@@ -14,10 +14,11 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, Trash2, Edit3, FileText, Users, Save, Landmark } from 'lucide-react';
+import { PlusCircle, Trash2, Edit3, Users, Save, Landmark } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
+// Exporting ContractClause interface
 export interface ContractClause {
   id: string;
   text: string;
@@ -30,6 +31,8 @@ interface ContractSettingsDialogProps {
   onAddClause: (text: string) => void;
   onRemoveClause: (id: string) => void;
   onUpdateClause: (id: string, newText: string) => void;
+  dialogTitle?: string;
+  dialogDescription?: string;
 }
 
 const suggestedClausesTemplates = {
@@ -52,6 +55,8 @@ export function ContractSettingsDialog({
   onAddClause,
   onRemoveClause,
   onUpdateClause,
+  dialogTitle = "Configurações dos Acordos",
+  dialogDescription = "Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Este sistema é flexível para acomodar diversas configurações e acordos."
 }: ContractSettingsDialogProps) {
   const [newClauseText, setNewClauseText] = useState('');
   const [editingClauseId, setEditingClauseId] = useState<string | null>(null);
@@ -59,7 +64,7 @@ export function ContractSettingsDialog({
 
   const handleEditClick = (clause: ContractClause) => {
     setEditingClauseId(clause.id);
-    setCurrentClauseTextForEdit(clause.text); // Usar estado separado para edição
+    setCurrentClauseTextForEdit(clause.text);
   };
 
   const handleSaveOrAddClause = () => {
@@ -102,9 +107,9 @@ export function ContractSettingsDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[90vh] flex flex-col bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-primary">Configurações do Contrato da União</DialogTitle>
+          <DialogTitle className="text-2xl text-primary">{dialogTitle}</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Este sistema é flexível para acomodar diversas configurações e acordos.
+            {dialogDescription}
           </DialogDescription>
         </DialogHeader>
 

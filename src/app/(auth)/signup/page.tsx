@@ -11,9 +11,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/co
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, Edit3, PlusCircle, Save, Trash2, FileText } from 'lucide-react';
+import type { ContractClause } from '@/components/contract/ContractSettingsDialog';
+import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7; // Aumentado para incluir a etapa de contrato
 
 const religionOptions = [
     { value: "cristianismo", label: "Cristianismo" },
@@ -26,27 +29,45 @@ const religionOptions = [
     { value: "agnosticismo", label: "Agnosticismo" },
     { value: "outra", label: "Outra" },
     { value: "nao_dizer", label: "Prefiro não dizer" },
-  ];
+];
+
+const defaultContractClauses: ContractClause[] = [
+  { id: `initial-${Date.now()}-1`, text: "Todos os ativos adquiridos conjuntamente serão divididos conforme acordado em caso de dissolução da sociedade." },
+  { id: `initial-${Date.now()}-2`, text: "As responsabilidades financeiras e operacionais serão divididas conforme definido neste registro." },
+];
 
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
 
+  // Etapa 1
   const [religion, setReligion] = useState('');
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
 
-  const [unionName, setUnionName] = useState(''); // Nome da União
+  // Etapa 2
+  const [unionName, setUnionName] = useState('');
+
+  // Etapa 3
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  // Etapa 4
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [connectedWalletAddress, setConnectedWalletAddress] = useState<string | null>(null);
 
+  // Etapa 5
   const [photo1, setPhoto1] = useState<File | null>(null);
   const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
   const [photo2, setPhoto2] = useState<File | null>(null);
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
 
+  // Etapa 6: Contract Clauses
+  const [contractClauses, setContractClauses] = useState<ContractClause[]>(defaultContractClauses);
+  const [newClauseText, setNewClauseText] = useState('');
+  const [editingClause, setEditingClause] = useState<ContractClause | null>(null);
+
+
+  // Etapa 7
   const [acceptedContract, setAcceptedContract] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -63,16 +84,14 @@ export default function SignupPage() {
         setPhoto2(file);
         setPhoto2Preview(URL.createObjectURL(file));
       }
-      setError(null); // Clear error if a photo is selected
+      setError(null);
     }
   };
 
   const handleConnectWallet = () => {
     setIsLoading(true);
     setError(null);
-    // Simulate wallet connection
     setTimeout(() => {
-      // Generate a mock wallet address
       const mockAddress = `0x${Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`;
       setConnectedWalletAddress(mockAddress);
       setIsWalletConnected(true);
@@ -80,20 +99,50 @@ export default function SignupPage() {
     }, 1000);
   };
 
+  // Clause Management
+  const handleAddOrUpdateClause = () => {
+    const textToSave = editingClause ? editingClause.text : newClauseText;
+    if (!textToSave.trim()) return;
+
+    if (editingClause) {
+      setContractClauses(clauses => clauses.map(c => c.id === editingClause.id ? { ...c, text: textToSave.trim() } : c));
+      setEditingClause(null);
+    } else {
+      setContractClauses(clauses => [...clauses, { id: `clause-${Date.now()}-${Math.random().toString(36).substring(2,7)}`, text: textToSave.trim() }]);
+    }
+    setNewClauseText('');
+  };
+
+  const handleEditClause = (clause: ContractClause) => {
+    setEditingClause(clause);
+    setNewClauseText(''); // Clear new clause text if editing
+  };
+
+  const handleRemoveClause = (id: string) => {
+    setContractClauses(clauses => clauses.filter(c => c.id !== id));
+    if (editingClause?.id === id) {
+      setEditingClause(null);
+    }
+  };
+   const handleCancelEdit = () => {
+    setEditingClause(null);
+    setNewClauseText('');
+  };
+
 
   const validateStep = () => {
     setError(null);
-    if (currentStep === 1) { // Detalhes da União
+    if (currentStep === 1) {
       if (!relationshipStructure) {
         setError("Por favor, selecione a estrutura da sua união.");
         return false;
       }
-    } else if (currentStep === 2) { // Nome da União
+    } else if (currentStep === 2) {
       if (!unionName.trim()) {
-        setError("Por favor, insira o nome da união (ex: Alex & Jamie).");
+        setError("Por favor, insira o nome da união (Ex: Alex & Jamie).");
         return false;
       }
-    } else if (currentStep === 3) { // Detalhes da Conta
+    } else if (currentStep === 3) {
       if (!email.trim() || !password || !confirmPassword) {
         setError("Por favor, preencha email, senha e confirmação de senha.");
         return false;
@@ -110,11 +159,10 @@ export default function SignupPage() {
         setError('A senha deve ter pelo menos 6 caracteres.');
         return false;
       }
-    } else if (currentStep === 4) { // Conectar Carteira
-        // Opcional
-    } else if (currentStep === 5) { // Fotos do Casal
-      // Fotos são opcionais
-    } else if (currentStep === 6) { // Termos e Condições
+    } else if (currentStep === 4) { // Conectar Carteira - Opcional
+    } else if (currentStep === 5) { // Fotos - Opcional
+    } else if (currentStep === 6) { // Cláusulas - Opcional (pode ser vazio)
+    } else if (currentStep === 7) {
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos de Serviço para continuar.');
         return false;
@@ -134,7 +182,7 @@ export default function SignupPage() {
   const handlePreviousStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
-      setError(null); // Clear error when going back
+      setError(null);
     }
   };
 
@@ -143,31 +191,25 @@ export default function SignupPage() {
     if (!validateStep()) {
       return;
     }
-
     setIsLoading(true);
     setError(null);
-
     try {
-      // Simulação de signup
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula atraso de rede
-      
+      await new Promise(resolve => setTimeout(resolve, 1000));
       signup(
         email,
-        unionName, // Passando unionName como displayName
+        unionName,
         relationshipStructure,
         religion,
         isWalletConnected,
         connectedWalletAddress,
-      ); 
-      // O redirecionamento para /dashboard será feito pelo AuthProvider
+        contractClauses // Passando cláusulas
+      );
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
-      // Normalmente, aqui você trataria erros específicos do Firebase Auth
     } finally {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gradient-green/20 via-gradient-blue/20 to-background p-4">
@@ -176,7 +218,7 @@ export default function SignupPage() {
           <Link href="/" className="inline-block mx-auto mb-4">
             <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardDescription className="text-lg font-sans text-muted-foreground">Siga as etapas para criar seu contrato e holding. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
+          <CardDescription className="text-lg font-sans text-muted-foreground">Siga as etapas para criar seu registro. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
@@ -346,15 +388,71 @@ export default function SignupPage() {
 
             {currentStep === 6 && (
               <div className="space-y-4">
+                <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Acordos Iniciais do Registro</Label>
+                <CardDescription className="text-muted-foreground">Defina as cláusulas iniciais do seu registro. Você poderá editá-las depois.</CardDescription>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="clause-text-area" className="text-foreground/90">
+                    {editingClause ? 'Editar Cláusula' : 'Nova Cláusula'}
+                  </Label>
+                  <Textarea
+                    id="clause-text-area"
+                    value={editingClause ? editingClause.text : newClauseText}
+                    onChange={(e) => editingClause ? setEditingClause({...editingClause, text: e.target.value}) : setNewClauseText(e.target.value)}
+                    placeholder="Digite o texto da cláusula aqui..."
+                    className="min-h-[80px] bg-input text-foreground placeholder:text-muted-foreground"
+                    rows={3}
+                    disabled={isLoading}
+                  />
+                  <div className="mt-2 flex gap-2">
+                    <Button type="button" onClick={handleAddOrUpdateClause} className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading || !(editingClause ? editingClause.text.trim() : newClauseText.trim())}>
+                      {editingClause ? <><Save size={16} className="mr-2" /> Salvar Alterações</> : <><PlusCircle size={16} className="mr-2" /> Adicionar Cláusula</>}
+                    </Button>
+                    {editingClause && (
+                      <Button type="button" variant="outline" onClick={handleCancelEdit} className="text-foreground/90 border-border hover:bg-muted/80" disabled={isLoading}>
+                        Cancelar Edição
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {contractClauses.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="text-md font-medium text-foreground/80 pt-2">Cláusulas Adicionadas:</h4>
+                    <ScrollArea className="h-40 border rounded-md p-3 bg-muted/30">
+                      <ul className="space-y-2">
+                        {contractClauses.map((clause) => (
+                          <li key={clause.id} className="p-2 bg-background/50 rounded-md text-sm text-foreground border border-border/30">
+                            <p className="whitespace-pre-wrap mb-1">{clause.text}</p>
+                            <div className="flex justify-end space-x-1">
+                              <Button variant="ghost" size="sm" className="h-7 px-2 text-primary hover:text-primary/80" onClick={() => handleEditClause(clause)} disabled={isLoading}>
+                                <Edit3 size={14} />
+                              </Button>
+                              <Button variant="ghost" size="sm" className="h-7 px-2 text-destructive hover:text-destructive/80" onClick={() => handleRemoveClause(clause.id)} disabled={isLoading}>
+                                <Trash2 size={14} />
+                              </Button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </ScrollArea>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentStep === 7 && (
+              <div className="space-y-4">
                 <Label className="text-lg font-semibold text-foreground/90">Termos de Serviço - Ipê Acta</Label>
                 <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground">
                   <p className="mb-2">Ao criar uma conta no Ipê Acta, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
-                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o Ipê Acta apenas para fins legais e de acordo com estes termos. O serviço é fornecido para criação de contratos de união e gestão visual de patrimônio.</p>
-                  <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia (fotos, textos, dados de ativos). Você concede ao Ipê Acta uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
-                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> Ipê Acta é uma ferramenta de planejamento e gestão visual. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de uniões ou holdings. A responsabilidade pela validade e aconselhamento profissional é inteiramente sua.</p>
+                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o Ipê Acta apenas para fins legais e de acordo com estes termos. O serviço é fornecido para criação e gestão de registros de união e patrimônio.</p>
+                  <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia. Você concede ao Ipê Acta uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
+                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> Ipê Acta é uma ferramenta de planejamento e gestão visual. Não fornece aconselhamento legal, financeiro ou contábil. A responsabilidade pela validade e aconselhamento profissional é sua.</p>
                   <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade.</p>
-                  <p><strong>5. Limitação de Responsabilidade:</strong> O Ipê Acta não se responsabiliza por perdas ou danos resultantes do uso do serviço, nem por decisões tomadas com base nas informações aqui apresentadas, na máxima extensão permitida por lei.</p>
-                   <p className="mt-2"><strong>6. Conexão de Carteira (Simulada):</strong> A funcionalidade de conexão de carteira é atualmente simulada. Nenhum dado real da sua carteira é acessado ou armazenado.</p>
+                  <p><strong>5. Limitação de Responsabilidade:</strong> O Ipê Acta não se responsabiliza por perdas ou danos resultantes do uso do serviço.</p>
+                  <p className="mt-2"><strong>6. Conexão de Carteira (Simulada):</strong> A funcionalidade de conexão de carteira é atualmente simulada. Nenhum dado real da sua carteira é acessado ou armazenado.</p>
+                  <p className="mt-2"><strong>7. Cláusulas Contratuais:</strong> As cláusulas definidas por você são para seu registro e planejamento. O Ipê Acta não valida ou endossa a legalidade ou aplicabilidade dessas cláusulas.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" checked={acceptedContract} onCheckedChange={(checked) => setAcceptedContract(Boolean(checked))} disabled={isLoading} className="border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"/>
@@ -373,7 +471,7 @@ export default function SignupPage() {
                   <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                 </Button>
               ) : (
-                <div /> // Placeholder para manter o botão Próximo à direita
+                <div /> 
               )}
 
               {currentStep < TOTAL_STEPS ? (
@@ -387,7 +485,7 @@ export default function SignupPage() {
                   ) : (
                     <UserPlus className="mr-2 h-4 w-4" />
                   )}
-                  Criar Contrato
+                  Criar Registro
                 </Button>
               )}
             </div>
@@ -395,7 +493,7 @@ export default function SignupPage() {
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Já possui um contrato?{' '}
+            Já possui um registro?{' '}
             <Button variant="link" asChild className="p-0 h-auto text-accent hover:text-accent/80">
               <Link href="/login">Acesse aqui</Link>
             </Button>
