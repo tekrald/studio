@@ -262,13 +262,13 @@ export default function SignupPage() {
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-sm">
-                <div className="w-full">
-                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
+              <div className="space-y-4 flex flex-col"> {/* Container for Step 1, width determined by content */}
+                <div> {/* Wrapper for Label and RadioGroup */}
+                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
                         value={relationshipStructure}
                         onValueChange={(value: 'monogamous' | 'polygamous') => setRelationshipStructure(value)}
-                        className="space-y-2 flex flex-col items-start w-full" 
+                        className="space-y-2 flex flex-col items-start" 
                         disabled={isLoading}
                     >
                         <div className="flex items-center space-x-2">
@@ -280,16 +280,17 @@ export default function SignupPage() {
                             <Label htmlFor="rel-polygamous" className="font-normal text-foreground/90">Polygamous</Label>
                         </div>
                     </RadioGroup>
+                    {!relationshipStructure && <p className="text-xs text-destructive text-left">This field is required.</p>}
                 </div>
               </div>
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col w-full max-w-sm">
-                    <div className="w-full">
-                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
+                 <div className="space-y-4 flex flex-col"> {/* Container for Step 2, width determined by content */}
+                    <div> {/* Wrapper for Label and Select */}
+                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
-                            <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary w-full">
+                            <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary w-full min-w-[200px] sm:min-w-[250px]">
                                 <SelectValue placeholder="Select an option" />
                             </SelectTrigger>
                             <SelectContent className="bg-popover text-popover-foreground border-border">
