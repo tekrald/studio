@@ -22,7 +22,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/ipe-acta-logo.svg" // Ensure this path is correct and the file exists in /public
+            src="/logo.svg" // Caminho atualizado
             alt="Ipê Acta Logo"
             width={250}
             height={83}

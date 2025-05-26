@@ -31,7 +31,7 @@ export default function HomePage() {
               </div>
               <div className="flex justify-center items-center bg-transparent">
                 <Image
-                  src="/nova-hero-imagem.png" // Ensure this path is correct and the file exists in /public
+                  src="/hero-imagem.png" // Caminho atualizado
                   alt="Ilustração de contrato de casamento e holding familiar"
                   width={500}
                   height={400}

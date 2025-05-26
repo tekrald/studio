@@ -158,8 +158,6 @@ export default function SignupPage() {
         religion,
         isWalletConnected,
         connectedWalletAddress,
-        '', // holdingType - não é mais coletado no cadastro
-        undefined // cnpjHolding - não é mais coletado no cadastro
       ); 
       // O redirecionamento para /dashboard será feito pelo AuthProvider
     } catch (err) {
@@ -176,7 +174,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-lg shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/ipe-acta-logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
+            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
           <CardDescription className="text-lg font-sans text-muted-foreground">Siga as etapas para criar seu contrato e holding. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
