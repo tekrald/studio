@@ -6,25 +6,70 @@ import { Handle, Position } from 'reactflow';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DollarSign, Coins, Landmark, Building, Clock } from 'lucide-react';
+import { DollarSign, Coins, Landmark, BuildingIcon, Clock } from 'lucide-react'; // Changed Building to BuildingIcon
 import { useToast } from '@/hooks/use-toast';
-import type { ExtendedAssetNodeData } from '@/app/(main)/dashboard/page'; // Importando o tipo estendido
+import type { AssetTransaction } from '@/types/asset'; // Assuming AssetTransaction might be useful for details
 
-// AssetNodeData aqui refere-se ao tipo de dados que este componente espera.
-// Usaremos ExtendedAssetNodeData para garantir que temos 'transactions' e 'nomeAtivo'.
-// A prop 'data' em NodeProps<AssetNodeData> será inferida como ExtendedAssetNodeData pelo React Flow.
+// Consistent with dashboard/page.tsx
+export interface ExtendedAssetNodeData {
+  id: string;
+  userId: string;
+  nomeAtivo: string;
+  tipo: 'digital' | 'fisico';
+  quantidadeTotalDigital?: number;
+  tipoImovelBemFisico?: string;
+  enderecoLocalizacaoFisico?: string;
+  documentacaoFisico?: string;
+  transactions: AssetTransaction[];
+  assignedToMemberId?: string;
+  releaseCondition?: { type: 'age'; targetAge: number };
+  observacoesGerais?: string;
+  onOpenDetails?: () => void;
+}
+
+const BitcoinIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+    <circle cx="12" cy="12" r="10" fill="#F7931A"/>
+    <path d="M10.05 16.64H12.32C14.66 16.64 16.31 15.32 16.31 12.91C16.31 10.5 14.66 9.17999 12.32 9.17999H10.05V7.35999H12.4C15.43 7.35999 17.5 8.95999 17.5 11.82C17.5 13.48 16.73 14.91 15.38 15.79V15.83C17.06 16.57 18 17.97 18 19.76C18 22.79 15.67 24.48 12.54 24.48H8V7.35999H10.05V16.64ZM10.05 11.6H12.22C13.6 11.6 14.51 12.31 14.51 13.59C14.51 14.87 13.6 15.58 12.22 15.58H10.05V11.6ZM10.05 17.68H12.4C13.98 17.68 15.03 18.46 15.03 19.79C15.03 21.12 13.98 21.9 12.4 21.9H10.05V17.68Z" fill="white" transform="scale(0.75) translate(2, -4)"/>
+  </svg>
+);
+
+const EthereumIcon = () => (
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+    <path d="M12.023 2.68701L11.531 3.32701V11.56L12.023 11.829L12.516 11.56V3.32701L12.023 2.68701Z" fill="#3C3C3B"/>
+    <path d="M12.023 2.68701L6.78101 9.40401L12.023 11.829V2.68701Z" fill="#343434"/>
+    <path d="M12.023 2.68701L17.265 9.40401L12.023 11.829V2.68701Z" fill="#8C8C8C"/>
+    <path d="M12.023 12.76L11.555 12.981V16.844L12.023 17.13L12.492 16.844V12.981L12.023 12.76Z" fill="#3C3C3B"/>
+    <path d="M12.023 17.13V12.76L6.78101 10.352L12.023 17.13Z" fill="#343434"/>
+    <path d="M12.023 17.13V12.76L17.265 10.352L12.023 17.13Z" fill="#8C8C8C"/>
+    <path d="M12.023 11.829L17.265 9.40401L12.023 6.99701L6.78101 9.40401L12.023 11.829Z" fill="#141414"/>
+  </svg>
+);
+
 
 const getIconForAsset = (data: ExtendedAssetNodeData) => {
   if (data.tipo === 'digital') {
+    if (data.nomeAtivo === 'Bitcoin') {
+      return <BitcoinIcon />;
+    }
+    if (data.nomeAtivo === 'Ethereum') {
+      return <EthereumIcon />;
+    }
     return <Coins size={18} className="text-primary mr-2" />;
   }
   if (data.tipo === 'fisico') {
-    if (data.tipoImovelBemFisico?.toLowerCase().includes('casa') || data.tipoImovelBemFisico?.toLowerCase().includes('apartamento') || data.tipoImovelBemFisico?.toLowerCase().includes('imóvel')) return <Landmark size={18} className="text-primary mr-2" />;
-    if (data.tipoImovelBemFisico?.toLowerCase().includes('veículo') || data.tipoImovelBemFisico?.toLowerCase().includes('carro')) return <Building size={18} className="text-primary mr-2" />;
-    return <Landmark size={18} className="text-primary mr-2" />;
+    const tipoBemLower = data.tipoImovelBemFisico?.toLowerCase() || '';
+    if (tipoBemLower.includes('casa') || tipoBemLower.includes('apartamento') || tipoBemLower.includes('imóvel')) {
+      return <Landmark size={18} className="text-primary mr-2" />;
+    }
+    if (tipoBemLower.includes('veículo') || tipoBemLower.includes('carro') || tipoBemLower.includes('automóvel')) {
+      return <BuildingIcon size={18} className="text-primary mr-2" />; // Using BuildingIcon as Car is not in lucide
+    }
+    return <Landmark size={18} className="text-primary mr-2" />; // Default for physical
   }
-  return <DollarSign size={18} className="text-primary mr-2" />;
+  return <DollarSign size={18} className="text-primary mr-2" />; // Default overall
 };
+
 
 export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAssetNodeData>) {
   const icon = getIconForAsset(data);
@@ -51,13 +96,12 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
 
   return (
     <Card
-      className={`w-60 shadow-lg border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-border'} bg-card relative rounded-lg cursor-pointer hover:shadow-md transition-shadow`}
+      className={`w-auto min-w-[180px] max-w-[240px] shadow-lg border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-border'} bg-card relative rounded-lg cursor-pointer hover:shadow-md transition-shadow`}
       style={{ overflow: 'visible' }}
       onClick={handleCardClick}
     >
       <Handle type="target" position={Position.Top} id={`t-${nodeId}-top`} className="!opacity-50 !bg-ring" />
       <Handle type="source" position={Position.Top} id={`s-${nodeId}-top`} className="!opacity-50 !bg-ring !top-[-4px]" />
-
 
       <CardHeader className="p-3 border-b border-border">
         <div className="flex items-center justify-between">
@@ -83,12 +127,12 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
 
       <CardContent className="p-3 text-xs space-y-1">
         {data.tipo === 'digital' && data.quantidadeTotalDigital !== undefined && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs whitespace-normal text-left">
                 Qtd Total: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
             </Badge>
         )}
         {data.tipo === 'fisico' && data.tipoImovelBemFisico && (
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs whitespace-normal text-left">
             {data.tipoImovelBemFisico}
           </Badge>
         )}
@@ -103,3 +147,4 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
     </Card>
   );
 }
+
