@@ -10,7 +10,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 
 export type UnionNodeData = {
   label: string;
-  onSettingsClick: () => void; 
+  onSettingsClick: () => void;
   onOpenAssetModal: () => void;
   onAddMember: () => void;
 };
@@ -47,19 +47,19 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
 
 
   return (
-    <Card 
-      className={`w-60 shadow-xl border-2 ${selected ? 'border-primary shadow-primary/50' : 'border-primary/60'} bg-card p-0 overflow-hidden relative rounded-lg`}
+    <Card
+      className={`w-60 shadow-xl border-2 ${selected ? 'border-primary shadow-primary/30' : 'border-primary/60'} bg-card p-0 overflow-hidden relative rounded-lg`}
       style={{ overflow: 'visible' }}
     >
-      <Handle type="target" position={Position.Top} className="!opacity-0" />
-      
+      <Handle type="target" position={Position.Top} id={`t-${id}-top`} className="!opacity-0" />
+
       <div className="bg-gradient-to-r from-gradient-green to-gradient-blue p-2 rounded-t-md flex justify-between items-center">
         <span className="text-xs font-semibold text-black">Contrato</span>
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 text-black hover:bg-white/20 hover:text-black/80"
-          onClick={data.onSettingsClick} 
+          className="h-6 w-6 text-black hover:bg-white/20 hover:text-black/80"
+          onClick={data.onSettingsClick}
           aria-label="Configurações do Contrato"
         >
           <Settings size={16} />
@@ -79,14 +79,14 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
           onClick={toggleActions}
           className="p-1.5 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center justify-center"
           aria-label="Adicionar"
-          style={{ width: '32px', height: '32px' }} 
+          style={{ width: '32px', height: '32px' }}
         >
           <PlusCircle size={20} />
         </button>
         {showActions && (
           <div
             ref={popoverRef}
-            className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-popover border-border rounded-md shadow-xl p-2 space-y-2 z-20"
+            className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-popover border border-border rounded-md shadow-xl p-2 space-y-2 z-20"
             style={{ top: 'calc(100% + 0.5rem)' }}
           >
             <Button
@@ -111,17 +111,17 @@ export function UnionNode({ id, data, selected }: NodeProps<UnionNodeData>) {
               }}
             >
               <Users size={16} className="mr-2" />
-              Adicionar Membro
+              Adicionar Filho(a)
             </Button>
           </div>
         )}
       </div>
-       <Handle 
-        type="source" 
-        position={Position.Bottom} 
-        id={`handle-source-invisible-${id}`} 
-        className="!opacity-0 !w-px !h-px !cursor-default" 
-        isConnectable={false} 
+       <Handle
+        type="source"
+        position={Position.Bottom}
+        id={`s-${id}-bottom`}
+        className="!opacity-0 !w-px !h-px !cursor-default"
+        isConnectable={false}
       />
     </Card>
   );

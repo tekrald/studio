@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Loader2, UserPlus } from 'lucide-react';
@@ -15,12 +14,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { MemberFormData } from '@/types/member';
 
+// Schema Zod simplificado, tipoRelacao não é mais um campo do formulário
 const formSchema = z.object({
-  nome: z.string().min(2, 'O nome do membro é obrigatório e deve ter pelo menos 2 caracteres.'),
-  tipoRelacao: z.string().min(1, 'O tipo de relação é obrigatório.'),
+  nome: z.string().min(2, 'O nome do filho(a) é obrigatório e deve ter pelo menos 2 caracteres.'),
   dataNascimento: z.date().optional(),
 });
 
+// A prop onSubmit espera MemberFormData, que ainda inclui tipoRelacao
 interface AddMemberFormProps {
   onSubmit: (data: MemberFormData) => Promise<void>;
   isLoading: boolean;
@@ -28,51 +28,30 @@ interface AddMemberFormProps {
 }
 
 export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormProps) {
-  const form = useForm<MemberFormData>({
+  const form = useForm<Omit<MemberFormData, 'tipoRelacao'>>({ // Omit tipoRelacao do tipo do formulário
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome: '',
-      tipoRelacao: undefined,
       dataNascimento: undefined,
     },
     mode: "onChange",
   });
 
-  const relationshipTypes = [
-    { value: "filho_a", label: "Filho(a)" },
-    { value: "pai_mae", label: "Pai/Mãe" },
-    { value: "conjuge_parceiro_a", label: "Cônjuge/Parceiro(a)" },
-    { value: "outro_parente", label: "Outro Parente" },
-    { value: "nao_parente", label: "Não Parente/Associado" },
-  ];
+  const handleFormSubmit = (values: Omit<MemberFormData, 'tipoRelacao'>) => {
+    // Adiciona tipoRelacao: 'filho_a' antes de chamar a prop onSubmit
+    const formDataWithRelation: MemberFormData = {
+      ...values,
+      tipoRelacao: 'filho_a',
+    };
+    onSubmit(formDataWithRelation);
+  };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <div className="space-y-1.5">
-        <Label htmlFor="nome" className="text-foreground/90">Nome Completo do Membro</Label>
+        <Label htmlFor="nome" className="text-foreground/90">Nome Completo do Filho(a)</Label>
         <Input id="nome" {...form.register('nome')} placeholder="Ex: Nome Sobrenome" disabled={isLoading} autoFocus className="bg-input text-foreground placeholder:text-muted-foreground"/>
         {form.formState.errors.nome && <p className="text-sm text-destructive">{form.formState.errors.nome.message}</p>}
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="tipoRelacao" className="text-foreground/90">Tipo de Relação com a Entidade</Label>
-        <Controller
-          name="tipoRelacao"
-          control={form.control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
-              <SelectTrigger id="tipoRelacao" className="bg-input text-foreground">
-                <SelectValue placeholder="Selecione o tipo de relação" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover text-popover-foreground">
-                {relationshipTypes.map(type => (
-                  <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-        {form.formState.errors.tipoRelacao && <p className="text-sm text-destructive">{form.formState.errors.tipoRelacao.message}</p>}
       </div>
       
       <div className="space-y-1.5">
@@ -120,7 +99,7 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
         </Button>
         <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading}>
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
-          Adicionar Membro
+          Adicionar Filho(a)
         </Button>
       </div>
     </form>
