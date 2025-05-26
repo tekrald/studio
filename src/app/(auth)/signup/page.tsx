@@ -1,6 +1,6 @@
 
 "use client";
-import { useState, type FormEvent, type ChangeEvent } from 'react';
+import React, { useState, type FormEvent, type ChangeEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/components/auth-provider';
@@ -11,10 +11,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/co
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye, Building } from 'lucide-react';
 import type { ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 const TOTAL_STEPS = 8;
 
@@ -46,7 +47,7 @@ export default function SignupPage() {
   const [religion, setReligion] = useState('');
 
   // Step 3: Union Name
-  const [unionName, setUnionName] = useState(''); // Changed from coupleName to unionName
+  const [unionName, setUnionName] = useState('');
 
   // Step 4: Account Details
   const [email, setEmail] = useState('');
@@ -163,7 +164,8 @@ export default function SignupPage() {
         setError('Password must be at least 6 characters long.');
         return false;
       }
-    } else if (currentStep === 5) { // Connect Wallet - Optional
+    } else if (currentStep === 5) { // Connect Wallet
+        // No mandatory validation here
     } else if (currentStep === 6) { // Photos - Optional
     } else if (currentStep === 7) { // Initial Agreements - Optional (can be empty)
     } else if (currentStep === 8) { // Terms
@@ -217,16 +219,44 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gradient-green/20 via-gradient-blue/20 to-background p-4">
-      <Card className="w-full max-w-lg shadow-2xl bg-card border-border">
+      <Card className="w-full max-w-2xl shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa"/>
+            <Image src="/logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardDescription className="text-lg font-sans text-muted-foreground">Follow the steps to create your contract. (Step {currentStep} of {TOTAL_STEPS})</CardDescription>
+          <div className="flex items-center justify-center w-full my-4 px-4 sm:px-8">
+            {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
+              <React.Fragment key={index}>
+                <div className="flex flex-col items-center">
+                  <div
+                    className={cn(
+                      "w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-all duration-300",
+                      index + 1 < currentStep // Completed
+                        ? "bg-primary text-primary-foreground"
+                        : index + 1 === currentStep // Current
+                        ? "bg-primary/20 border-2 border-primary text-primary scale-110"
+                        : // Pending
+                          "bg-muted border-2 border-border text-muted-foreground"
+                    )}
+                  >
+                    {index + 1}
+                  </div>
+                </div>
+                {index < TOTAL_STEPS - 1 && (
+                  <div
+                    className={cn(
+                      "flex-1 h-0.5 sm:h-1 mx-0.5 sm:mx-1 transition-colors duration-300",
+                      index + 1 < currentStep ? "bg-primary" : "bg-border"
+                    )}
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
-            {currentStep === 1 && ( // Step 1: Union Structure
+            {currentStep === 1 && ( 
               <div className="space-y-4">
                 <div>
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
@@ -249,7 +279,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 2 && ( // Step 2: Union Belief
+            {currentStep === 2 && ( 
                  <div className="space-y-4">
                     <div>
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
@@ -267,7 +297,7 @@ export default function SignupPage() {
                  </div>
             )}
 
-            {currentStep === 3 && ( // Step 3: Union Name
+            {currentStep === 3 && ( 
               <div className="space-y-2">
                 <Label htmlFor="unionName" className="text-foreground/90">Union Name</Label>
                 <Input
@@ -283,7 +313,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 4 && ( // Step 4: Account Details
+            {currentStep === 4 && ( 
               <>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-foreground/90">Main Email Address</Label>
@@ -346,7 +376,7 @@ export default function SignupPage() {
               </>
             )}
 
-            {currentStep === 5 && ( // Step 5: Connect Joint Wallet
+            {currentStep === 5 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center text-foreground/90"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
                 <CardDescription className="text-muted-foreground">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
@@ -375,7 +405,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 6 && ( // Step 6: Photos
+            {currentStep === 6 && ( 
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">Add photos of the union (optional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -417,7 +447,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 7 && ( // Step 7: Initial Agreements
+            {currentStep === 7 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Initial Contract Agreements</Label>
                 <CardDescription className="text-muted-foreground">Define the initial clauses of your contract. You can edit them later.</CardDescription>
@@ -472,7 +502,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 8 && ( // Step 8: Terms and Conditions
+            {currentStep === 8 && ( 
               <div className="space-y-4">
                 <Label className="text-lg font-semibold text-foreground/90">Terms of Service - Ipê Acta</Label>
                 <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground">
@@ -484,6 +514,7 @@ export default function SignupPage() {
                   <p><strong>5. Limitation of Liability:</strong> Ipê Acta is not liable for losses or damages resulting from the use of the service.</p>
                   <p className="mt-2"><strong>6. Wallet Connection (Simulated):</strong> The wallet connection feature is currently simulated. No real data from your wallet is accessed or stored.</p>
                   <p className="mt-2"><strong>7. Contractual Clauses:</strong> The clauses you define are for your record and planning. Ipê Acta does not validate or endorse the legality or applicability of these clauses.</p>
+                  <p className="mt-2"><strong>8. No Legal Formalization:</strong> Ipê Acta is a planning tool and does not perform legal formalization of any entity or contract. Consult qualified professionals for legal and tax matters.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" checked={acceptedContract} onCheckedChange={(checked) => setAcceptedContract(Boolean(checked))} disabled={isLoading} className="border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"/>
@@ -534,4 +565,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
