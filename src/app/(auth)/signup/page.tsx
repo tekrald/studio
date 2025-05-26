@@ -260,13 +260,13 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
             {currentStep === 1 && ( 
-              <div className="space-y-4">
-                <div>
-                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
+              <div className="space-y-4 flex flex-col items-center text-center">
+                <div className="w-full max-w-md">
+                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-center mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
                         value={relationshipStructure}
                         onValueChange={(value: 'monogamous' | 'polygamous') => setRelationshipStructure(value)}
-                        className="space-y-2"
+                        className="space-y-2 flex flex-col items-center" 
                         disabled={isLoading}
                     >
                         <div className="flex items-center space-x-2">
@@ -283,11 +283,11 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4">
-                    <div>
-                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
+                 <div className="space-y-4 flex flex-col items-center text-center">
+                    <div className="w-full max-w-md">
+                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-center mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
-                            <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary">
+                            <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary w-full">
                                 <SelectValue placeholder="Select an option" />
                             </SelectTrigger>
                             <SelectContent className="bg-popover text-popover-foreground border-border">
@@ -301,8 +301,8 @@ export default function SignupPage() {
             )}
 
             {currentStep === 3 && ( 
-              <div className="space-y-2">
-                <Label htmlFor="unionName" className="text-foreground/90">Union Name</Label>
+              <div className="space-y-2 flex flex-col items-center text-center">
+                <Label htmlFor="unionName" className="text-foreground/90 w-full max-w-md">Union Name</Label>
                 <Input
                   id="unionName"
                   type="text"
@@ -311,14 +311,14 @@ export default function SignupPage() {
                   onChange={(e) => setUnionName(e.target.value)}
                   disabled={isLoading}
                   autoFocus
-                  className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary"
+                  className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary w-full max-w-md"
                 />
               </div>
             )}
 
             {currentStep === 4 && ( 
-              <>
-                <div className="space-y-2">
+              <div className="space-y-6 flex flex-col items-center text-center">
+                <div className="space-y-2 w-full max-w-md">
                   <Label htmlFor="email" className="text-foreground/90">Main Email Address</Label>
                   <Input
                     id="email"
@@ -331,7 +331,7 @@ export default function SignupPage() {
                     className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 w-full max-w-md">
                   <Label htmlFor="password" className="text-foreground/90">Password</Label>
                   <div className="relative">
                     <Input
@@ -354,7 +354,7 @@ export default function SignupPage() {
                   </div>
                    <p className="text-xs text-muted-foreground">Minimum 6 characters.</p>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 w-full max-w-md">
                   <Label htmlFor="confirmPassword" className="text-foreground/90">Confirm Password</Label>
                    <div className="relative">
                     <Input
@@ -376,15 +376,15 @@ export default function SignupPage() {
                     </Button>
                    </div>
                 </div>
-              </>
+              </div>
             )}
 
             {currentStep === 5 && ( 
-              <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center text-foreground/90"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
-                <CardDescription className="text-muted-foreground">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
+              <div className="space-y-4 flex flex-col items-center text-center">
+                <Label className="text-lg font-semibold flex items-center justify-center text-foreground/90 w-full max-w-md"><Wallet size={20} className="mr-2 text-primary" />Connect Joint Wallet</Label>
+                <CardDescription className="text-muted-foreground w-full max-w-md">Connect your digital wallet to auto-visualize your digital assets within the holding.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
-                  <div className="p-4 border rounded-md bg-accent/10 border-accent/30 text-accent">
+                  <div className="p-4 border rounded-md bg-accent/10 border-accent/30 text-accent w-full max-w-md">
                     <p className="font-semibold">Wallet Connected!</p>
                     <p className="text-sm break-all">Address: {connectedWalletAddress}</p>
                     <Button variant="link" className="p-0 h-auto text-sm mt-1 text-accent hover:text-accent/80" onClick={() => {setIsWalletConnected(false); setConnectedWalletAddress(null);}}>
@@ -395,26 +395,26 @@ export default function SignupPage() {
                   <Button
                     type="button"
                     onClick={handleConnectWallet}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    className="w-full max-w-md bg-primary hover:bg-primary/90 text-primary-foreground"
                     disabled={isLoading}
                   >
                     {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wallet className="mr-2 h-4 w-4" />}
                     Connect Wallet (Simulated)
                   </Button>
                 )}
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground w-full max-w-md">
                   This is a simulation. No real wallet will be connected at this time.
                 </p>
               </div>
             )}
 
             {currentStep === 6 && ( 
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Add photos of the union (optional).</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                  <div className="space-y-2">
+              <div className="space-y-4 flex flex-col items-center text-center">
+                <p className="text-sm text-muted-foreground w-full max-w-lg">Add photos of the union (optional).</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start w-full max-w-lg">
+                  <div className="space-y-2 flex flex-col items-center md:items-start text-center md:text-left w-full">
                     <Label htmlFor="photo1" className="text-foreground/90">Partner 1 Photo</Label>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-center md:justify-start">
                       {photo1Preview ? (
                         <Image src={photo1Preview} alt="Photo 1 Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
                       ) : (
@@ -427,11 +427,11 @@ export default function SignupPage() {
                         {photo1 ? "Change Photo" : "Choose Photo"}
                       </Button>
                     </div>
-                    {photo1 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo1.name}>{photo1.name}</p>}
+                    {photo1 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-center md:text-left" title={photo1.name}>{photo1.name}</p>}
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 flex flex-col items-center md:items-start text-center md:text-left w-full">
                     <Label htmlFor="photo2" className="text-foreground/90">Partner 2 Photo</Label>
-                     <div className="flex items-center space-x-2">
+                     <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-center md:justify-start">
                       {photo2Preview ? (
                         <Image src={photo2Preview} alt="Photo 2 Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
                       ) : (
@@ -444,18 +444,18 @@ export default function SignupPage() {
                         {photo2 ? "Change Photo" : "Choose Photo"}
                       </Button>
                     </div>
-                    {photo2 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo2.name}>{photo2.name}</p>}
+                    {photo2 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-center md:text-left" title={photo2.name}>{photo2.name}</p>}
                   </div>
                 </div>
               </div>
             )}
 
             {currentStep === 7 && ( 
-              <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Initial Contract Agreements</Label>
-                <CardDescription className="text-muted-foreground">Define the initial clauses of your contract. You can edit them later.</CardDescription>
+              <div className="space-y-4 flex flex-col items-center text-center">
+                <Label className="text-lg font-semibold flex items-center justify-center text-foreground/90 w-full max-w-lg"><FileText size={20} className="mr-2 text-primary"/>Initial Contract Agreements</Label>
+                <CardDescription className="text-muted-foreground w-full max-w-lg">Define the initial clauses of your contract. You can edit them later.</CardDescription>
                 
-                <div className="space-y-2">
+                <div className="space-y-2 w-full max-w-lg">
                   <Label htmlFor="clause-text-area" className="text-foreground/90">
                     {editingClause ? 'Edit Clause' : 'New Clause'}
                   </Label>
@@ -468,12 +468,12 @@ export default function SignupPage() {
                     rows={3}
                     disabled={isLoading}
                   />
-                  <div className="mt-2 flex gap-2">
-                    <Button type="button" onClick={handleAddOrUpdateClause} className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isLoading || !(editingClause ? editingClause.text.trim() : newClauseText.trim())}>
+                  <div className="mt-2 flex flex-col sm:flex-row gap-2">
+                    <Button type="button" onClick={handleAddOrUpdateClause} className="bg-primary hover:bg-primary/90 text-primary-foreground sm:flex-1" disabled={isLoading || !(editingClause ? editingClause.text.trim() : newClauseText.trim())}>
                       {editingClause ? <><Save size={16} className="mr-2" /> Save Changes</> : <><PlusCircle size={16} className="mr-2" /> Add Clause</>}
                     </Button>
                     {editingClause && (
-                      <Button type="button" variant="outline" onClick={handleCancelEdit} className="text-foreground/90 border-border hover:bg-muted/80" disabled={isLoading}>
+                      <Button type="button" variant="outline" onClick={handleCancelEdit} className="text-foreground/90 border-border hover:bg-muted/80 sm:w-auto" disabled={isLoading}>
                         Cancel Edit
                       </Button>
                     )}
@@ -481,9 +481,9 @@ export default function SignupPage() {
                 </div>
 
                 {contractClauses.length > 0 && (
-                  <div className="space-y-3">
+                  <div className="space-y-3 w-full max-w-lg">
                     <h4 className="text-md font-medium text-foreground/80 pt-2">Added Clauses:</h4>
-                    <ScrollArea className="h-40 border rounded-md p-3 bg-muted/30">
+                    <ScrollArea className="h-40 border rounded-md p-3 bg-muted/30 text-left">
                       <ul className="space-y-2">
                         {contractClauses.map((clause) => (
                           <li key={clause.id} className="p-2 bg-background/50 rounded-md text-sm text-foreground border border-border/30">
@@ -506,9 +506,9 @@ export default function SignupPage() {
             )}
 
             {currentStep === 8 && ( 
-              <div className="space-y-4">
-                <Label className="text-lg font-semibold text-foreground/90">Terms of Service - Ipê Acta</Label>
-                <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground">
+              <div className="space-y-4 flex flex-col items-center text-center">
+                <Label className="text-lg font-semibold text-foreground/90 w-full max-w-lg">Terms of Service - Ipê Acta</Label>
+                <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground w-full max-w-lg text-left">
                   <p className="mb-2">By creating an account with Ipê Acta, you agree to our Terms of Service and Privacy Policy.</p>
                   <p className="mb-2"><strong>1. Use of Service:</strong> You agree to use Ipê Acta only for lawful purposes and in accordance with these terms. The service is provided for creating and managing union and asset records.</p>
                   <p className="mb-2"><strong>2. User Content:</strong> You are responsible for all content you submit. You grant Ipê Acta a license to use this content in the context of providing the service.</p>
@@ -519,7 +519,7 @@ export default function SignupPage() {
                   <p className="mt-2"><strong>7. Contractual Clauses:</strong> The clauses you define are for your record and planning. Ipê Acta does not validate or endorse the legality or applicability of these clauses.</p>
                   <p className="mt-2"><strong>8. No Legal Formalization:</strong> Ipê Acta is a planning tool and does not perform legal formalization of any entity or contract. Consult qualified professionals for legal and tax matters.</p>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full max-w-lg justify-center">
                   <Checkbox id="terms" checked={acceptedContract} onCheckedChange={(checked) => setAcceptedContract(Boolean(checked))} disabled={isLoading} className="border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"/>
                   <Label htmlFor="terms" className="text-sm font-normal text-foreground/90">
                     I have read and accept the Ipê Acta Terms of Service and Privacy Policy.
@@ -528,7 +528,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
             <div className="flex justify-between items-center pt-4">
               {currentStep > 1 ? (
@@ -556,9 +556,6 @@ export default function SignupPage() {
             </div>
           </form>
         </CardContent>
-        <CardFooter className="flex-shrink-0 py-4">
-          {/* CardFooter can be empty or used for other purposes if the link is outside */}
-        </CardFooter>
       </Card>
       <div className="mt-6 text-center">
         <p className="text-sm text-muted-foreground">
@@ -571,5 +568,4 @@ export default function SignupPage() {
     </div>
   );
 }
-
     
