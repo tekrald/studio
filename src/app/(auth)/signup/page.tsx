@@ -40,8 +40,8 @@ const religionOptions = otherOption ? [...sortedReligionOptions, otherOption] : 
 
 
 const defaultContractClauses: ContractClause[] = [
-  { id: `initial-${Date.now()}-1`, text: "All jointly acquired assets will be divided as agreed upon in case of dissolution of the union." },
-  { id: `initial-${Date.now()}-2`, text: "Financial and operational responsibilities will be divided as defined in this record." },
+  { id: 'initial-clause-1', text: "All jointly acquired assets will be divided as agreed upon in case of dissolution of the union." },
+  { id: 'initial-clause-2', text: "Financial and operational responsibilities will be divided as defined in this record." },
 ];
 
 export default function SignupPage() {
@@ -581,7 +581,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
-    
-
-    
