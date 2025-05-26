@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Loader2, Network, Settings, DollarSign, Users, PlusCircle, Info } from 'lucide-react'; // Added Info
+import { Loader2, Network, Settings, DollarSign, Users, PlusCircle, Info, FileText } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
-import type { AssetFormData, AssetTransaction, PhysicalAsset } from '@/types/asset';
+import type { AssetFormData, AssetTransaction } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
 import { AddMemberForm } from '@/components/members/AddMemberForm';
 import type { MemberFormData, Member } from '@/types/member';
@@ -28,7 +28,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import { UnionNode, type UnionNodeData } from '@/components/nodes/UnionNode';
-import { AssetNode, type ExtendedAssetNodeData as AssetNodeDataType } from '@/components/nodes/AssetNode';
+import { AssetNode, type ExtendedAssetNodeData } from '@/components/nodes/AssetNode';
 import { MemberNode, type MemberNodeData } from '@/components/nodes/MemberNode';
 import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Button } from '@/components/ui/button';
@@ -68,18 +68,15 @@ export default function AssetManagementDashboard() {
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<UnionNodeData | AssetNodeDataType | MemberNodeData>[]>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node<UnionNodeData | ExtendedAssetNodeData | MemberNodeData>[]>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [allMembers, setAllMembers] = useState<MemberWithBirthDate[]>([]);
 
   const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
-  const [contractClauses, setContractClauses] = useState<ContractClause[]>([
-    { id: 'initial-1', text: 'Todos os bens adquiridos durante a união serão divididos igualmente (50/50) em caso de separação.' },
-    { id: 'initial-2', text: 'As despesas ordinárias do lar serão custeadas por ambos os cônjuges, na proporção de seus respectivos rendimentos.' },
-  ]);
+  const [contractClauses, setContractClauses] = useState<ContractClause[]>([]);
 
   const [isAssetDetailsModalOpen, setIsAssetDetailsModalOpen] = useState(false);
-  const [selectedAssetForDetails, setSelectedAssetForDetails] = useState<AssetNodeDataType | null>(null);
+  const [selectedAssetForDetails, setSelectedAssetForDetails] = useState<ExtendedAssetNodeData | null>(null);
 
 
   const onConnect: OnConnect = useCallback(
@@ -88,8 +85,14 @@ export default function AssetManagementDashboard() {
   );
 
   const handleOpenContractSettings = useCallback(() => {
+    // Carregar cláusulas do usuário se existirem, senão usar as padrão
+    const userClauses = user?.contractClauses || [
+      { id: 'initial-1', text: 'Todos os bens adquiridos durante a união serão divididos igualmente (50/50) em caso de separação.' },
+      { id: 'initial-2', text: 'As despesas ordinárias do lar serão custeadas por ambos os cônjuges, na proporção de seus respectivos rendimentos.' },
+    ];
+    setContractClauses(userClauses);
     setIsContractSettingsModalOpen(true);
-  }, []);
+  }, [user?.contractClauses]);
 
   const handleAddContractClause = (text: string) => {
     const newClause: ContractClause = {
@@ -125,7 +128,7 @@ export default function AssetManagementDashboard() {
     setIsAddMemberModalOpen(true);
   }, []);
 
-  const handleOpenAssetDetailsModal = useCallback((assetData: AssetNodeDataType) => {
+  const handleOpenAssetDetailsModal = useCallback((assetData: ExtendedAssetNodeData) => {
     setSelectedAssetForDetails(assetData);
     setIsAssetDetailsModalOpen(true);
   }, []);
@@ -151,7 +154,7 @@ export default function AssetManagementDashboard() {
 
  useEffect(() => {
     const currentUnionNode = nodes.find(node => node.id === UNION_NODE_ID);
-    let unionNodeCreated = false;
+    let unionNodeCreatedThisRun = false;
 
     if (!currentUnionNode && !authLoading && effectiveUser?.displayName) {
       const unionNode: Node<UnionNodeData> = {
@@ -169,7 +172,7 @@ export default function AssetManagementDashboard() {
       };
       setNodes([unionNode]);
       setEdges([]); // Clear edges when union node is first created
-      unionNodeCreated = true;
+      unionNodeCreatedThisRun = true;
     } else if (currentUnionNode && effectiveUser?.displayName && (currentUnionNode.data as UnionNodeData).label !== effectiveUser.displayName) {
       setNodes((nds) =>
         nds.map((node) =>
@@ -180,20 +183,20 @@ export default function AssetManagementDashboard() {
       );
     }
 
-    if (user?.isWalletConnected && (currentUnionNode || unionNodeCreated) && !authLoading) {
-        const mockDigitalAssetsData: Omit<AssetNodeDataType, 'id' | 'userId' | 'onOpenDetails'>[] = [
+    if (user?.isWalletConnected && (currentUnionNode || unionNodeCreatedThisRun) && !authLoading) {
+        const mockDigitalAssetsData: Omit<ExtendedAssetNodeData, 'id' | 'userId' | 'onOpenDetails' | 'assignedToMemberId' | 'releaseCondition'>[] = [
             { nomeAtivo: 'Bitcoin', tipo: 'digital', quantidadeTotalDigital: 0.5, transactions: [{ id: 'tx-btc-1', dataAquisicao: new Date(), quantidadeDigital: 0.5, quemComprou: 'Carteira Conectada'}], isAutoLoaded: true },
             { nomeAtivo: 'Ethereum', tipo: 'digital', quantidadeTotalDigital: 10, transactions: [{ id: 'tx-eth-1', dataAquisicao: new Date(), quantidadeDigital: 10, quemComprou: 'Carteira Conectada'}], isAutoLoaded: true },
         ];
 
-        const nodesToAddThisRun: Node<AssetNodeDataType>[] = [];
+        const nodesToAddThisRun: Node<ExtendedAssetNodeData>[] = [];
         const edgesToAddThisRun: Edge[] = [];
 
         mockDigitalAssetsData.forEach((mockAsset, index) => {
             const assetId = `mock-${mockAsset.nomeAtivo.toLowerCase().replace(/\s+/g, '-')}`;
-            const nodeExists = nodes.some(n => n.id === assetId);
+            const nodeExists = nodes.some(n => n.id === assetId && !(n.data as ExtendedAssetNodeData).assignedToMemberId); // Check if unassigned asset exists
              if (!nodeExists) {
-                const assetDataForDetails: AssetNodeDataType = {
+                const assetDataForDetails: ExtendedAssetNodeData = {
                     id: assetId,
                     userId: effectiveUser.uid,
                     nomeAtivo: mockAsset.nomeAtivo,
@@ -201,23 +204,23 @@ export default function AssetManagementDashboard() {
                     quantidadeTotalDigital: mockAsset.quantidadeTotalDigital,
                     transactions: mockAsset.transactions || [],
                     isAutoLoaded: mockAsset.isAutoLoaded,
-                    onOpenDetails: () => {} // Will be set below
+                    onOpenDetails: () => {}
                 };
                 assetDataForDetails.onOpenDetails = () => handleOpenAssetDetailsModal(assetDataForDetails);
 
-                const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID) || { position: { x: 400, y: 100 }, height: 100 };
+                const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID) || { position: { x: 400, y: 100 }, height: 100, width: 240 };
                 const sourceX = unionNodeInstance.position?.x ?? 400;
                 const sourceY = unionNodeInstance.position?.y ?? 100;
-                const existingDigitalAssetsCount = nodes.filter(n => n.type === 'assetNode' && (n.data as AssetNodeDataType).tipo === 'digital' && !(n.data as AssetNodeDataType).assignedToMemberId).length;
+                const existingUnionDigitalAssetsCount = nodes.filter(n => n.type === 'assetNode' && (n.data as ExtendedAssetNodeData).tipo === 'digital' && !(n.data as ExtendedAssetNodeData).assignedToMemberId).length;
 
-                const angleStep = Math.PI / 4; 
-                const radius = 250 + Math.floor(existingDigitalAssetsCount / 6) * 80;
-                const angleStart = Math.PI / 2 - ((Math.max(0, existingDigitalAssetsCount -1)) * angleStep / 2);
-                const angle = angleStart + (index * angleStep) ;
+                const angleStep = Math.PI / 6; // Increased density
+                const radius = 280 + Math.floor(existingUnionDigitalAssetsCount / 8) * 90; // Slightly larger radius for more space
+                // Distribute around the union node, not just below
+                const angle = (index * angleStep) + Math.PI / 12;
 
 
                 nodesToAddThisRun.push({
-                    id: assetId, type: 'assetNode', position: { x: sourceX + radius * Math.cos(angle), y: sourceY + (unionNodeInstance?.height ?? 100) + 50 + radius * Math.sin(angle) }, draggable: true, nodeOrigin,
+                    id: assetId, type: 'assetNode', position: { x: sourceX + radius * Math.cos(angle), y: sourceY + radius * Math.sin(angle) }, draggable: true, nodeOrigin,
                     data: assetDataForDetails
                 });
                 edgesToAddThisRun.push({
@@ -230,6 +233,56 @@ export default function AssetManagementDashboard() {
                 });
             }
         });
+        
+        // Logic for USDC linked to a child
+        const firstChildNode = allMembers.find(m => m.tipoRelacao === 'filho_a');
+        if (firstChildNode && firstChildNode.id) {
+          const childId = firstChildNode.id;
+          const usdcAssetId = `mock-usdc-child-${childId}`;
+          const usdcNodeExists = nodes.some(n => n.id === usdcAssetId);
+
+          if (!usdcNodeExists) {
+            const usdcAssetData: ExtendedAssetNodeData = {
+              id: usdcAssetId,
+              userId: effectiveUser.uid,
+              nomeAtivo: 'USDC Reserva',
+              tipo: 'digital',
+              quantidadeTotalDigital: 5000,
+              transactions: [{ id: `tx-usdc-${childId}`, dataAquisicao: new Date(), quantidadeDigital: 5000, quemComprou: 'Carteira Conectada' }],
+              isAutoLoaded: true,
+              assignedToMemberId: childId,
+              releaseCondition: { type: 'age', targetAge: 18 },
+              onOpenDetails: () => {}
+            };
+            usdcAssetData.onOpenDetails = () => handleOpenAssetDetailsModal(usdcAssetData);
+            
+            const childNodeInstance = nodes.find(n => n.id === childId);
+            if (childNodeInstance) {
+                const childNodeX = childNodeInstance.position?.x ?? 0;
+                const childNodeY = childNodeInstance.position?.y ?? 0;
+                const childAssetsCount = edges.filter(e => e.source === childId).length;
+
+                const angleStepChild = Math.PI / 3; 
+                const radiusChild = 180;
+                const angleChild = (childAssetsCount * angleStepChild) + Math.PI / 6;
+
+
+                nodesToAddThisRun.push({
+                    id: usdcAssetId, type: 'assetNode', position: { x: childNodeX + radiusChild * Math.cos(angleChild), y: childNodeY + radiusChild * Math.sin(angleChild) }, draggable: true, nodeOrigin,
+                    data: usdcAssetData
+                });
+                edgesToAddThisRun.push({
+                    id: `e-${childId}-${usdcAssetId}`,
+                    source: childId,
+                    target: usdcAssetId,
+                    type: 'smoothstep',
+                    markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
+                    style: { stroke: 'hsl(var(--primary))', strokeWidth: 1.5 },
+                });
+            }
+          }
+        }
+
 
         if (nodesToAddThisRun.length > 0) {
              setNodes(prevNodes => {
@@ -246,7 +299,8 @@ export default function AssetManagementDashboard() {
             });
         }
     }
-  }, [authLoading, effectiveUser, user?.isWalletConnected, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal, nodes, setNodes, setEdges]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, effectiveUser?.displayName, user?.isWalletConnected, user?.uid, allMembers, nodes, setNodes, setEdges, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal]);
 
 
   const memberHasBirthDate = (memberId?: string): boolean => {
@@ -261,6 +315,7 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingAsset(true);
+    // For physical assets, `tipoAtivoDigital` will be undefined.
     const result = await addAsset(formData, effectiveUser.uid); 
 
     if (result.success && result.assetId && result.transactionId) {
@@ -273,21 +328,12 @@ export default function AssetManagementDashboard() {
         contribuicaoParceiro1: formData.contribuicaoParceiro1,
         contribuicaoParceiro2: formData.contribuicaoParceiro2,
         observacoes: formData.observacoes,
-        // Campos de ativo físico para a primeira transação
-        tipoImovelBemFisico: formData.tipoImovelBemFisico,
-        enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
+        tipoImovelBemFisico: formData.tipoImovelBemFisico, // Specific to physical asset transaction
+        enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico, // Specific to physical asset transaction
       };
-
+      
       const processedAssignedToMemberId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" ? undefined : formData.assignedToMemberId);
       
-      let existingNodeIndex = -1;
-      let existingNode: Node<AssetNodeDataType> | undefined;
-
-      // Para ativos físicos, não há consolidação de quantidade como em digitais.
-      // Sempre criamos um novo nó para um novo ativo físico.
-      // A lógica de 'existingNode' aqui seria mais para o caso de uma futura funcionalidade de "adicionar transação a ativo físico existente".
-      // Por ora, um novo ativo físico sempre gera um novo nó.
-
       const sourceNodeId = processedAssignedToMemberId || UNION_NODE_ID;
       const sourceNodeInstance = nodes.find(n => n.id === sourceNodeId);
 
@@ -298,54 +344,42 @@ export default function AssetManagementDashboard() {
         return;
       }
 
-      const assetNodesLinkedToSource = nodes.filter(n => {
-         if (n.type !== 'assetNode') return false;
-         const nodeData = n.data as AssetNodeDataType;
-         let isLinkedToThisSource = false;
-         if (sourceNodeId === UNION_NODE_ID) {
-            isLinkedToThisSource = !nodeData.assignedToMemberId;
-         } else {
-            isLinkedToThisSource = nodeData.assignedToMemberId === sourceNodeId;
-         }
-         const edgeExists = edges.some(edge => edge.source === sourceNodeId && edge.target === n.id);
-         return isLinkedToThisSource && nodeData.tipo === 'fisico' && edgeExists;
-      }).length;
+      const assetNodesLinkedToSource = edges.filter(e => e.source === sourceNodeId && nodes.find(n => n.id === e.target && n.type === 'assetNode')).length;
 
 
-      const angleStep = sourceNodeId === UNION_NODE_ID ? Math.PI / 4 : Math.PI / 3;
-      const radius = sourceNodeId === UNION_NODE_ID ? 250 + Math.floor(assetNodesLinkedToSource / 6) * 100 : 180 + Math.floor(assetNodesLinkedToSource / 4) * 70;
+      const angleStep = sourceNodeId === UNION_NODE_ID ? Math.PI / 6 : Math.PI / 4;
+      const radius = sourceNodeId === UNION_NODE_ID ? 280 + Math.floor(assetNodesLinkedToSource / 8) * 90 : 180 + Math.floor(assetNodesLinkedToSource / 6) * 80;
       const sourceNodeX = sourceNodeInstance.position?.x ?? 400;
       const sourceNodeY = sourceNodeInstance.position?.y ?? 100;
-      const sourceNodeHeight = sourceNodeInstance.height ?? (sourceNodeInstance.type === 'unionNode' ? 100 : 80);
-
+      
       let angleStart;
       if (sourceNodeId === UNION_NODE_ID) { 
-          angleStart = (Math.PI * 1.5) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ; 
+          angleStart = (Math.PI * 1.75) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ; 
       } else { 
-          angleStart = (Math.PI * 0.25) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ; 
+          angleStart = (Math.PI * 0.15) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ; 
       }
       const angle = angleStart + (assetNodesLinkedToSource * angleStep) ;
 
       const newAssetNodeX = sourceNodeX + radius * Math.cos(angle);
-      const newAssetNodeY = sourceNodeY + sourceNodeHeight + 50 + radius * Math.sin(angle);
+      const newAssetNodeY = sourceNodeY + radius * Math.sin(angle);
       
-      const nodeDataPayload: AssetNodeDataType = {
+      const nodeDataPayload: ExtendedAssetNodeData = {
           id: result.assetId!,
           userId: effectiveUser.uid,
           nomeAtivo: formData.nomeAtivo,
-          tipo: 'fisico',
-          tipoImovelBemFisico: formData.tipoImovelBemFisico!,
+          tipo: 'fisico', // Explicitly physical for this form
+          tipoImovelBemFisico: formData.tipoImovelBemFisico,
           enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
           transactions: [newTransaction],
           observacoes: formData.observacoes, // Observação geral do ativo, pode ser a mesma da primeira transação
           assignedToMemberId: processedAssignedToMemberId,
           releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
           isAutoLoaded: false,
-          onOpenDetails: () => {} // Placeholder, será definido abaixo
+          onOpenDetails: () => {} 
       };
       nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
       
-      const newAssetNodeReactFlow: Node<AssetNodeDataType> = {
+      const newAssetNodeReactFlow: Node<ExtendedAssetNodeData> = {
         id: result.assetId!,
         type: 'assetNode',
         data: nodeDataPayload,
@@ -391,7 +425,7 @@ export default function AssetManagementDashboard() {
         tipoRelacao: data.tipoRelacao, 
         dataNascimento: data.dataNascimento,
       };
-      setAllMembers(prev => [...prev, newMember]);
+      setAllMembers(prev => [...prev, newMember]); // Add to allMembers for future reference
 
       const unionNodeInstance = nodes.find(n => n.id === UNION_NODE_ID);
       if (!unionNodeInstance) {
@@ -400,17 +434,16 @@ export default function AssetManagementDashboard() {
       }
 
       const memberNodesCount = nodes.filter(n => n.type === 'memberNode').length;
-      const angleStep = Math.PI / 4;
-      const radius = 250 + Math.floor(memberNodesCount / 6) * 100;
+      const angleStep = Math.PI / 6; // Increased density
+      const radius = 280 + Math.floor(memberNodesCount / 8) * 90; // Slightly larger radius
       const unionNodeX = unionNodeInstance.position?.x ?? 400;
       const unionNodeY = unionNodeInstance.position?.y ?? 100;
-      const unionNodeHeight = unionNodeInstance.height ?? 100;
-
-      const angleStart = (Math.PI * 1.5) - ((Math.max(0, memberNodesCount -1)) * angleStep / 2); 
+      
+      const angleStart = (Math.PI * 0.25) - ((Math.max(0, memberNodesCount -1)) * angleStep / 2); // Start slightly to the side
       const angle = angleStart + (memberNodesCount * angleStep);
 
       const newMemberNodeX = unionNodeX + radius * Math.cos(angle);
-      const newMemberNodeY = unionNodeY + unionNodeHeight + 50 + radius * Math.sin(angle);
+      const newMemberNodeY = unionNodeY + radius * Math.sin(angle);
 
       const nodeDataPayload: MemberNodeData = {
         id: result.memberId,
@@ -461,7 +494,7 @@ export default function AssetManagementDashboard() {
   }
 
   const getMemberNameById = (memberId?: string) => {
-    if (!memberId || memberId === "Entidade Principal") return 'União Principal (Ipê Acta)';
+    if (!memberId || memberId === "Entidade Principal" || memberId === "Carteira Conectada") return 'União Principal (Ipê Acta)';
     const member = allMembers.find(m => m.id === memberId);
     return member ? member.nome : 'Membro Desconhecido';
   };
@@ -526,19 +559,19 @@ export default function AssetManagementDashboard() {
               {selectedAssetForDetails.tipo === 'digital' && (
                 <div>
                   <Label className="text-xs font-medium text-muted-foreground">Quantidade Total</Label>
-                  <p className="text-foreground">{(selectedAssetForDetails as AssetNodeDataType).quantidadeTotalDigital?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) || 'N/A'}</p>
+                  <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData).quantidadeTotalDigital?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 }) || 'N/A'}</p>
                 </div>
               )}
               {selectedAssetForDetails.tipo === 'fisico' && (
                 <>
                   <div>
                     <Label className="text-xs font-medium text-muted-foreground">Tipo de Bem Físico</Label>
-                    <p className="text-foreground">{(selectedAssetForDetails as AssetNodeDataType).tipoImovelBemFisico || 'Não especificado'}</p>
+                    <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData).tipoImovelBemFisico || 'Não especificado'}</p>
                   </div>
-                  {(selectedAssetForDetails as AssetNodeDataType).enderecoLocalizacaoFisico && (
+                  {(selectedAssetForDetails as ExtendedAssetNodeData).enderecoLocalizacaoFisico && (
                     <div>
                         <Label className="text-xs font-medium text-muted-foreground">Endereço/Localização</Label>
-                        <p className="text-foreground">{(selectedAssetForDetails as AssetNodeDataType).enderecoLocalizacaoFisico}</p>
+                        <p className="text-foreground">{(selectedAssetForDetails as ExtendedAssetNodeData).enderecoLocalizacaoFisico}</p>
                     </div>
                   )}
                 </>
@@ -596,7 +629,7 @@ export default function AssetManagementDashboard() {
                            {tx.quemComprou && (
                             <div>
                               <Label className="text-xs font-medium text-muted-foreground">Adquirido por</Label>
-                              <p className="text-foreground">{tx.quemComprou === "Entidade Principal" ? "União Principal (Ipê Acta)" : getMemberNameById(tx.quemComprou)}</p>
+                              <p className="text-foreground">{tx.quemComprou === "Entidade Principal" ? "União Principal (Ipê Acta)" : tx.quemComprou === "Carteira Conectada" ? "Carteira Conectada (Simulado)" : getMemberNameById(tx.quemComprou)}</p>
                             </div>
                           )}
                           {tx.quemComprou === 'Ambos' && effectiveUser?.displayName && (
@@ -651,8 +684,8 @@ export default function AssetManagementDashboard() {
         onAddClause={handleAddContractClause}
         onRemoveClause={handleRemoveClause}
         onUpdateClause={handleUpdateContractClause}
-        dialogTitle="Configurações do Contrato da União"
-        dialogDescription="Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Lembre-se de que o Ipê Acta é uma ferramenta de planejamento e não substitui aconselhamento jurídico."
+        dialogTitle="Configurações dos Acordos do Registro"
+        dialogDescription="Adicione, visualize, edite e gerencie as cláusulas dos seus acordos. Lembre-se que o Ipê Acta é uma ferramenta de planejamento e não substitui aconselhamento jurídico."
       />
 
       <div className="flex-grow shadow-lg relative overflow-hidden rounded-md border-2 border-dashed border-border bg-background">
@@ -681,14 +714,19 @@ export default function AssetManagementDashboard() {
 declare module 'reactflow' {
   interface NodeData {
     id?: string;
-    label?: string;
-    name?: string; // For MemberNode
-    relationshipType?: string; // For MemberNode
-    onAddAssetClick?: (memberId: string) => void; // For MemberNode
-    onSettingsClick?: () => void; // For UnionNode
-    onOpenAssetModal?: () => void; // For UnionNode
-    onAddMember?: () => void; // For UnionNode
-    // Campos de AssetNodeDataType
+    label?: string; // For default React Flow nodes, can be used by custom nodes too
+    
+    // For UnionNode
+    onSettingsClick?: () => void;
+    onOpenAssetModal?: () => void;
+    onAddMember?: () => void;
+    
+    // For MemberNode
+    name?: string; 
+    relationshipType?: string; 
+    onAddAssetClick?: (memberId: string) => void; 
+    
+    // For AssetNode (ExtendedAssetNodeData)
     userId?: string;
     nomeAtivo?: string;
     tipo?: 'digital' | 'fisico';
@@ -703,4 +741,3 @@ declare module 'reactflow' {
     onOpenDetails?: () => void;
   }
 }
-
