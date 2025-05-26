@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/co
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye, Building } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye, Building, Landmark } from 'lucide-react';
 import type { ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -144,7 +144,7 @@ export default function SignupPage() {
       // No mandatory validation here
     } else if (currentStep === 3) { // Union Name
       if (!unionName.trim()) {
-        setError("Please enter the name of the union.");
+        setError("Please enter the name of your union.");
         return false;
       }
     } else if (currentStep === 4) { // Account Details
@@ -208,7 +208,7 @@ export default function SignupPage() {
         religion,
         isWalletConnected,
         connectedWalletAddress,
-        contractClauses
+        contractClauses,
       );
     } catch (err) {
       setError('Failed to create contract. Please try again.');
@@ -218,7 +218,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gradient-green/20 via-gradient-blue/20 to-background p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gradient-green/20 via-gradient-blue/20 to-background p-4">
       <Card className="w-full max-w-2xl shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
@@ -556,15 +556,18 @@ export default function SignupPage() {
             </div>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col items-center space-y-2">
-          <p className="text-sm text-muted-foreground">
-            Already have a contract?{' '}
-            <Button variant="link" asChild className="p-0 h-auto text-accent hover:text-accent/80">
-              <Link href="/login">Access here</Link>
-            </Button>
-          </p>
+        <CardFooter className="flex-shrink-0 py-4">
+          {/* CardFooter can be empty or used for other purposes if the link is outside */}
         </CardFooter>
       </Card>
+      <div className="mt-6 text-center">
+        <p className="text-sm text-muted-foreground">
+          Already have a contract?{' '}
+          <Button variant="link" asChild className="p-0 h-auto text-accent hover:text-accent/80">
+            <Link href="/login">Access here</Link>
+          </Button>
+        </p>
+      </div>
     </div>
   );
 }
