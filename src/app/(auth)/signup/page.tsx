@@ -16,7 +16,7 @@ import type { ContractClause } from '@/components/contract/ContractSettingsDialo
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const TOTAL_STEPS = 7; // Aumentado para incluir a etapa de contrato
+const TOTAL_STEPS = 8; // Aumentado para incluir a etapa de contrato e separar crença
 
 const religionOptions = [
     { value: "cristianismo", label: "Cristianismo" },
@@ -39,35 +39,37 @@ const defaultContractClauses: ContractClause[] = [
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Etapa 1
-  const [religion, setReligion] = useState('');
+  // Etapa 1: Estrutura da União
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
+  
+  // Etapa 2: Crença
+  const [religion, setReligion] = useState('');
 
-  // Etapa 2
+  // Etapa 3: Nome da União
   const [unionName, setUnionName] = useState('');
 
-  // Etapa 3
+  // Etapa 4: Detalhes da Conta
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // Etapa 4
+  // Etapa 5: Conectar Carteira
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [connectedWalletAddress, setConnectedWalletAddress] = useState<string | null>(null);
 
-  // Etapa 5
+  // Etapa 6: Fotos
   const [photo1, setPhoto1] = useState<File | null>(null);
   const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
   const [photo2, setPhoto2] = useState<File | null>(null);
   const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
 
-  // Etapa 6: Contract Clauses
+  // Etapa 7: Acordos Iniciais
   const [contractClauses, setContractClauses] = useState<ContractClause[]>(defaultContractClauses);
   const [newClauseText, setNewClauseText] = useState('');
   const [editingClause, setEditingClause] = useState<ContractClause | null>(null);
 
 
-  // Etapa 7
+  // Etapa 8: Termos e Condições
   const [acceptedContract, setAcceptedContract] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -99,7 +101,6 @@ export default function SignupPage() {
     }, 1000);
   };
 
-  // Clause Management
   const handleAddOrUpdateClause = () => {
     const textToSave = editingClause ? editingClause.text : newClauseText;
     if (!textToSave.trim()) return;
@@ -115,7 +116,7 @@ export default function SignupPage() {
 
   const handleEditClause = (clause: ContractClause) => {
     setEditingClause(clause);
-    setNewClauseText(''); // Clear new clause text if editing
+    setNewClauseText(''); 
   };
 
   const handleRemoveClause = (id: string) => {
@@ -132,17 +133,19 @@ export default function SignupPage() {
 
   const validateStep = () => {
     setError(null);
-    if (currentStep === 1) {
+    if (currentStep === 1) { // Estrutura da União
       if (!relationshipStructure) {
         setError("Por favor, selecione a estrutura da sua união.");
         return false;
       }
-    } else if (currentStep === 2) {
+    } else if (currentStep === 2) { // Crença - Opcional
+      // Nenhuma validação obrigatória aqui
+    } else if (currentStep === 3) { // Nome da União
       if (!unionName.trim()) {
         setError("Por favor, insira o nome da união (Ex: Alex & Jamie).");
         return false;
       }
-    } else if (currentStep === 3) {
+    } else if (currentStep === 4) { // Detalhes da Conta
       if (!email.trim() || !password || !confirmPassword) {
         setError("Por favor, preencha email, senha e confirmação de senha.");
         return false;
@@ -159,10 +162,10 @@ export default function SignupPage() {
         setError('A senha deve ter pelo menos 6 caracteres.');
         return false;
       }
-    } else if (currentStep === 4) { // Conectar Carteira - Opcional
-    } else if (currentStep === 5) { // Fotos - Opcional
-    } else if (currentStep === 6) { // Cláusulas - Opcional (pode ser vazio)
-    } else if (currentStep === 7) {
+    } else if (currentStep === 5) { // Conectar Carteira - Opcional
+    } else if (currentStep === 6) { // Fotos - Opcional
+    } else if (currentStep === 7) { // Acordos Iniciais - Opcional (pode ser vazio)
+    } else if (currentStep === 8) { // Termos
       if (!acceptedContract) {
         setError('Você precisa aceitar os Termos de Serviço para continuar.');
         return false;
@@ -202,7 +205,7 @@ export default function SignupPage() {
         religion,
         isWalletConnected,
         connectedWalletAddress,
-        contractClauses // Passando cláusulas
+        contractClauses 
       );
     } catch (err) {
       setError('Falha ao criar conta. Por favor, tente novamente.');
@@ -222,7 +225,7 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
-            {currentStep === 1 && (
+            {currentStep === 1 && ( // Etapa 1: Estrutura da União
               <div className="space-y-4">
                 <div>
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><Users size={20} className="mr-2 text-primary" />Estrutura da União</Label>
@@ -242,23 +245,28 @@ export default function SignupPage() {
                         </div>
                     </RadioGroup>
                 </div>
-                <div>
-                    <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Crença / Filosofia (Opcional)</Label>
-                    <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
-                        <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary">
-                            <SelectValue placeholder="Selecione uma opção" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover text-popover-foreground border-border">
-                            {religionOptions.map(opt => (
-                                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
               </div>
             )}
 
-            {currentStep === 2 && (
+            {currentStep === 2 && ( // Etapa 2: Crença
+                 <div className="space-y-4">
+                    <div>
+                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Crença (Opcional)</Label>
+                        <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
+                            <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary">
+                                <SelectValue placeholder="Selecione uma opção" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover text-popover-foreground border-border">
+                                {religionOptions.map(opt => (
+                                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                 </div>
+            )}
+
+            {currentStep === 3 && ( // Etapa 3: Nome da União
               <div className="space-y-2">
                 <Label htmlFor="unionName" className="text-foreground/90">Nome da União (Ex: Alex & Jamie)</Label>
                 <Input
@@ -274,7 +282,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 4 && ( // Etapa 4: Detalhes da Conta
               <>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-foreground/90">Endereço de Email Principal</Label>
@@ -315,7 +323,7 @@ export default function SignupPage() {
               </>
             )}
 
-            {currentStep === 4 && (
+            {currentStep === 5 && ( // Etapa 5: Conectar Carteira
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center text-foreground/90"><Wallet size={20} className="mr-2 text-primary" />Conectar Carteira da União (Opcional)</Label>
                 <CardDescription className="text-muted-foreground">Conecte sua carteira digital para futuramente visualizar seus ativos digitais automaticamente (simulado).</CardDescription>
@@ -344,7 +352,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 5 && (
+            {currentStep === 6 && ( // Etapa 6: Fotos
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">Adicione fotos da união (opcional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -386,7 +394,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 6 && (
+            {currentStep === 7 && ( // Etapa 7: Acordos Iniciais
               <div className="space-y-4">
                 <Label className="text-lg font-semibold flex items-center text-foreground/90"><FileText size={20} className="mr-2 text-primary"/>Acordos Iniciais do Registro</Label>
                 <CardDescription className="text-muted-foreground">Defina as cláusulas iniciais do seu registro. Você poderá editá-las depois.</CardDescription>
@@ -441,7 +449,7 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 7 && (
+            {currentStep === 8 && ( // Etapa 8: Termos e Condições
               <div className="space-y-4">
                 <Label className="text-lg font-semibold text-foreground/90">Termos de Serviço - Ipê Acta</Label>
                 <div className="p-4 border border-border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm text-muted-foreground">
@@ -503,3 +511,5 @@ export default function SignupPage() {
     </div>
   );
 }
+
+    
