@@ -325,8 +325,8 @@ export default function SignupPage() {
 
             {currentStep === 5 && ( // Etapa 5: Conectar Carteira
               <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center text-foreground/90"><Wallet size={20} className="mr-2 text-primary" />Conectar Carteira da União (Opcional)</Label>
-                <CardDescription className="text-muted-foreground">Conecte sua carteira digital para futuramente visualizar seus ativos digitais automaticamente (simulado).</CardDescription>
+                <Label className="text-lg font-semibold flex items-center text-foreground/90"><Wallet size={20} className="mr-2 text-primary" />Conectar Carteira da União</Label>
+                <CardDescription className="text-muted-foreground">Conecte sua carteira digital para auto-visualizar seus ativos digitais dentro da holding.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
                   <div className="p-4 border rounded-md bg-accent/10 border-accent/30 text-accent">
                     <p className="font-semibold">Carteira Conectada!</p>
@@ -493,7 +493,7 @@ export default function SignupPage() {
                   ) : (
                     <UserPlus className="mr-2 h-4 w-4" />
                   )}
-                  Criar Registro
+                  Criar Contrato
                 </Button>
               )}
             </div>
@@ -511,10 +511,10 @@ export default function SignupPage() {
     </div>
   );
 }
-
     
-
     
+  
 
   
 
+    
