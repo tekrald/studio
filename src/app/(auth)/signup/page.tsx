@@ -28,6 +28,7 @@ const initialReligionOptions = [
     { value: "hinduism", label: "Hinduism" },
     { value: "islam", label: "Islam" },
     { value: "judaism", label: "Judaism" },
+    // { value: "none", label: "Prefiro não dizer" }, // Removed
     { value: "other", label: "Other" },
     { value: "spiritualism", label: "Spiritualism" },
 ];
@@ -40,7 +41,7 @@ const religionOptions = otherOption ? [...sortedReligionOptions, otherOption] : 
 
 
 const defaultContractClauses: ContractClause[] = [
-  { id: 'initial-clause-1', text: "All jointly acquired assets will be divided as agreed upon in case of dissolution of the union." },
+  { id: 'initial-clause-1', text: "All assets acquired together will be divided into X% as agreed in the event of dissolution of the union or equally what each person put in from their own pocket." },
   { id: 'initial-clause-2', text: "Financial and operational responsibilities will be divided as defined in this record." },
 ];
 
@@ -268,9 +269,9 @@ export default function SignupPage() {
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col"> {/* Container for Step 1, width determined by content */}
+              <div className="space-y-4 flex flex-col"> {/* Container for Step 1 */}
                 <div> {/* Wrapper for Label and RadioGroup */}
-                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
+                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
                         value={relationshipStructure}
                         onValueChange={(value: 'monogamous' | 'polygamous') => setRelationshipStructure(value)}
@@ -292,9 +293,9 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col"> {/* Container for Step 2, width determined by content */}
+                 <div className="space-y-4 flex flex-col"> {/* Container for Step 2 */}
                     <div> {/* Wrapper for Label and Select */}
-                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
+                        <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
                             <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary w-full min-w-[200px] sm:min-w-[250px]">
                                 <SelectValue placeholder="Select an option" />
@@ -581,3 +582,6 @@ export default function SignupPage() {
     </div>
   );
 }
+
+
+    
