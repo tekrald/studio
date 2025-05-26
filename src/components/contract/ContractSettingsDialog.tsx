@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, Trash2, Edit3, FileText, Users, Save } from 'lucide-react';
+import { PlusCircle, Trash2, Edit3, FileText, Users, Save, Landmark } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
@@ -34,14 +34,14 @@ interface ContractSettingsDialogProps {
 
 const suggestedClausesTemplates = {
   partilhaBens: [
-    { id: 'sug_pb_1', text: "Partilha de bens em caso de término da união: divisão de 50/50 dos bens adquiridos em conjunto durante a união." },
-    { id: 'sug_pb_2', text: "Bens adquiridos individualmente antes da união permanecerão como propriedade individual de cada parte." },
-    { id: 'sug_pb_3', text: "Em caso de aquisição do bem [NOME DO BEM ESPECÍFICO], a propriedade será dividida em X% para Parte A e Z% para Parte B." },
+    { id: 'sug_pb_1', text: "Partilha de ativos em caso de dissolução: divisão de 50/50 dos ativos adquiridos em conjunto durante a vigência do acordo." },
+    { id: 'sug_pb_2', text: "Ativos adquiridos individualmente antes do acordo permanecerão como propriedade individual de cada parte." },
+    { id: 'sug_pb_3', text: "Em caso de aquisição do ativo [NOME DO ATIVO ESPECÍFICO], a propriedade será dividida em X% para Parte A e Z% para Parte B." },
   ],
-  regrasConvivencia: [
-    { id: 'sug_rc_1', text: "As despesas domésticas mensais (ex: contas de água, luz, internet) serão divididas da seguinte forma: [Descrever a divisão]." },
-    { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de R$ [VALOR]) deverão ser discutidas e aprovadas por todas as partes envolvidas no contrato." },
-    { id: 'sug_rc_3', text: "Viagens individuais: [Definir regras, ex: permitidas com comunicação prévia de X dias/semanas]." },
+  regrasConvivencia: [ // Rebatizado para "Regras da Sociedade"
+    { id: 'sug_rc_1', text: "As despesas operacionais (ex: custos de manutenção, taxas) serão divididas da seguinte forma: [Descrever a divisão]." },
+    { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de [VALOR/MOEDA]) deverão ser discutidas e aprovadas por todas as partes envolvidas no acordo." },
+    { id: 'sug_rc_3', text: "Contribuições e responsabilidades: [Definir regras para aportes, trabalho, etc.]." },
   ],
 };
 
@@ -85,12 +85,10 @@ export function ContractSettingsDialog({
 
   useEffect(() => {
     if (isOpen) {
-      // Reset state when dialog opens, if not editing
       if (!editingClauseId) {
         setNewClauseText('');
       }
     } else {
-      // Always reset when dialog closes
       setNewClauseText('');
       setEditingClauseId(null);
     }
@@ -100,20 +98,19 @@ export function ContractSettingsDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-primary">Configurações do Contrato da União</DialogTitle>
+          <DialogTitle className="text-2xl text-primary">Configurações dos Acordos</DialogTitle>
           <DialogDescription>
-            Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Estas cláusulas são flexíveis e podem ser adaptadas a qualquer configuração familiar e crença.
+            Adicione, visualize, edite e gerencie as cláusulas dos seus acordos e registros em Ipê City.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4 flex-grow min-h-0">
-          {/* Coluna de Cláusulas Atuais */}
           <div className="md:col-span-2 flex flex-col min-h-0">
             <h3 className="text-lg font-semibold mb-3 text-foreground">Cláusulas Atuais</h3>
             {clauses.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-10">Nenhuma cláusula adicionada ainda. Comece adicionando uma nova ou usando uma sugestão.</p>
             ) : (
-              <ScrollArea className="flex-grow border rounded-md p-4 bg-muted/30 max-h-[calc(90vh-350px)] md:max-h-none"> {/* md:max-h-none para permitir que cresça com o dialogo */}
+              <ScrollArea className="flex-grow border rounded-md p-4 bg-muted/30 max-h-[calc(90vh-350px)] md:max-h-none">
                 <ul className="space-y-3">
                   {clauses.map((clause) => (
                     <li key={clause.id} className="p-3 bg-card shadow rounded-md text-sm text-card-foreground">
@@ -133,7 +130,6 @@ export function ContractSettingsDialog({
             )}
           </div>
 
-          {/* Coluna de Adicionar/Editar Cláusula e Sugestões */}
           <div className="flex flex-col space-y-6 min-h-0">
             <div>
               <Label htmlFor="clause-text-area" className="text-lg font-semibold mb-2 text-foreground block">
@@ -163,10 +159,10 @@ export function ContractSettingsDialog({
 
             <div>
               <h3 className="text-lg font-semibold mb-3 text-foreground">Sugestões de Cláusulas</h3>
-              <ScrollArea className="max-h-[calc(90vh-500px)] md:max-h-none pr-2"> {/* md:max-h-none para permitir que cresça com o dialogo */}
+              <ScrollArea className="max-h-[calc(90vh-500px)] md:max-h-none pr-2"> 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><FileText size={18} className="mr-2"/>Partilha de Bens</h4>
+                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Landmark size={18} className="mr-2"/>Partilha de Ativos</h4>
                     {suggestedClausesTemplates.partilhaBens.map(sug => (
                         <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}
@@ -174,7 +170,7 @@ export function ContractSettingsDialog({
                     ))}
                   </div>
                   <div>
-                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras de Acordo Comum</h4>
+                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras da Sociedade</h4>
                      {suggestedClausesTemplates.regrasConvivencia.map(sug => (
                         <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}

@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Holding', icon: Briefcase },
+  { href: '/dashboard', label: 'Registros', icon: Briefcase },
   { href: '/profile', label: 'Perfil', icon: UserCircle }, 
 ];
 
@@ -22,13 +22,13 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/domedome-logo.svg" 
-            alt="domedome Logo"
-            width={150} 
+            src="/acta-ipe-logo.svg" 
+            alt="Acta Ipê Logo"
+            width={250} 
             height={83}  
             className="h-auto" 
             priority
-            // Filtro removido para reverter à cor original do SVG
+            data-ai-hint="logo ActaIpê"
           />
         </Link>
         
@@ -86,7 +86,7 @@ export function Header() {
       {user && (
         <div className="md:hidden bg-card border-t border-border p-2 flex justify-around">
            {navLinks.map((link) => {
-              const label = link.href === '/profile' && user?.displayName ? user.displayName : link.label;
+              const label = link.href === '/profile' && user?.displayName ? user.displayName.split('&')[0].trim() : link.label;
               return (
                 <Button key={link.href} variant="ghost" size="sm" asChild
                   className={cn(

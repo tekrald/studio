@@ -34,7 +34,7 @@ export default function SignupPage() {
   const [religion, setReligion] = useState('');
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
 
-  const [name, setName] = useState(''); // Este 'name' será o "Nome da Holding"
+  const [name, setName] = useState(''); // Nome da Entidade/Registro
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -80,14 +80,14 @@ export default function SignupPage() {
 
   const validateStep = () => {
     setError(null);
-    if (currentStep === 1) { // Detalhes da União
+    if (currentStep === 1) { // Detalhes da Sociedade
       if (!relationshipStructure) {
-        setError("Por favor, selecione a estrutura da relação.");
+        setError("Por favor, selecione a estrutura da sua sociedade/relação.");
         return false;
       }
-    } else if (currentStep === 2) { // Nome da Holding
+    } else if (currentStep === 2) { // Nome da Entidade/Registro
       if (!name.trim()) {
-        setError("Por favor, insira o nome da holding.");
+        setError("Por favor, insira o nome da entidade/registro.");
         return false;
       }
     } else if (currentStep === 3) { // Detalhes da Conta
@@ -109,11 +109,11 @@ export default function SignupPage() {
       }
     } else if (currentStep === 4) { // Conectar Carteira
       // Esta etapa é opcional
-    } else if (currentStep === 5) { // Fotos do Casal
-      // Upload de fotos é opcional
+    } else if (currentStep === 5) { // Logos/Imagens (ex-Fotos do Casal)
+      // Upload de logos/imagens é opcional
     } else if (currentStep === 6) { // Termos e Condições
       if (!acceptedContract) {
-        setError('Você precisa aceitar os Termos e Condições para continuar.');
+        setError('Você precisa aceitar os Termos de Serviço para continuar.');
         return false;
       }
     }
@@ -148,7 +148,7 @@ export default function SignupPage() {
       await new Promise(resolve => setTimeout(resolve, 1000)); 
       signup(
         email,
-        name, // Este 'name' é o "Nome da Holding"
+        name, // Nome da Entidade/Registro
         relationshipStructure,
         religion,
         isWalletConnected,
@@ -167,16 +167,16 @@ export default function SignupPage() {
       <Card className="w-full max-w-lg shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-            <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} priority data-ai-hint="logo domedome" />
+            <Image src="/acta-ipe-logo.svg" alt="Acta Ipê Logo" width={250} height={83} priority data-ai-hint="logo ActaIpê" />
           </Link>
-          <CardDescription className="text-lg">Siga as etapas para começar a construir seu futuro. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
+          <CardDescription className="text-lg font-lato">Siga as etapas para criar seu registro em Ipê City. (Etapa {currentStep} de {TOTAL_STEPS})</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFinalSubmit} className="space-y-6">
             {currentStep === 1 && ( 
               <div className="space-y-4">
                 <div>
-                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2"><Users size={20} className="mr-2 text-primary" />Estrutura da Relação</Label>
+                    <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center mb-2"><Users size={20} className="mr-2 text-primary" />Estrutura da Sociedade/Relação</Label>
                     <RadioGroup 
                         value={relationshipStructure} 
                         onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous')}
@@ -185,16 +185,16 @@ export default function SignupPage() {
                     >
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="monogamous" id="rel-monogamous" />
-                            <Label htmlFor="rel-monogamous" className="font-normal">Monogâmica</Label>
+                            <Label htmlFor="rel-monogamous" className="font-normal">Individual/Monogâmica</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="polygamous" id="rel-polygamous" />
-                            <Label htmlFor="rel-polygamous" className="font-normal">Poligâmica</Label>
+                            <Label htmlFor="rel-polygamous" className="font-normal">Coletiva/Poligâmica</Label>
                         </div>
                     </RadioGroup>
                 </div>
                 <div>
-                    <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2"><BookOpen size={20} className="mr-2 text-primary" />Religião / Crença Espiritual (Opcional)</Label>
+                    <Label htmlFor="religion" className="text-lg font-semibold flex items-center mb-2"><BookOpen size={20} className="mr-2 text-primary" />Crença / Filosofia (Opcional)</Label>
                     <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
                         <SelectTrigger id="religion">
                             <SelectValue placeholder="Selecione uma opção" />
@@ -211,11 +211,11 @@ export default function SignupPage() {
 
             {currentStep === 2 && ( 
               <div className="space-y-2">
-                <Label htmlFor="name">Nome da Holding (ex: Alex & Jamie)</Label>
+                <Label htmlFor="name">Nome da Entidade/Registro (ex: Família Silva, Projeto Ipê Verde)</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Alex & Jamie"
+                  placeholder="ex: Família Silva, Projeto Ipê Verde"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
@@ -227,7 +227,7 @@ export default function SignupPage() {
             {currentStep === 3 && ( 
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Endereço de Email Compartilhado</Label>
+                  <Label htmlFor="email">Endereço de Email Principal</Label>
                   <Input
                     id="email"
                     type="email"
@@ -264,8 +264,8 @@ export default function SignupPage() {
 
             {currentStep === 4 && (
               <div className="space-y-4">
-                <Label className="text-lg font-semibold flex items-center"><Wallet size={20} className="mr-2 text-primary" />Conectar Carteira da União (Opcional)</Label>
-                <CardDescription>Conecte a carteira digital da união para futuramente sincronizar ativos digitais automaticamente.</CardDescription>
+                <Label className="text-lg font-semibold flex items-center"><Wallet size={20} className="mr-2 text-primary" />Conectar Carteira Digital (Opcional)</Label>
+                <CardDescription>Conecte sua carteira digital para futuramente sincronizar ativos digitais automaticamente com seus registros em Ipê City.</CardDescription>
                 {isWalletConnected && connectedWalletAddress ? (
                   <div className="p-4 border rounded-md bg-green-50 border-green-200 text-green-700">
                     <p className="font-semibold">Carteira Conectada!</p>
@@ -294,38 +294,38 @@ export default function SignupPage() {
 
             {currentStep === 5 && ( 
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Adicione fotos que representem vocês como união (opcional).</p>
+                <p className="text-sm text-muted-foreground">Adicione logos ou imagens que representem sua entidade/registro (opcional).</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <div className="space-y-2">
-                    <Label htmlFor="photo1">Foto 1</Label>
+                    <Label htmlFor="photo1">Imagem 1</Label>
                     <div className="flex items-center space-x-2">
                       {photo1Preview ? (
-                        <Image src={photo1Preview} alt="Pré-visualização Foto 1" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="couple photo preview" />
+                        <Image src={photo1Preview} alt="Pré-visualização Imagem 1" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="entity logo preview" />
                       ) : (
-                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="couple photo placeholder">
+                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="entity logo placeholder">
                           <Camera size={32} />
                         </div>
                       )}
                       <Input id="photo1" type="file" accept="image/*" onChange={(e) => handlePhotoChange(e, 1)} className="sr-only" disabled={isLoading} />
                       <Button type="button" variant="outline" onClick={() => document.getElementById('photo1')?.click()} disabled={isLoading}>
-                        {photo1 ? "Trocar Foto" : "Escolher Foto"}
+                        {photo1 ? "Trocar Imagem" : "Escolher Imagem"}
                       </Button>
                     </div>
                     {photo1 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo1.name}>{photo1.name}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="photo2">Foto 2 (Opcional)</Label>
+                    <Label htmlFor="photo2">Imagem 2 (Opcional)</Label>
                      <div className="flex items-center space-x-2">
                       {photo2Preview ? (
-                        <Image src={photo2Preview} alt="Pré-visualização Foto 2" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="couple photo preview" />
+                        <Image src={photo2Preview} alt="Pré-visualização Imagem 2" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="entity logo preview" />
                       ) : (
-                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="couple photo placeholder">
+                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="entity logo placeholder">
                           <Camera size={32} />
                         </div>
                       )}
                       <Input id="photo2" type="file" accept="image/*" onChange={(e) => handlePhotoChange(e, 2)} className="sr-only" disabled={isLoading} />
                        <Button type="button" variant="outline" onClick={() => document.getElementById('photo2')?.click()} disabled={isLoading}>
-                        {photo2 ? "Trocar Foto" : "Escolher Foto"}
+                        {photo2 ? "Trocar Imagem" : "Escolher Imagem"}
                       </Button>
                     </div>
                     {photo2 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs" title={photo2.name}>{photo2.name}</p>}
@@ -336,20 +336,20 @@ export default function SignupPage() {
 
             {currentStep === 6 && ( 
               <div className="space-y-4">
-                <Label className="text-lg font-semibold">Termos e Condições do Aplicativo</Label>
+                <Label className="text-lg font-semibold">Termos de Serviço da Plataforma Acta Ipê</Label>
                 <div className="p-4 border rounded-md max-h-40 overflow-y-auto bg-muted/50 text-sm">
-                  <p className="mb-2">Ao criar uma conta no domedome, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
-                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o domedome apenas para fins legais e de acordo com estes termos. O serviço é fornecido para planejamento pessoal e gestão visual de patrimônio.</p>
-                  <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia (fotos, textos, dados de ativos). Você concede ao domedome uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
-                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> domedome é uma ferramenta de planejamento e visualização. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal de holdings ou empresas. A responsabilidade pela formalização e aconselhamento profissional é inteiramente sua.</p>
-                  <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade. Coletamos informações para fornecer e melhorar o serviço.</p>
-                  <p><strong>5. Limitação de Responsabilidade:</strong> O domedome não se responsabiliza por perdas ou danos resultantes do uso do serviço, nem por decisões tomadas com base nas informações aqui apresentadas, na máxima extensão permitida por lei.</p>
-                  <p className="mt-2"><strong>6. Conexão de Carteira (Simulada):</strong> Se você optar por "conectar" uma carteira, esta funcionalidade é atualmente simulada para fins de demonstração. Nenhum dado real da sua carteira é acessado ou armazenado. A futura integração real buscará apenas informações públicas (saldos, endereços de tokens) com sua permissão explícita.</p>
+                  <p className="mb-2">Ao criar uma conta no Acta Ipê, você concorda com nossos Termos de Serviço e Política de Privacidade.</p>
+                  <p className="mb-2"><strong>1. Uso do Serviço:</strong> Você concorda em usar o Acta Ipê apenas para fins legais e de acordo com estes termos. O serviço é fornecido para registro e gestão visual de ativos e acordos na Ipê City.</p>
+                  <p className="mb-2"><strong>2. Conteúdo do Usuário:</strong> Você é responsável por todo o conteúdo que envia (logos, textos, dados de ativos). Você concede ao Acta Ipê uma licença para usar esse conteúdo no contexto da prestação do serviço.</p>
+                  <p className="mb-2"><strong>3. Natureza do Serviço:</strong> Acta Ipê é uma ferramenta de registro visual e planejamento. Não fornece aconselhamento legal, financeiro ou contábil, nem realiza a formalização legal ou jurídica de entidades ou acordos. A responsabilidade pela validade e aconselhamento profissional é inteiramente sua.</p>
+                  <p className="mb-2"><strong>4. Privacidade:</strong> Seus dados serão tratados conforme nossa Política de Privacidade.</p>
+                  <p><strong>5. Limitação de Responsabilidade:</strong> O Acta Ipê não se responsabiliza por perdas ou danos resultantes do uso do serviço, nem por decisões tomadas com base nas informações aqui apresentadas, na máxima extensão permitida por lei.</p>
+                  <p className="mt-2"><strong>6. Conexão de Carteira (Simulada):</strong> A funcionalidade de conexão de carteira é atualmente simulada. Nenhum dado real da sua carteira é acessado ou armazenado.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="terms" checked={acceptedContract} onCheckedChange={(checked) => setAcceptedContract(Boolean(checked))} disabled={isLoading} />
                   <Label htmlFor="terms" className="text-sm font-normal">
-                    Eu li e aceito os Termos de Serviço e a Política de Privacidade.
+                    Eu li e aceito os Termos de Serviço e a Política de Privacidade do Acta Ipê.
                   </Label>
                 </div>
               </div>
@@ -377,7 +377,7 @@ export default function SignupPage() {
                   ) : (
                     <UserPlus className="mr-2 h-4 w-4" />
                   )}
-                  Cadastrar
+                  Criar Registro
                 </Button>
               )}
             </div>
@@ -385,9 +385,9 @@ export default function SignupPage() {
         </CardContent>
         <CardFooter className="flex flex-col items-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Já tem uma conta?{' '}
+            Já possui um registro?{' '}
             <Button variant="link" asChild className="p-0 h-auto text-primary">
-              <Link href="/login">Faça login aqui</Link>
+              <Link href="/login">Acesse aqui</Link>
             </Button>
           </p>
         </CardFooter>
@@ -395,6 +395,3 @@ export default function SignupPage() {
     </div>
   );
 }
-    
-
-    

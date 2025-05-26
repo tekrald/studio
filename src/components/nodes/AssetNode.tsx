@@ -6,11 +6,10 @@ import { Handle, Position } from 'reactflow';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DollarSign, Coins, Landmark, BuildingIcon, Clock } from 'lucide-react'; // Changed Building to BuildingIcon
+import { DollarSign, Coins, Landmark, BuildingIcon, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { AssetTransaction } from '@/types/asset'; // Assuming AssetTransaction might be useful for details
+import type { AssetTransaction } from '@/types/asset'; 
 
-// Consistent with dashboard/page.tsx
 export interface ExtendedAssetNodeData {
   id: string;
   userId: string;
@@ -19,11 +18,11 @@ export interface ExtendedAssetNodeData {
   quantidadeTotalDigital?: number;
   tipoImovelBemFisico?: string;
   enderecoLocalizacaoFisico?: string;
-  documentacaoFisico?: string;
+  documentacaoFisico?: string; // Mantido, embora o formulário não o colete mais diretamente assim
   transactions: AssetTransaction[];
   assignedToMemberId?: string;
   releaseCondition?: { type: 'age'; targetAge: number };
-  observacoesGerais?: string;
+  observacoesGerais?: string; // Observações gerais do ativo, não da transação
   onOpenDetails?: () => void;
 }
 
@@ -46,6 +45,20 @@ const EthereumIcon = () => (
   </svg>
 );
 
+// Adicionando um ícone para Solana
+const SolanaIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+    <defs>
+      <linearGradient id="solanaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: "#9945FF"}} />
+        <stop offset="100%" style={{stopColor: "#14F195"}} />
+      </linearGradient>
+    </defs>
+    <circle cx="12" cy="12" r="10" fill="url(#solanaGradient)"/>
+    <path d="M8.06006 6.5L6.5 8.06006L10.44 12L6.5 15.94L8.06006 17.5L12 13.56L15.94 17.5L17.5 15.94L13.56 12L17.5 8.06006L15.94 6.5L12 10.44L8.06006 6.5Z" fill="white" transform="scale(0.8) translate(3,3)"/>
+  </svg>
+);
+
 
 const getIconForAsset = (data: ExtendedAssetNodeData) => {
   if (data.tipo === 'digital') {
@@ -55,6 +68,9 @@ const getIconForAsset = (data: ExtendedAssetNodeData) => {
     if (data.nomeAtivo === 'Ethereum') {
       return <EthereumIcon />;
     }
+    if (data.nomeAtivo === 'Solana') {
+      return <SolanaIcon />;
+    }
     return <Coins size={18} className="text-primary mr-2" />;
   }
   if (data.tipo === 'fisico') {
@@ -63,11 +79,11 @@ const getIconForAsset = (data: ExtendedAssetNodeData) => {
       return <Landmark size={18} className="text-primary mr-2" />;
     }
     if (tipoBemLower.includes('veículo') || tipoBemLower.includes('carro') || tipoBemLower.includes('automóvel')) {
-      return <BuildingIcon size={18} className="text-primary mr-2" />; // Using BuildingIcon as Car is not in lucide
+      return <BuildingIcon size={18} className="text-primary mr-2" />; 
     }
-    return <Landmark size={18} className="text-primary mr-2" />; // Default for physical
+    return <Landmark size={18} className="text-primary mr-2" />; 
   }
-  return <DollarSign size={18} className="text-primary mr-2" />; // Default overall
+  return <DollarSign size={18} className="text-primary mr-2" />; 
 };
 
 
@@ -87,9 +103,10 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
     if (data.onOpenDetails) {
       data.onOpenDetails();
     } else {
+      // Fallback, caso onOpenDetails não esteja definido (não deveria acontecer se configurado no dashboard)
       toast({
         title: 'Detalhes do Ativo',
-        description: `Visualizando detalhes de "${data.nomeAtivo}". (onOpenDetails não configurado)`,
+        description: `Visualizando detalhes de "${data.nomeAtivo}". (Callback onOpenDetails não encontrado)`,
       });
     }
   };
@@ -137,7 +154,7 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
           </Badge>
         )}
         {data.releaseCondition?.targetAge && (
-           <p className="text-muted-foreground text-xs italic mt-1">
+           <p className="text-muted-foreground text-[0.7rem] italic mt-1">
             Libera aos: {data.releaseCondition.targetAge} anos
           </p>
         )}
@@ -147,4 +164,3 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
     </Card>
   );
 }
-

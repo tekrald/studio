@@ -1,5 +1,5 @@
-# Firebase Studio
+# Acta Ipê - Registro para Ipê City
 
-This is a NextJS starter in Firebase Studio.
+Este é um projeto NextJS para Acta Ipê, um serviço de registro para a network state Ipê City, desenvolvido no Firebase Studio.
 
-To get started, take a look at src/app/page.tsx.
+Para começar, explore `src/app/page.tsx`.

@@ -11,20 +11,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, UserCheck, Clock } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, UserCheck, Clock, Coins, RefreshCw, Building, WalletCards } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { AssetFormData } from '@/types/asset';
 import type { AuthContextType } from '@/components/auth-provider';
+import Image from 'next/image';
 
-// Schema simplificado para ativos físicos
 const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
   return z.object({
     nomeAtivo: z.string().min(1, 'O nome do ativo é obrigatório.'),
     dataAquisicao: z.date({ required_error: "A data de aquisição é obrigatória." }),
     observacoes: z.string().optional(),
-    quemComprou: z.string().optional(),
+    quemComprou: z.string().min(1, "É necessário indicar quem adquiriu o ativo.").optional(),
     contribuicaoParceiro1: z.preprocess(
       (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
       z.number().min(0, 'A contribuição deve ser um valor positivo.').optional()
@@ -50,6 +50,14 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
         path: ['releaseTargetAge']
       });
     }
+    if (data.quemComprou === 'Ambos' && (data.contribuicaoParceiro1 === undefined || data.contribuicaoParceiro2 === undefined)) {
+      // Tornando contribuições opcionais mesmo se "Ambos" for selecionado
+      // ctx.addIssue({
+      //   code: z.ZodIssueCode.custom,
+      //   message: 'As contribuições de ambas as partes são obrigatórias se "Ambos" for selecionado.',
+      //   path: ['contribuicaoParceiro1'] // Ou um caminho mais genérico
+      // });
+    }
   });
 };
 
@@ -60,10 +68,10 @@ interface AssetFormProps {
   availableMembers: { id: string; name: string; birthDate?: Date | string }[];
   targetMemberId?: string | null;
   user: AuthContextType['user']; 
+  existingAssetToUpdate?: { name: string; type: 'digital' | 'fisico' } | null; // Para modo de adição de transação
 }
 
-// Total de etapas reduzido, pois a seleção de tipo foi removida.
-const TOTAL_STEPS = 3; // 1. Identificação, 2. Propriedade, 3. Detalhes Físicos e Designação
+const TOTAL_STEPS_PHYSICAL = 3; 
 
 export function AssetForm({
   onSubmit,
@@ -71,13 +79,15 @@ export function AssetForm({
   onClose,
   availableMembers = [],
   targetMemberId,
-  user
+  user,
+  existingAssetToUpdate
 }: AssetFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Contribuinte 1", "Contribuinte 2"]);
-  
+  const [priceError, setPriceError] = useState<string | null>(null);
+
   const localCurrentAssignedToMemberId = useForm().watch('assignedToMemberId');
   const selectedMemberForRelease = availableMembers.find(m => m.id === localCurrentAssignedToMemberId);
   const memberHasBirthDateForSchema = !!selectedMemberForRelease?.birthDate;
@@ -87,7 +97,7 @@ export function AssetForm({
   const form = useForm<AssetFormData>({
     resolver: zodResolver(currentAssetFormSchema),
     defaultValues: {
-      nomeAtivo: '',
+      nomeAtivo: existingAssetToUpdate?.name || '',
       dataAquisicao: new Date(),
       observacoes: '',
       quemComprou: '',
@@ -103,16 +113,16 @@ export function AssetForm({
   });
 
   const quemComprouWatch = form.watch('quemComprou');
-  const watchedNomeAtivo = form.watch('nomeAtivo'); // Para habilitar/desabilitar "Próximo"
-  const localAssignedToMemberIdWatch = form.watch('assignedToMemberId'); // Renomeado para evitar conflito
+  const watchedNomeAtivo = form.watch('nomeAtivo');
+  const localAssignedToMemberIdWatch = form.watch('assignedToMemberId');
   const setReleaseConditionWatch = form.watch('setReleaseCondition');
-
+  
   const actualSelectedMember = availableMembers.find(m => m.id === localAssignedToMemberIdWatch);
   const memberHasBirthDate = !!actualSelectedMember?.birthDate;
 
   useEffect(() => {
     const initialValues: AssetFormData = {
-      nomeAtivo: '',
+      nomeAtivo: existingAssetToUpdate?.name || '',
       dataAquisicao: new Date(),
       observacoes: '',
       quemComprou: '',
@@ -126,7 +136,8 @@ export function AssetForm({
     };
     form.reset(initialValues);
     setCurrentStep(1);
-  }, [targetMemberId, form]);
+  }, [targetMemberId, existingAssetToUpdate, form]);
+
 
   useEffect(() => {
     if (user?.displayName) {
@@ -136,6 +147,8 @@ export function AssetForm({
         setPartnerLabels([names[0], "Outro Contribuinte"]);
       } else if (names.length > 1) {
         setPartnerLabels([names[0], names[1]]);
+      } else {
+        setPartnerLabels(["Parte 1", "Parte 2"]);
       }
     }
   }, [user]);
@@ -154,15 +167,15 @@ export function AssetForm({
     let fieldsToValidate: (keyof AssetFormData)[] = [];
     let currentValues = form.getValues();
     
-    if (step === 1) { // Identificação do Ativo Físico
+    if (step === 1) { 
       fieldsToValidate = ['nomeAtivo', 'dataAquisicao', 'observacoes'];
-    } else if (step === 2) { // Propriedade e Contribuições
+    } else if (step === 2) { 
       fieldsToValidate = ['quemComprou'];
       if (currentValues.quemComprou === 'Ambos') {
-        fieldsToValidate.push('contribuicaoParceiro1', 'contribuicaoParceiro2');
+        // Contribuições são opcionais, não validar aqui para avançar
       }
-    } else if (step === 3) { // Detalhes Físicos e Designação
-      fieldsToValidate.push('tipoImovelBemFisico'); // Endereço e doc são opcionais
+    } else if (step === 3) { 
+      fieldsToValidate.push('tipoImovelBemFisico'); 
       if (!targetMemberId) { 
         fieldsToValidate.push('assignedToMemberId');
       }
@@ -189,7 +202,6 @@ export function AssetForm({
       }
     }
     
-    // Validação completa com Zod (refinada para a etapa atual)
     const validationResult = currentAssetFormSchema.safeParse(currentValues);
     if (!validationResult.success) {
         const stepErrors = validationResult.error.issues.filter(issue => {
@@ -209,7 +221,7 @@ export function AssetForm({
 
   const handleNextStep = async () => {
     if (await validateStep(currentStep)) {
-      if (currentStep < TOTAL_STEPS) {
+      if (currentStep < TOTAL_STEPS_PHYSICAL) {
         setCurrentStep(currentStep + 1);
       }
     }
@@ -224,8 +236,8 @@ export function AssetForm({
 
   const isNextButtonDisabled = () => {
     if (isSubmittingForm) return true;
-    if (currentStep === 1) { // Identificação
-        return !watchedNomeAtivo; // Só precisa do nome do ativo para prosseguir da etapa 1
+    if (currentStep === 1) {
+        return !watchedNomeAtivo; 
     }
     return false;
   };
@@ -233,10 +245,10 @@ export function AssetForm({
   return (
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
       <p className="text-sm text-center text-muted-foreground">
-        Adicionar Novo Ativo Físico (Etapa {currentStep} de {TOTAL_STEPS})
+        {existingAssetToUpdate ? `Adicionar Transação a ${existingAssetToUpdate.name}` : `Adicionar Novo Ativo Físico`} (Etapa {currentStep} de {TOTAL_STEPS_PHYSICAL})
       </p>
 
-      {currentStep === 1 && ( // Etapa 1: Identificação do Ativo Físico
+      {currentStep === 1 && (
         <>
           <div className="space-y-1.5">
             <Label htmlFor="nomeAtivoFisicoInput">Nome do Ativo Físico</Label>
@@ -244,7 +256,7 @@ export function AssetForm({
                 id="nomeAtivoFisicoInput"
                 {...form.register('nomeAtivo')}
                 placeholder={"Ex: Casa da Praia, Carro SUV, Obra de Arte"}
-                disabled={isSubmittingForm}
+                disabled={isSubmittingForm || !!existingAssetToUpdate}
                 autoFocus
             />
             {form.formState.errors.nomeAtivo && <p className="text-sm text-destructive">{form.formState.errors.nomeAtivo.message}</p>}
@@ -318,7 +330,7 @@ export function AssetForm({
         </>
       )}
 
-      {currentStep === 2 && ( // Etapa 2: Propriedade e Contribuições
+      {currentStep === 2 && (
         <>
           <div className="space-y-1.5">
             <Label htmlFor="quemComprou">Quem Adquiriu/Contribuiu? (Opcional)</Label>
@@ -336,19 +348,20 @@ export function AssetForm({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="UNSPECIFIED_BUYER">Não especificado</SelectItem>
+                    <SelectItem value="Entidade Principal">Registro Principal (Acta Ipê)</SelectItem>
                     {partnerNames.length === 1 && (
                       <SelectItem value={partnerNames[0]}>{partnerNames[0]}</SelectItem>
                     )}
                     {partnerNames.length > 1 && partnerNames.map(name => (
                       <SelectItem key={name} value={name}>{name}</SelectItem>
                     ))}
-                    <SelectItem value="Ambos">Ambos</SelectItem>
+                    {partnerNames.length > 1 && <SelectItem value="Ambos">Ambos ({partnerNames.join(' & ')})</SelectItem>}
                   </SelectContent>
                 </Select>
               )}
             />
             <p className="text-xs text-muted-foreground">
-              Se o nome do membro não aparecer, verifique o nome de exibição do casal no Perfil.
+              Se os nomes dos parceiros não aparecerem, verifique o nome de exibição do registro no Perfil.
             </p>
             {form.formState.errors.quemComprou && <p className="text-sm text-destructive">{form.formState.errors.quemComprou.message}</p>}
           </div>
@@ -385,7 +398,7 @@ export function AssetForm({
         </>
       )}
 
-      {currentStep === 3 && ( // Etapa 3: Detalhes Físicos e Designação
+      {currentStep === 3 && ( 
         <>
           <div className="space-y-4 p-4 border rounded-md bg-muted/30 mb-4">
             <h4 className="text-md font-semibold text-primary">Detalhes do Ativo Físico</h4>
@@ -394,7 +407,7 @@ export function AssetForm({
               <Input
                   id="tipoImovelBemFisico"
                   {...form.register('tipoImovelBemFisico')}
-                  placeholder="Ex: Casa, Apartamento, Carro, Jóia"
+                  placeholder="Ex: Imóvel Residencial, Veículo, Obra de Arte"
                   disabled={isSubmittingForm}
               />
               {form.formState.errors.tipoImovelBemFisico && <p className="text-sm text-destructive">{form.formState.errors.tipoImovelBemFisico.message}</p>}
@@ -440,7 +453,7 @@ export function AssetForm({
                         <SelectValue placeholder="Selecione um membro" />
                         </SelectTrigger>
                         <SelectContent>
-                        <SelectItem value="UNASSIGNED">Não Designar / Manter com a União</SelectItem>
+                        <SelectItem value="UNASSIGNED">Não Designar / Manter com o Registro Principal</SelectItem>
                         {availableMembers.map(member => (
                             <SelectItem key={member.id} value={member.id}>{member.name}</SelectItem>
                         ))}
@@ -497,6 +510,8 @@ export function AssetForm({
       )}
 
       {formError && <p className="text-sm text-destructive text-center">{formError}</p>}
+      {priceError && <p className="text-sm text-destructive text-center">{priceError}</p>}
+
 
       <div className="flex justify-between items-center pt-4">
         {currentStep > 1 ? (
@@ -509,14 +524,14 @@ export function AssetForm({
           </Button>
         )}
 
-        {currentStep < TOTAL_STEPS ? (
+        {currentStep < TOTAL_STEPS_PHYSICAL ? (
           <Button type="button" onClick={handleNextStep} disabled={isNextButtonDisabled()}>
             Próximo <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
           <Button type="submit" disabled={isSubmittingForm}>
             {isSubmittingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-            Salvar Ativo Físico
+            {existingAssetToUpdate ? "Adicionar Transação" : "Salvar Ativo Físico"}
           </Button>
         )}
       </div>

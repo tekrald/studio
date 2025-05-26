@@ -40,10 +40,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="/domedome-logo.svg" alt="domedome Logo" width={250} height={83} data-ai-hint="logo domedome" className="rounded-full"/>
+             <Image src="/acta-ipe-logo.svg" alt="Acta Ipê Logo" width={250} height={83} data-ai-hint="logo ActaIpê" className="rounded-full"/>
           </Link>
-          <CardTitle className="text-3xl">Bem-vindo(a) de Volta!</CardTitle>
-          <CardDescription>Faça login na sua conta domedome para continuar planejando seu dia especial.</CardDescription>
+          <CardTitle className="text-3xl font-lato">Acesse sua Conta Acta Ipê</CardTitle>
+          <CardDescription className="font-lato">Faça login para gerenciar seus registros em Ipê City.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
