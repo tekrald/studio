@@ -569,5 +569,4 @@ export default function SignupPage() {
   );
 }
 
-
     
