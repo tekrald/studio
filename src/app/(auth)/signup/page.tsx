@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen } from 'lucide-react';
 
-const TOTAL_STEPS = 6; // Reduzido, pois a etapa de formalização da holding foi removida do cadastro
+const TOTAL_STEPS = 6; 
 
 const religionOptions = [
     { value: "cristianismo", label: "Cristianismo" },
@@ -34,7 +34,7 @@ export default function SignupPage() {
   const [religion, setReligion] = useState('');
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState(''); // Este 'name' será o "Nome da Holding"
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -85,9 +85,9 @@ export default function SignupPage() {
         setError("Por favor, selecione a estrutura da relação.");
         return false;
       }
-    } else if (currentStep === 2) { // Nome do Casal
+    } else if (currentStep === 2) { // Nome da Holding
       if (!name.trim()) {
-        setError("Por favor, insira o nome do casal.");
+        setError("Por favor, insira o nome da holding.");
         return false;
       }
     } else if (currentStep === 3) { // Detalhes da Conta
@@ -148,8 +148,7 @@ export default function SignupPage() {
       await new Promise(resolve => setTimeout(resolve, 1000)); 
       signup(
         email,
-        name,
-        // holdingType removido daqui
+        name, // Este 'name' é o "Nome da Holding"
         relationshipStructure,
         religion,
         isWalletConnected,
@@ -212,7 +211,7 @@ export default function SignupPage() {
 
             {currentStep === 2 && ( 
               <div className="space-y-2">
-                <Label htmlFor="name">Nome do Casal (ex: Alex & Jamie)</Label>
+                <Label htmlFor="name">Nome da Holding (ex: Alex & Jamie)</Label>
                 <Input
                   id="name"
                   type="text"
@@ -334,8 +333,6 @@ export default function SignupPage() {
                 </div>
               </div>
             )}
-
-            {/* Etapa de Formalização da Holding foi removida */}
 
             {currentStep === 6 && ( 
               <div className="space-y-4">

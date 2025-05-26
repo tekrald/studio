@@ -30,7 +30,7 @@ export default function ProfilePage() {
   const { user, updateProfile, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  const [displayName, setDisplayName] = useState('');
+  const [displayName, setDisplayName] = useState(''); // Nome da Holding/União
   const [avatarText, setAvatarText] = useState('');
   
   const [holdingType, setHoldingType] = useState<'physical' | ''>('');
@@ -92,7 +92,7 @@ export default function ProfilePage() {
         holdingType,
         relationshipStructure,
         religion,
-        cnpjHolding: holdingType === 'physical' ? cnpjHolding : '', // Salva CNPJ apenas se holding for física
+        cnpjHolding: holdingType === 'physical' ? cnpjHolding : '', 
       });
       toast({
         title: 'Perfil Atualizado',
@@ -148,7 +148,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="displayName">Nome de Exibição do Casal (ex: Alex & Jamie)</Label>
+              <Label htmlFor="displayName">Nome da Holding (ex: Alex & Jamie)</Label>
               <Input
                 id="displayName"
                 type="text"
