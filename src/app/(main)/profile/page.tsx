@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { UserCircle, Save, Loader2, Briefcase, Users, BookOpen, Landmark, FileText } from 'lucide-react';
+import { UserCircle, Save, Loader2, Briefcase, Users, BookOpen, Landmark, FileText, Edit3 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; // Import dialog and type
@@ -116,7 +116,7 @@ export default function ProfilePage() {
 
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula atraso
       updateProfile({
         displayName,
         relationshipStructure,
@@ -206,7 +206,7 @@ export default function ProfilePage() {
                 <Label htmlFor="relationshipStructure" className="flex items-center text-foreground/90"><Users size={18} className="mr-2 text-primary" />Estrutura da União</Label>
                 <RadioGroup
                     value={relationshipStructure}
-                    onValueChange={(value: 'monogamous' | 'polygamous') => setRelationshipStructure(value as 'monogamous' | 'polygamous')}
+                    onValueChange={(value: 'monogamous' | 'polygamous' | '') => setRelationshipStructure(value as 'monogamous' | 'polygamous' | '')}
                     className="space-y-2 pt-1"
                     disabled={isLoading}
                 >
@@ -223,7 +223,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Crença / Filosofia (Opcional)</Label>
+                <Label htmlFor="religion" className="flex items-center text-foreground/90"><BookOpen size={18} className="mr-2 text-primary" />Religião / Crença Espiritual (Opcional)</Label>
                 <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
                     <SelectTrigger id="religion" className="bg-input text-foreground">
                         <SelectValue placeholder="Selecione uma opção" />
@@ -290,7 +290,7 @@ export default function ProfilePage() {
 
             {holdingType === 'physical' && (
               <Card className="p-4 bg-muted/30 space-y-4 border-border">
-                <p className="text-sm text-foreground/80 font-medium">
+                 <p className="text-sm text-foreground/80 font-medium">
                   A formalização de entidades com ativos físicos (imóveis, veículos) ou mistas geralmente requer a consulta a um contador ou advogado para os processos legais e fiscais.
                 </p>
                 <div className="space-y-2">
