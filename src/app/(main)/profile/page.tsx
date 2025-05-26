@@ -8,10 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { UserCircle, Save, Loader2, Briefcase, Users, BookOpen, Landmark, FileText, Edit3 } from 'lucide-react';
+import { UserCircle, Save, Loader2, Users, BookOpen, Landmark, FileText, Edit3 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog';
+import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog'; // Ensure ContractClause is exported
 
 const initialReligionOptions = [
     { value: "agnosticism", label: "Agnosticism" },
@@ -40,6 +40,7 @@ export default function ProfilePage() {
   const [avatarText, setAvatarText] = useState('');
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
   const [religion, setReligion] = useState('');
+  
   const [holdingType, setHoldingType] = useState<'physical' | ''>('');
   const [cnpjHolding, setCnpjHolding] = useState('');
 
@@ -52,7 +53,7 @@ export default function ProfilePage() {
     if (user) {
       setDisplayName(user.displayName || '');
       setRelationshipStructure(user.relationshipStructure || '');
-      setReligion(user.religion || '');
+      setReligion(user.religion || ''); // Ensure this is correctly loaded
       setHoldingType(user.holdingType || '');
       setCnpjHolding(user.cnpjHolding || '');
       setContractClauses(user.contractClauses || []);
@@ -156,8 +157,8 @@ export default function ProfilePage() {
         <Card className="shadow-xl mb-8 bg-card border-border">
           <CardHeader className="text-center">
             <UserCircle className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl text-foreground">Union Profile</CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardTitle className="text-3xl text-foreground font-lato">Union Profile</CardTitle>
+            <CardDescription className="text-muted-foreground font-lato">
               Manage your information and preferences here.
             </CardDescription>
           </CardHeader>
@@ -173,11 +174,10 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="displayName" className="text-foreground/90">Union Name (Ex: Alex &amp; Jamie)</Label>
+              <Label htmlFor="displayName" className="text-foreground/90">Union Name</Label>
               <Input
                 id="displayName"
                 type="text"
-                placeholder="Ex: Alex & Jamie"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 disabled={isLoading}
@@ -234,7 +234,7 @@ export default function ProfilePage() {
 
         <Card className="shadow-xl mb-8 bg-card border-border">
             <CardHeader>
-                <CardTitle className="text-2xl flex items-center text-foreground"><FileText className="mr-3 text-primary h-7 w-7" />Record Agreements</CardTitle>
+                <CardTitle className="text-2xl flex items-center text-foreground"><FileText className="mr-3 text-primary h-7 w-7" />Contract Agreements</CardTitle>
                 <CardDescription className="text-muted-foreground">
                 View and manage the clauses and agreements defined for this record.
                 </CardDescription>
@@ -267,7 +267,7 @@ export default function ProfilePage() {
                 value={holdingType}
                 onValueChange={(value: 'physical' | '') => {
                   setHoldingType(value);
-                  if (value === '') { // If "Digital / Not formalized" is selected, clear CNPJ
+                  if (value === '') { 
                     setCnpjHolding('');
                   }
                 }}
@@ -276,7 +276,7 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="" id="profile-holding-undefined" className="border-primary checked:bg-primary"/>
-                  <Label htmlFor="profile-holding-undefined" className="font-normal text-foreground/90">Digital / Not formalized</Label>
+                  <Label htmlFor="profile-holding-undefined" className="font-normal text-foreground/90">Digital / IpêActa Formalization</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="physical" id="profile-holding-physical" className="border-primary checked:bg-primary"/>
@@ -333,6 +333,5 @@ export default function ProfilePage() {
     </div>
   );
 }
-
 
     
