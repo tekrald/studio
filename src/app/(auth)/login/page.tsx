@@ -27,10 +27,13 @@ export default function LoginPage() {
         setIsLoading(false);
         return;
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      login(email);
+      // Simulação de login
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula atraso de rede
+      // Em uma aplicação real, aqui você chamaria sua função de login do Firebase/Auth
+      login(email); // Usando o mock do AuthProvider
     } catch (err) {
       setError('Falha ao fazer login. Verifique suas credenciais.');
+      // Normalmente, aqui você trataria erros específicos do Firebase Auth
       setIsLoading(false);
     }
   };
@@ -40,10 +43,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl bg-card border-border">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block mx-auto mb-4">
-             <Image src="/acta-ipe-logo.svg" alt="Acta Ipê Logo" width={250} height={83} data-ai-hint="logo ActaIpê" className="rounded-full" style={{ filter: 'brightness(0) invert(1)' }}/>
+             <Image src="/ipe-acta-logo.svg" alt="Ipê Acta Logo" width={250} height={83} data-ai-hint="logo IpêActa" className="rounded-full" style={{ filter: 'brightness(0) invert(1)' }}/>
           </Link>
-          <CardTitle className="text-3xl font-lato text-foreground">Acesse sua Conta Acta Ipê</CardTitle>
-          <CardDescription className="font-lato text-muted-foreground">Faça login para gerenciar seus registros em Ipê City.</CardDescription>
+          <CardTitle className="text-3xl font-lato text-foreground">Acesse sua Conta Ipê Acta</CardTitle>
+          <CardDescription className="font-lato text-muted-foreground">Faça login para gerenciar seus contratos e holding.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -65,7 +68,6 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

@@ -34,14 +34,14 @@ interface ContractSettingsDialogProps {
 
 const suggestedClausesTemplates = {
   partilhaBens: [
-    { id: 'sug_pb_1', text: "Partilha de ativos em caso de dissolução: divisão de 50/50 dos ativos adquiridos em conjunto durante a vigência do acordo." },
-    { id: 'sug_pb_2', text: "Ativos adquiridos individualmente antes do acordo permanecerão como propriedade individual de cada parte." },
+    { id: 'sug_pb_1', text: "Partilha de ativos em caso de dissolução da união: divisão de 50/50 dos ativos adquiridos em conjunto durante a vigência do acordo." },
+    { id: 'sug_pb_2', text: "Ativos adquiridos individualmente antes da união permanecerão como propriedade individual de cada parte." },
     { id: 'sug_pb_3', text: "Em caso de aquisição do ativo [NOME DO ATIVO ESPECÍFICO], a propriedade será dividida em X% para Parte A e Z% para Parte B." },
   ],
   regrasConvivencia: [
-    { id: 'sug_rc_1', text: "As despesas operacionais (ex: custos de manutenção, taxas) serão divididas da seguinte forma: [Descrever a divisão]." },
-    { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de [VALOR/MOEDA]) deverão ser discutidas e aprovadas por todas as partes envolvidas no acordo." },
-    { id: 'sug_rc_3', text: "Contribuições e responsabilidades: [Definir regras para aportes, trabalho, etc.]." },
+    { id: 'sug_rc_1', text: "As despesas operacionais da união (ex: custos de manutenção, taxas) serão divididas da seguinte forma: [Descrever a divisão]." },
+    { id: 'sug_rc_2', text: "Decisões financeiras de grande porte (acima de [VALOR/MOEDA]) deverão ser discutidas e aprovadas por ambas as partes da união." },
+    { id: 'sug_rc_3', text: "Contribuições e responsabilidades financeiras: [Definir regras para aportes, trabalho, etc.]." },
   ],
 };
 
@@ -55,52 +55,56 @@ export function ContractSettingsDialog({
 }: ContractSettingsDialogProps) {
   const [newClauseText, setNewClauseText] = useState('');
   const [editingClauseId, setEditingClauseId] = useState<string | null>(null);
+  const [currentClauseTextForEdit, setCurrentClauseTextForEdit] = useState('');
 
   const handleEditClick = (clause: ContractClause) => {
     setEditingClauseId(clause.id);
-    setNewClauseText(clause.text);
+    setCurrentClauseTextForEdit(clause.text); // Usar estado separado para edição
   };
 
   const handleSaveOrAddClause = () => {
-    if (newClauseText.trim()) {
+    const textToSave = editingClauseId ? currentClauseTextForEdit : newClauseText;
+    if (textToSave.trim()) {
       if (editingClauseId) {
-        onUpdateClause(editingClauseId, newClauseText.trim());
+        onUpdateClause(editingClauseId, textToSave.trim());
       } else {
-        onAddClause(newClauseText.trim());
+        onAddClause(textToSave.trim());
       }
       setNewClauseText('');
+      setCurrentClauseTextForEdit('');
       setEditingClauseId(null);
     }
   };
 
   const handleCancelEdit = () => {
-    setNewClauseText('');
+    setCurrentClauseTextForEdit('');
     setEditingClauseId(null);
   };
-  
+
   const handleAddSuggestion = (text: string) => {
-    setNewClauseText(prev => prev ? `${prev}\n${text}` : text);
-    setEditingClauseId(null); 
+    if (editingClauseId) {
+        setCurrentClauseTextForEdit(prev => prev ? `${prev}\n${text}` : text);
+    } else {
+        setNewClauseText(prev => prev ? `${prev}\n${text}` : text);
+    }
   };
 
   useEffect(() => {
-    if (isOpen) {
-      if (!editingClauseId) {
-        setNewClauseText('');
-      }
-    } else {
+    if (!isOpen) {
       setNewClauseText('');
+      setCurrentClauseTextForEdit('');
       setEditingClauseId(null);
     }
-  }, [isOpen, editingClauseId]);
+  }, [isOpen]);
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl lg:max-w-4xl xl:max-w-6xl max-h-[90vh] flex flex-col bg-card border-border">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-primary">Configurações dos Acordos</DialogTitle>
+          <DialogTitle className="text-2xl text-primary">Configurações do Contrato da União</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Adicione, visualize, edite e gerencie as cláusulas dos seus acordos e registros em Ipê City. Este sistema é flexível para acomodar diversas configurações familiares e crenças.
+            Adicione, visualize, edite e gerencie as cláusulas do seu contrato. Este sistema é flexível para acomodar diversas configurações e acordos.
           </DialogDescription>
         </DialogHeader>
 
@@ -137,14 +141,14 @@ export function ContractSettingsDialog({
               </Label>
               <Textarea
                 id="clause-text-area"
-                value={newClauseText}
-                onChange={(e) => setNewClauseText(e.target.value)}
+                value={editingClauseId ? currentClauseTextForEdit : newClauseText}
+                onChange={(e) => editingClauseId ? setCurrentClauseTextForEdit(e.target.value) : setNewClauseText(e.target.value)}
                 placeholder="Digite o texto da cláusula aqui..."
                 className="min-h-[100px] bg-input text-foreground placeholder:text-muted-foreground"
                 rows={5}
               />
               <div className="mt-3 flex flex-col sm:flex-row gap-2">
-                <Button onClick={handleSaveOrAddClause} className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!newClauseText.trim()}>
+                <Button onClick={handleSaveOrAddClause} className="w-full sm:flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!(editingClauseId ? currentClauseTextForEdit.trim() : newClauseText.trim())}>
                   {editingClauseId ? <><Save size={18} className="mr-2" /> Salvar Alterações</> : <><PlusCircle size={18} className="mr-2" /> Adicionar Cláusula</>}
                 </Button>
                 {editingClauseId && (
@@ -154,12 +158,12 @@ export function ContractSettingsDialog({
                 )}
               </div>
             </div>
-            
+
             <Separator className="bg-border"/>
 
             <div>
               <h3 className="text-lg font-semibold mb-3 text-foreground">Sugestões de Cláusulas</h3>
-              <ScrollArea className="max-h-[calc(90vh-500px)] md:max-h-none pr-2"> 
+              <ScrollArea className="max-h-[calc(90vh-500px)] md:max-h-none pr-2">
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Landmark size={18} className="mr-2"/>Partilha de Ativos</h4>
@@ -170,7 +174,7 @@ export function ContractSettingsDialog({
                     ))}
                   </div>
                   <div>
-                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras da Sociedade</h4>
+                    <h4 className="text-md font-semibold text-primary mb-1.5 flex items-center"><Users size={18} className="mr-2"/>Regras da União</h4>
                      {suggestedClausesTemplates.regrasConvivencia.map(sug => (
                         <Button key={sug.id} variant="outline" size="sm" className="text-xs w-full justify-start text-left h-auto py-1.5 mb-1.5 text-foreground/90 border-border hover:bg-muted/80" onClick={() => handleAddSuggestion(sug.text)}>
                          {sug.text}

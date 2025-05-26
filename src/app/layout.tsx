@@ -5,8 +5,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/components/auth-provider';
 
 export const metadata: Metadata = {
-  title: 'Acta Ipê - Registros para Ipê City',
-  description: 'Organize, visualize e gerencie seus registros e acordos em Ipê City.',
+  title: 'Ipê Acta - Contratos de Casamento e Holding Familiar',
+  description: 'Crie seu contrato de casamento personalizado e organize sua holding familiar, incluindo ativos digitais e físicos.',
 };
 
 export default function RootLayout({

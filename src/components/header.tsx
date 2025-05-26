@@ -9,8 +9,8 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/dashboard', label: 'Registros', icon: Briefcase },
-  { href: '/profile', label: 'Perfil', icon: UserCircle }, 
+  { href: '/dashboard', label: 'Holding', icon: Briefcase },
+  { href: '/profile', label: 'Perfil da União', icon: UserCircle },
 ];
 
 export function Header() {
@@ -18,21 +18,21 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="bg-background shadow-md sticky top-0 z-50 border-b border-border">
+    <header className="bg-card shadow-md sticky top-0 z-50 border-b border-border">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
-            src="/acta-ipe-logo.svg" 
-            alt="Acta Ipê Logo"
-            width={250} 
-            height={83}  
-            className="h-auto" 
+            src="/ipe-acta-logo.svg"
+            alt="Ipê Acta Logo"
+            width={250}
+            height={83}
+            className="h-auto"
             priority
-            data-ai-hint="logo ActaIpê"
-            style={{ filter: 'brightness(0) invert(1)' }} // Para logo escuro em fundo escuro
+            data-ai-hint="logo IpêActa"
+            style={{ filter: 'brightness(0) invert(1)' }}
           />
         </Link>
-        
+
         {user && (
           <nav className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => {
@@ -40,7 +40,7 @@ export function Header() {
               return (
                 <Button key={link.href} variant="ghost" asChild
                   className={cn(
-                    "text-sm text-foreground/80 hover:text-foreground hover:bg-primary/20", // primary é azul
+                    "text-sm text-foreground/80 hover:text-primary hover:bg-primary/10",
                     pathname === link.href ? "bg-primary/10 text-primary font-semibold" : ""
                   )}
                 >
