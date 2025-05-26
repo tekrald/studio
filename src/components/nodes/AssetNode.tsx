@@ -6,9 +6,10 @@ import { Handle, Position } from 'reactflow';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DollarSign, Coins, Landmark, BuildingIcon, Clock } from 'lucide-react';
+import { DollarSign, Coins, Landmark, BuildingIcon, Clock, Info } from 'lucide-react'; // Added Info
 import { useToast } from '@/hooks/use-toast';
 import type { AssetTransaction } from '@/types/asset'; 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'; // Added Tooltip components
 
 export interface ExtendedAssetNodeData {
   id: string;
@@ -21,7 +22,8 @@ export interface ExtendedAssetNodeData {
   transactions: AssetTransaction[];
   assignedToMemberId?: string;
   releaseCondition?: { type: 'age'; targetAge: number };
-  observacoesGerais?: string;
+  observacoes?: string; // Changed from observacoesGerais
+  isAutoLoaded?: boolean; // New prop
   onOpenDetails?: () => void;
 }
 
@@ -47,12 +49,12 @@ const EthereumIcon = () => (
 const SolanaIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
     <defs>
-      <linearGradient id="solanaGradientNode" x1="0%" y1="0%" x2="100%" y2="100%">
+      <linearGradient id="solanaGradientNodeAsset" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style={{stopColor: "#9945FF"}} />
         <stop offset="100%" style={{stopColor: "#14F195"}} />
       </linearGradient>
     </defs>
-    <circle cx="12" cy="12" r="10" fill="url(#solanaGradientNode)"/>
+    <circle cx="12" cy="12" r="10" fill="url(#solanaGradientNodeAsset)"/>
     <path d="M8.06006 6.5L6.5 8.06006L10.44 12L6.5 15.94L8.06006 17.5L12 13.56L15.94 17.5L17.5 15.94L13.56 12L17.5 8.06006L15.94 6.5L12 10.44L8.06006 6.5Z" fill="black" transform="scale(0.8) translate(3,3)"/>
   </svg>
 );
@@ -60,15 +62,9 @@ const SolanaIcon = () => (
 
 const getIconForAsset = (data: ExtendedAssetNodeData) => {
   if (data.tipo === 'digital') {
-    if (data.nomeAtivo === 'Bitcoin') {
-      return <BitcoinIcon />;
-    }
-    if (data.nomeAtivo === 'Ethereum') {
-      return <EthereumIcon />;
-    }
-    if (data.nomeAtivo === 'Solana') {
-      return <SolanaIcon />;
-    }
+    if (data.nomeAtivo === 'Bitcoin') return <BitcoinIcon />;
+    if (data.nomeAtivo === 'Ethereum') return <EthereumIcon />;
+    if (data.nomeAtivo === 'Solana') return <SolanaIcon />; // Assuming you might add Solana
     return <Coins size={18} className="text-primary mr-2" />;
   }
   if (data.tipo === 'fisico') {
@@ -109,55 +105,69 @@ export function AssetNode({ id: nodeId, data, selected }: NodeProps<ExtendedAsse
   };
 
   return (
-    <Card
-      className={`w-auto min-w-[200px] max-w-[280px] shadow-lg border-2 ${selected ? 'border-primary shadow-primary/30' : 'border-border'} bg-card relative rounded-lg cursor-pointer hover:shadow-md transition-shadow`}
-      style={{ overflow: 'visible' }}
-      onClick={handleCardClick}
-    >
-      <Handle type="target" position={Position.Top} id={`t-${nodeId}-top`} className="!opacity-50 !bg-ring" />
-      <Handle type="source" position={Position.Top} id={`s-${nodeId}-top`} className="!opacity-50 !bg-ring !top-[-4px]" />
-
-      <CardHeader className="p-3 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center overflow-hidden">
-            {icon}
-            <CardTitle className="text-sm font-semibold text-card-foreground truncate" title={data.nomeAtivo}>
-              {data.nomeAtivo}
-            </CardTitle>
+    <TooltipProvider delayDuration={300}>
+      <Card
+        className={`w-auto min-w-[200px] max-w-[280px] shadow-lg border-2 ${selected ? 'border-primary shadow-primary/30' : 'border-border'} bg-card relative rounded-lg cursor-pointer hover:shadow-md transition-shadow`}
+        style={{ overflow: 'visible' }}
+        onClick={handleCardClick}
+      >
+        <Handle type="target" position={Position.Top} id={`t-${nodeId}`} className="!opacity-50 !bg-ring" />
+        
+        <CardHeader className="p-3 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center overflow-hidden">
+              {icon}
+              <CardTitle className="text-sm font-semibold text-card-foreground truncate" title={data.nomeAtivo}>
+                {data.nomeAtivo}
+              </CardTitle>
+            </div>
+            {data.releaseCondition?.type === 'age' && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-accent hover:bg-accent/10"
+                onClick={handleClockClick}
+                aria-label="Configurar condição de liberação"
+              >
+                <Clock size={14} />
+              </Button>
+            )}
           </div>
-          {data.releaseCondition?.type === 'age' && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 text-blue-400 hover:bg-blue-400/10"
-              onClick={handleClockClick}
-              aria-label="Configurar condição de liberação"
-            >
-              <Clock size={14} />
-            </Button>
-          )}
-        </div>
-      </CardHeader>
+        </CardHeader>
 
-      <CardContent className="p-3 text-xs space-y-1">
-        {data.tipo === 'digital' && data.quantidadeTotalDigital !== undefined && (
-            <Badge variant="outline" className="text-xs whitespace-normal text-left border-primary/50 text-primary">
-                Qtd Total: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
+        <CardContent className="p-3 text-xs space-y-1">
+          {data.tipo === 'digital' && data.quantidadeTotalDigital !== undefined && (
+              <Badge variant="outline" className="text-xs whitespace-normal text-left border-primary/50 text-primary">
+                  Qtd Total: {data.quantidadeTotalDigital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 })}
+              </Badge>
+          )}
+          {data.tipo === 'fisico' && data.tipoImovelBemFisico && (
+            <Badge variant="secondary" className="text-xs whitespace-normal text-left bg-secondary/80 text-secondary-foreground">
+              {data.tipoImovelBemFisico}
             </Badge>
-        )}
-        {data.tipo === 'fisico' && data.tipoImovelBemFisico && (
-          <Badge variant="secondary" className="text-xs whitespace-normal text-left bg-secondary/80 text-secondary-foreground">
-            {data.tipoImovelBemFisico}
-          </Badge>
-        )}
-        {data.releaseCondition?.targetAge && (
-           <p className="text-muted-foreground text-[0.7rem] italic mt-1">
-            Libera aos: {data.releaseCondition.targetAge} anos
-          </p>
-        )}
-      </CardContent>
-      <Handle type="source" position={Position.Bottom} id={`s-${nodeId}-bottom`} className="!opacity-50 !bg-ring" />
-       <Handle type="target" position={Position.Bottom} id={`t-${nodeId}-bottom`} className="!opacity-50 !bg-ring !bottom-[-4px]" />
-    </Card>
+          )}
+          {data.releaseCondition?.targetAge && (
+             <p className="text-muted-foreground text-[0.7rem] italic mt-1">
+              Libera aos: {data.releaseCondition.targetAge} anos
+            </p>
+          )}
+          {data.isAutoLoaded && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center space-x-1 text-xs text-accent mt-1 cursor-default">
+                  <Info size={13} />
+                  <span>Automático</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="bg-popover text-popover-foreground text-xs p-2">
+                <p>Carregado da carteira conectada (simulado).</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </CardContent>
+        <Handle type="source" position={Position.Bottom} id={`s-${nodeId}`} className="!opacity-50 !bg-ring" />
+      </Card>
+    </TooltipProvider>
   );
 }
+
