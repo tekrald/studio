@@ -1,0 +1,16 @@
+{
+  "node": {
+    "4019b8259bd4151967bb3af43053f5da721167fba1": {
+      "workers": {
+        "app/(main)/speech-writer/page": {
+          "moduleId": "[project]/.next-internal/server/app/(main)/speech-writer/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-wedding-speech.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/(main)/speech-writer/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}
