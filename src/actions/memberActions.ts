@@ -13,6 +13,7 @@ export async function addMember(data: MemberFormData, unionId: string): Promise<
     nome: data.nome,
     tipoRelacao: data.tipoRelacao, // e.g., 'filho_a' (child)
     dataNascimento: data.dataNascimento,
+    walletAddress: data.walletAddress, // Log the wallet address
   });
 
   // Simulate a network delay

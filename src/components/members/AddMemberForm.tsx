@@ -8,15 +8,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, UserPlus } from 'lucide-react';
+import { CalendarIcon, Loader2, UserPlus, Wallet } from 'lucide-react'; // Added Wallet icon
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { enUS } from 'date-fns/locale'; // Changed to enUS
+import { enUS } from 'date-fns/locale';
 import type { MemberFormData } from '@/types/member';
 
 const formSchema = z.object({
-  nome: z.string().min(2, 'Child\'s name is required and must be at least 2 characters.'),
+  nome: z.string().min(2, "Child's name is required and must be at least 2 characters."),
   dataNascimento: z.date({ required_error: "Date of birth is required." }),
+  walletAddress: z.string().optional().nullable(), // Optional wallet address
 });
 
 interface AddMemberFormProps {
@@ -26,19 +27,21 @@ interface AddMemberFormProps {
 }
 
 export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormProps) {
-  const form = useForm<Omit<MemberFormData, 'tipoRelacao'>>({
+  const form = useForm<Omit<MemberFormData, 'tipoRelacao' | 'unionId'>>({ // Omit unionId as well
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome: '',
       dataNascimento: undefined,
+      walletAddress: '',
     },
     mode: "onChange",
   });
 
-  const handleFormSubmit = (values: Omit<MemberFormData, 'tipoRelacao'>) => {
+  const handleFormSubmit = (values: Omit<MemberFormData, 'tipoRelacao' | 'unionId'>) => {
     const formDataWithRelation: MemberFormData = {
       ...values,
-      tipoRelacao: 'filho_a', // 'child' in English context
+      tipoRelacao: 'filho_a', // 'child'
+      walletAddress: values.walletAddress || undefined, // Ensure empty string becomes undefined
     };
     onSubmit(formDataWithRelation);
   };
@@ -88,6 +91,21 @@ export function AddMemberForm({ onSubmit, isLoading, onClose }: AddMemberFormPro
           )}
         />
         {form.formState.errors.dataNascimento && <p className="text-sm text-destructive">{form.formState.errors.dataNascimento.message}</p>}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="walletAddress" className="text-foreground/90 flex items-center">
+          <Wallet size={16} className="mr-2 text-primary" />
+          Child's Wallet Address (Optional)
+        </Label>
+        <Input 
+          id="walletAddress" 
+          {...form.register('walletAddress')} 
+          placeholder="Ex: 0x123...abc" 
+          disabled={isLoading} 
+          className="bg-input text-foreground placeholder:text-muted-foreground"
+        />
+        {form.formState.errors.walletAddress && <p className="text-sm text-destructive">{form.formState.errors.walletAddress.message}</p>}
       </div>
 
       <div className="flex justify-end space-x-3 pt-4">

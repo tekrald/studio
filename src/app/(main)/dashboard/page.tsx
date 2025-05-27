@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Loader2, PlusCircle, Users, Settings, FileText, Briefcase, DollarSign, Network, LayoutGrid } from 'lucide-react'; // Removed Canvas, Plus. Added LayoutGrid
+import { Loader2, PlusCircle, Users, Settings, FileText, Briefcase, Network, DollarSign, LayoutGrid, HomeIcon } from 'lucide-react';
 import { AssetForm } from '@/components/assets/AssetForm';
 import type { AssetFormData, ExtendedAssetNodeData, AssetTransaction } from '@/types/asset';
 import { addAsset } from '@/actions/assetActions';
@@ -30,7 +30,7 @@ import 'reactflow/dist/style.css';
 
 import { UnionNode, type UnionNodeData } from '@/components/nodes/UnionNode';
 import { AssetNode } from '@/components/nodes/AssetNode';
-import { MemberNode, type MemberNodeData } from '@/components/nodes/MemberNode';
+import { MemberNode, type MemberNodeData as IMemberNodeData } from '@/components/nodes/MemberNode'; // Renamed to avoid conflict
 import { ContractSettingsDialog, type ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -45,9 +45,16 @@ const nodeOrigin: NodeOrigin = [0.5, 0.5];
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
 
-export interface MemberWithBirthDate extends Member {
+export interface MemberWithBirthDateAndWallet extends Member {
   dataNascimento?: Date | string;
+  walletAddress?: string;
 }
+
+// Extend MemberNodeData to include walletAddress if needed for display in the node itself
+export interface ExtendedMemberNodeData extends IMemberNodeData {
+  walletAddress?: string;
+}
+
 
 const nodeTypes = {
   unionNode: UnionNode,
@@ -63,15 +70,14 @@ export default function AssetManagementDashboard() {
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isSubmittingAsset, setIsSubmittingAsset] = useState(false);
   const [memberContextForAssetAdd, setMemberContextForAssetAdd] = useState<string | null>(null);
-  const [existingAssetToUpdate, setExistingAssetToUpdate] = useState<ExtendedAssetNodeData | null>(null);
-
+  // const [existingAssetToUpdate, setExistingAssetToUpdate] = useState<ExtendedAssetNodeData | null>(null); // Currently AssetForm is for new physical assets only
 
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [isSubmittingMember, setIsSubmittingMember] = useState(false);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<UnionNodeData | ExtendedAssetNodeData | MemberNodeData>[]>(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node<UnionNodeData | ExtendedAssetNodeData | ExtendedMemberNodeData>[]>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [allMembers, setAllMembers] = useState<MemberWithBirthDate[]>([]); // Stores full member data including birthdate
+  const [allMembers, setAllMembers] = useState<MemberWithBirthDateAndWallet[]>([]);
 
   const [isContractSettingsModalOpen, setIsContractSettingsModalOpen] = useState(false);
   const [contractClauses, setContractClauses] = useState<ContractClause[]>([]);
@@ -103,6 +109,7 @@ export default function AssetManagementDashboard() {
       text,
     };
     setContractClauses(prev => [...prev, newClause]);
+    // In a real app, you'd also save this to the user's profile/backend
     toast({ title: 'Clause Added', description: 'New clause saved to the agreements.' });
   };
 
@@ -116,14 +123,15 @@ export default function AssetManagementDashboard() {
     toast({ title: 'Clause Updated', description: 'The clause has been successfully modified.' });
   };
 
+
   const handleOpenAssetModalForUnion = useCallback(() => {
-    setExistingAssetToUpdate(null);
+    // setExistingAssetToUpdate(null); // AssetForm now for new physical assets only
     setMemberContextForAssetAdd(null);
     setIsAssetModalOpen(true);
   }, []);
 
   const handleOpenAssetModalForMember = useCallback((memberId: string) => {
-    setExistingAssetToUpdate(null); // For now, adding asset from member is always "new"
+    // setExistingAssetToUpdate(null); // AssetForm now for new physical assets only
     setMemberContextForAssetAdd(memberId);
     setIsAssetModalOpen(true);
   }, []);
@@ -203,7 +211,7 @@ export default function AssetManagementDashboard() {
       const unionNodeData: UnionNodeData = {
         label: effectiveUser.displayName || 'My Union',
         onSettingsClick: handleOpenContractSettings,
-        onOpenAssetModal: handleOpenAssetModalForUnion, // This will add a PHYSICAL asset to the union
+        onOpenAssetModal: handleOpenAssetModalForUnion,
         onAddMember: handleOpenAddMemberModal,
       };
       const unionNodeReactFlow: Node<UnionNodeData> = {
@@ -215,7 +223,7 @@ export default function AssetManagementDashboard() {
         nodeOrigin,
       };
       setNodes([unionNodeReactFlow]);
-      setEdges([]); // Clear edges when union node is first created
+      setEdges([]);
       unionNodeCreatedThisRun = true;
     } else if (currentUnionNode && effectiveUser?.displayName && (currentUnionNode.data as UnionNodeData).label !== effectiveUser.displayName) {
       setNodes((nds) =>
@@ -228,7 +236,7 @@ export default function AssetManagementDashboard() {
     }
 
     if (user?.isWalletConnected && (currentUnionNode || unionNodeCreatedThisRun) && !authLoading) {
-        const mockDigitalAssets: Omit<ExtendedAssetNodeData, 'id' | 'userId' | 'onOpenDetails' | 'onOpenReleaseDialog' | 'assignedToMemberId' | 'releaseCondition' | 'tipoImovelBemFisico' | 'enderecoLocalizacaoFisico' | 'observacoes' | 'tipo'>[] = [
+        const mockDigitalAssetsConfig: Omit<ExtendedAssetNodeData, 'id' | 'userId' | 'onOpenDetails' | 'onOpenReleaseDialog' | 'assignedToMemberId' | 'releaseCondition' | 'tipoImovelBemFisico' | 'enderecoLocalizacaoFisico' | 'observacoes' | 'tipo'>[] = [
             { nomeAtivo: 'Bitcoin', transactions: [{ id: 'tx-btc-1', dataAquisicao: new Date(), quantidadeDigital: 0.5, quemComprou: 'Connected Wallet'}], quantidadeTotalDigital: 0.5, isAutoLoaded: true },
             { nomeAtivo: 'Ethereum', transactions: [{ id: 'tx-eth-1', dataAquisicao: new Date(), quantidadeDigital: 10, quemComprou: 'Connected Wallet'}], quantidadeTotalDigital: 10, isAutoLoaded: true },
         ];
@@ -236,7 +244,7 @@ export default function AssetManagementDashboard() {
         const nodesToAddThisRun: Node<ExtendedAssetNodeData>[] = [];
         const edgesToAddThisRun: Edge[] = [];
 
-        mockDigitalAssets.forEach((mockAsset, index) => {
+        mockDigitalAssetsConfig.forEach((mockAsset, index) => {
             const assetId = `mock-asset-${mockAsset.nomeAtivo.toLowerCase().replace(/\s+/g, '-')}-union`;
             const nodeExists = nodes.some(n => n.id === assetId && n.type === 'assetNode' && !(n.data as ExtendedAssetNodeData).assignedToMemberId);
              if (!nodeExists) {
@@ -244,13 +252,13 @@ export default function AssetManagementDashboard() {
                     id: assetId,
                     userId: effectiveUser.uid,
                     nomeAtivo: mockAsset.nomeAtivo,
-                    tipo: 'digital', // All mock assets from wallet are digital
+                    tipo: 'digital',
                     quantidadeTotalDigital: mockAsset.quantidadeTotalDigital,
                     transactions: mockAsset.transactions || [],
                     isAutoLoaded: mockAsset.isAutoLoaded,
                     observacoes: `Asset ${mockAsset.nomeAtivo} automatically loaded.`,
-                    onOpenDetails: () => {}, // Placeholder, will be set below
-                    onOpenReleaseDialog: () => {}, // Placeholder
+                    onOpenDetails: () => {},
+                    onOpenReleaseDialog: () => {},
                 };
                 assetDataForNode.onOpenDetails = () => handleOpenAssetDetailsModal(assetDataForNode);
                 assetDataForNode.onOpenReleaseDialog = (ad) => handleOpenReleaseDialog(ad);
@@ -263,7 +271,7 @@ export default function AssetManagementDashboard() {
 
                 const angleStep = Math.PI / 6;
                 const radius = 280 + Math.floor(existingUnionDigitalAssetsCount / 8) * 90;
-                const angle = (existingUnionDigitalAssetsCount * angleStep) + Math.PI / 12; // Offset slightly from members
+                const angle = (existingUnionDigitalAssetsCount * angleStep) + Math.PI / 12;
 
 
                 nodesToAddThisRun.push({
@@ -332,7 +340,6 @@ export default function AssetManagementDashboard() {
           }
         }
 
-
         if (nodesToAddThisRun.length > 0) {
              setNodes(prevNodes => {
                 const currentIds = new Set(prevNodes.map(n => n.id));
@@ -349,7 +356,7 @@ export default function AssetManagementDashboard() {
         }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, effectiveUser?.displayName, user?.isWalletConnected, user?.uid, allMembers.length, setNodes, setEdges, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal, handleOpenReleaseDialog]);
+  }, [authLoading, effectiveUser?.displayName, user?.isWalletConnected, user?.uid, allMembers.length, setNodes, setEdges, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal, handleOpenReleaseDialog, nodes.length]); // Added nodes.length to deps
 
 
   const memberHasBirthDate = (memberId?: string): boolean => {
@@ -365,7 +372,7 @@ export default function AssetManagementDashboard() {
     }
     setIsSubmittingAsset(true);
 
-    const result = await addAsset(formData, effectiveUser.uid); // This is for PHYSICAL assets
+    const result = await addAsset(formData, effectiveUser.uid);
 
     if (result.success && result.assetId && result.transactionId) {
         toast({ title: 'Success!', description: 'Physical asset added successfully.' });
@@ -400,7 +407,7 @@ export default function AssetManagementDashboard() {
             tipoImovelBemFisico: formData.tipoImovelBemFisico,
             enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
             transactions: [newTransaction],
-            observacoes: formData.observacoes, // General asset observation
+            observacoes: formData.observacoes,
             assignedToMemberId: processedAssignedToMemberId,
             releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
             isAutoLoaded: false,
@@ -463,12 +470,13 @@ export default function AssetManagementDashboard() {
     if (result.success && result.memberId) {
       toast({ title: 'Success!', description: 'Child added successfully.' });
 
-       const newMemberData: MemberWithBirthDate = {
+       const newMemberData: MemberWithBirthDateAndWallet = {
         id: result.memberId,
         unionId: UNION_NODE_ID,
         nome: data.nome,
         tipoRelacao: data.tipoRelacao,
         dataNascimento: data.dataNascimento,
+        walletAddress: data.walletAddress,
       };
       setAllMembers(prev => [...prev, newMemberData]);
 
@@ -487,14 +495,15 @@ export default function AssetManagementDashboard() {
       const angleStart = (Math.PI * 0.25) - ((Math.max(0, memberNodesCount -1)) * angleStep / 2);
       const angle = angleStart + (memberNodesCount * angleStep);
 
-      const nodeDataPayload: MemberNodeData = {
+      const nodeDataPayload: ExtendedMemberNodeData = {
         id: result.memberId,
         name: data.nome,
         relationshipType: data.tipoRelacao,
         onAddAssetClick: (memberId) => handleOpenAssetModalForMember(memberId),
+        walletAddress: data.walletAddress,
       };
 
-      const newMemberNodeReactFlow: Node<MemberNodeData> = {
+      const newMemberNodeReactFlow: Node<ExtendedMemberNodeData> = {
         id: result.memberId,
         type: 'memberNode',
         data: nodeDataPayload,
@@ -556,7 +565,7 @@ export default function AssetManagementDashboard() {
         setIsAssetModalOpen(isOpen);
         if (!isOpen) {
             setMemberContextForAssetAdd(null);
-            setExistingAssetToUpdate(null);
+            // setExistingAssetToUpdate(null); // No longer using this state here
         }
       }}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-card border-border">
@@ -570,11 +579,12 @@ export default function AssetManagementDashboard() {
             onClose={() => {
                 setIsAssetModalOpen(false);
                 setMemberContextForAssetAdd(null);
-                setExistingAssetToUpdate(null);
+                // setExistingAssetToUpdate(null);
             }}
             availableMembers={availableMembersForAssetForm}
             targetMemberId={memberContextForAssetAdd}
             user={user}
+            // existingAssetToUpdate={existingAssetToUpdate} // Removed
           />
         </DialogContent>
       </Dialog>
@@ -649,7 +659,7 @@ export default function AssetManagementDashboard() {
               )}
               {selectedAssetForDetails.isAutoLoaded && (
                  <div className="flex items-center space-x-1 text-xs text-accent pt-1">
-                    <LayoutGrid size={14} /> {/* Changed from Info to LayoutGrid as per previous changes */}
+                    <LayoutGrid size={14} />
                     <span>Automatically loaded from connected wallet (simulated).</span>
                 </div>
               )}
@@ -684,7 +694,7 @@ export default function AssetManagementDashboard() {
                               <p className="text-foreground">{tx.quemComprou === "Main Entity" ? "Main Union (Ipê Acta)" : tx.quemComprou === "Connected Wallet" ? "Connected Wallet (Simulated)" : getMemberNameById(tx.quemComprou)}</p>
                             </div>
                           )}
-                          {tx.quemComprou === 'Ambos' && effectiveUser?.displayName && ( // Assuming "Ambos" means both partners
+                          {tx.quemComprou === 'Ambos' && effectiveUser?.displayName && (
                             <>
                               {tx.contribuicaoParceiro1 !== undefined && (
                                 <div>
@@ -794,7 +804,7 @@ export default function AssetManagementDashboard() {
 declare module 'reactflow' {
   interface NodeData {
     // Common to all node types for easier access in generic functions
-    id?: string;
+    id?: string; // Ensure 'id' is part of the common NodeData for our custom nodes
 
     // For UnionNode (UnionNodeData from UnionNode.tsx)
     label?: string;
@@ -802,10 +812,11 @@ declare module 'reactflow' {
     onOpenAssetModal?: () => void;
     onAddMember?: () => void;
 
-    // For MemberNode (MemberNodeData from MemberNode.tsx)
+    // For MemberNode (ExtendedMemberNodeData from this file)
     name?: string;
     relationshipType?: string;
     onAddAssetClick?: (memberId: string) => void;
+    walletAddress?: string; // Added for member nodes
 
     // For AssetNode (ExtendedAssetNodeData from types/asset.ts)
     userId?: string;
