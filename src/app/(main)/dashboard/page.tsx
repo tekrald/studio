@@ -46,13 +46,23 @@ const nodeOrigin: NodeOrigin = [0.5, 0.5];
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
 
-export interface MemberWithBirthDateAndWallet extends Member {
+export interface MemberWithBirthDate extends Member {
   dataNascimento?: Date | string;
+}
+
+export interface MemberWithBirthDateAndWallet extends MemberWithBirthDate {
   walletAddress?: string;
 }
 
 export interface ExtendedMemberNodeData extends IMemberNodeData {
   walletAddress?: string;
+}
+
+export interface GeneratedCertificate {
+  id: string;
+  dateGenerated: Date;
+  clausesSnapshot: ContractClause[];
+  unionName: string;
 }
 
 const nodeTypes = {
@@ -87,6 +97,7 @@ export default function AssetManagementDashboard() {
   const [isSubmittingRelease, setIsSubmittingRelease] = useState(false);
 
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
+  const [generatedCertificates, setGeneratedCertificates] = useState<GeneratedCertificate[]>([]);
   const [isHoldingReportModalOpen, setIsHoldingReportModalOpen] = useState(false);
 
   const onConnect: OnConnect = useCallback(
@@ -95,6 +106,7 @@ export default function AssetManagementDashboard() {
   );
 
   const handleOpenContractSettings = useCallback(() => {
+    // Ensure clauses are loaded from user if available, else use defaults
     const userClauses = user?.contractClauses || [
       { id: 'initial-1', text: 'All assets acquired during the union will be divided equally (50/50) in case of separation.' },
       { id: 'initial-2', text: 'Ordinary household expenses will be borne by both spouses, in proportion to their respective incomes.' },
@@ -182,6 +194,28 @@ export default function AssetManagementDashboard() {
     });
   }, [setNodes, handleCloseReleaseDialog, toast]);
 
+  const handleGenerateNewCertificate = () => {
+    if (!user || contractClauses.length === 0) {
+      toast({
+        title: "Cannot Generate Certificate",
+        description: "Please ensure there are contract agreements defined and you are logged in.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const newCertificate: GeneratedCertificate = {
+      id: `cert-${Date.now()}`,
+      dateGenerated: new Date(),
+      clausesSnapshot: [...contractClauses], // Create a snapshot
+      unionName: user.displayName || "Unnamed Union",
+    };
+    setGeneratedCertificates(prev => [newCertificate, ...prev]);
+    toast({
+      title: "Certificate Generated",
+      description: "A new certificate has been generated and added to the history.",
+    });
+  };
+
   const effectiveUser = user || {
     uid: 'mock-uid-default',
     displayName: 'My Union (Mock)',
@@ -202,7 +236,15 @@ export default function AssetManagementDashboard() {
     if (!currentUnionNode && !authLoading && effectiveUser?.displayName) {
       const unionNodeData: UnionNodeData = {
         label: effectiveUser.displayName || 'My Union',
-        onSettingsClick: handleOpenContractSettings,
+        onSettingsClick: () => {
+           // First, ensure the contract clauses are up-to-date from user profile before opening settings
+            const userClauses = user?.contractClauses || [
+                { id: 'initial-1', text: 'All assets acquired during the union will be divided equally (50/50) in case of separation.' },
+                { id: 'initial-2', text: 'Ordinary household expenses will be borne by both spouses, in proportion to their respective incomes.' },
+            ];
+            setContractClauses(userClauses); // Sync with current user profile clauses
+            setIsContractSettingsModalOpen(true);
+        },
         onOpenAssetModal: handleOpenAssetModalForUnion,
         onAddMember: handleOpenAddMemberModal,
       };
@@ -215,7 +257,7 @@ export default function AssetManagementDashboard() {
         nodeOrigin,
       };
       setNodes([unionNodeReactFlow]);
-      setEdges([]); // Clear edges when union node is first created
+      setEdges([]);
       unionNodeCreatedThisRun = true;
     } else if (currentUnionNode && effectiveUser?.displayName && (currentUnionNode.data as UnionNodeData).label !== effectiveUser.displayName) {
       setNodes((nds) =>
@@ -228,9 +270,9 @@ export default function AssetManagementDashboard() {
     }
 
     if (user?.isWalletConnected && (currentUnionNode || unionNodeCreatedThisRun) && !authLoading) {
-        const mockDigitalAssetsConfig: Omit<ExtendedAssetNodeData, 'id' | 'userId' | 'onOpenDetails' | 'onOpenReleaseDialog' | 'assignedToMemberId' | 'releaseCondition' | 'tipoImovelBemFisico' | 'enderecoLocalizacaoFisico' | 'observacoes' | 'tipo' | 'transactions'>[] = [
-            { nomeAtivo: 'Bitcoin', quantidadeTotalDigital: 0.5, isAutoLoaded: true },
-            { nomeAtivo: 'Ethereum', quantidadeTotalDigital: 10, isAutoLoaded: true },
+        const mockDigitalAssetsConfig: Omit<ExtendedAssetNodeData, 'id' | 'userId' | 'onOpenDetails' | 'onOpenReleaseDialog' | 'assignedToMemberId' | 'releaseCondition' | 'tipoImovelBemFisico' | 'enderecoLocalizacaoFisico' | 'observacoes' | 'transactions' | 'onOpenReleaseDialog'>[] = [
+            { nomeAtivo: 'Bitcoin', tipo: 'digital', quantidadeTotalDigital: 0.5, isAutoLoaded: true },
+            { nomeAtivo: 'Ethereum', tipo: 'digital', quantidadeTotalDigital: 10, isAutoLoaded: true },
         ];
 
         const nodesToAddThisRun: Node<ExtendedAssetNodeData>[] = [];
@@ -249,8 +291,8 @@ export default function AssetManagementDashboard() {
                     transactions: [{ id: `tx-${assetId}-${Date.now()}`, dataAquisicao: new Date(), quantidadeDigital: mockAsset.quantidadeTotalDigital, quemComprou: 'Connected Wallet'}],
                     isAutoLoaded: mockAsset.isAutoLoaded,
                     observacoes: `Asset ${mockAsset.nomeAtivo} automatically loaded.`,
-                    onOpenDetails: () => {},
-                    onOpenReleaseDialog: () => {},
+                    onOpenDetails: () => {}, // Will be set below
+                    onOpenReleaseDialog: () => {}, // Will be set below
                 };
                 assetDataForNode.onOpenDetails = () => handleOpenAssetDetailsModal(assetDataForNode);
                 assetDataForNode.onOpenReleaseDialog = (ad) => handleOpenReleaseDialog(ad);
@@ -334,7 +376,7 @@ export default function AssetManagementDashboard() {
         }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, effectiveUser?.displayName, user?.isWalletConnected, user?.uid, allMembers.length, setNodes, setEdges, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal, handleOpenReleaseDialog, nodes.length]);
+  }, [authLoading, effectiveUser?.displayName, user?.isWalletConnected, user?.uid, allMembers.length, nodes.length, handleOpenContractSettings, handleOpenAssetModalForUnion, handleOpenAddMemberModal, handleOpenReleaseDialog, handleOpenAssetDetailsModal, setNodes, setEdges]);
 
 
   const memberHasBirthDate = (memberId?: string): boolean => {
@@ -349,80 +391,122 @@ export default function AssetManagementDashboard() {
         return;
     }
     setIsSubmittingAsset(true);
-    const sourceNodeId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" || !formData.assignedToMemberId ? UNION_NODE_ID : formData.assignedToMemberId);
     
-    const result = await addAsset(formData, effectiveUser.uid); // addAsset is for physical assets
+    const result = await addAsset(formData, effectiveUser.uid);
     
+    const targetEntityId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" || !formData.assignedToMemberId ? UNION_NODE_ID : formData.assignedToMemberId);
+    const existingAssetNode = nodes.find(
+      (node) =>
+        node.type === 'assetNode' &&
+        (node.data as ExtendedAssetNodeData).nomeAtivo === formData.nomeAtivo &&
+        (node.data as ExtendedAssetNodeData).tipo === 'digital' && // Only consolidate digital for now
+        ((node.data as ExtendedAssetNodeData).assignedToMemberId || UNION_NODE_ID) === targetEntityId
+    );
+
     if (result.success && result.assetId && result.transactionId) {
         const newTransaction: AssetTransaction = {
-            id: result.transactionId, // Use ID from action
+            id: result.transactionId,
             dataAquisicao: formData.dataAquisicao,
             quemComprou: formData.quemComprou === "UNSPECIFIED_BUYER" || !formData.quemComprou ? "Main Entity" : formData.quemComprou,
             contribuicaoParceiro1: formData.contribuicaoParceiro1,
             contribuicaoParceiro2: formData.contribuicaoParceiro2,
-            observacoes: formData.observacoes,
+            observacoes: formData.observacoes, // Transaction specific notes from the form
+            // Physical asset transaction specifics
             tipoImovelBemFisico: formData.tipoImovelBemFisico, 
             enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico, 
         };
+        
+        if (existingAssetNode && formData.tipo === 'digital') { // Update existing digital asset node
+            setNodes((prevNodes) =>
+                prevNodes.map((node) => {
+                    if (node.id === existingAssetNode.id) {
+                        const currentData = node.data as ExtendedAssetNodeData;
+                        const newTotalQuantity = (currentData.quantidadeTotalDigital || 0) + (formData.quantidadeDigital || 0);
+                        const updatedTransactions = [...(currentData.transactions || []), newTransaction];
+                        
+                        const updatedNodeData: ExtendedAssetNodeData = {
+                            ...currentData,
+                            quantidadeTotalDigital: newTotalQuantity,
+                            transactions: updatedTransactions,
+                            // Update general notes if new ones are provided, or keep existing
+                            observacoes: formData.observacoes || currentData.observacoes, 
+                            // Update release condition if provided
+                            releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(currentData.assignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : currentData.releaseCondition,
+                        };
+                        updatedNodeData.onOpenDetails = () => handleOpenAssetDetailsModal(updatedNodeData);
+                        updatedNodeData.onOpenReleaseDialog = (ad) => handleOpenReleaseDialog(ad);
+                        return { ...node, data: updatedNodeData };
+                    }
+                    return node;
+                })
+            );
+            toast({ title: 'Success!', description: `Transaction added to asset: ${formData.nomeAtivo}.` });
 
-        const processedAssignedToMemberId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" ? undefined : formData.assignedToMemberId);
-        const actualSourceNodeId = processedAssignedToMemberId || UNION_NODE_ID;
-        const sourceNodeInstance = nodes.find(n => n.id === actualSourceNodeId);
+        } else { // Create new asset node (physical or new digital)
+            const processedAssignedToMemberId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" ? undefined : formData.assignedToMemberId);
+            const actualSourceNodeId = processedAssignedToMemberId || UNION_NODE_ID;
+            const sourceNodeInstance = nodes.find(n => n.id === actualSourceNodeId);
 
-        if (!sourceNodeInstance) {
-            console.error("Source node (Union or Member) not found for physical asset.", actualSourceNodeId);
-            setIsSubmittingAsset(false);
-            setMemberContextForAssetAdd(null);
-            return;
+            if (!sourceNodeInstance) {
+                console.error("Source node (Union or Member) not found.", actualSourceNodeId);
+                setIsSubmittingAsset(false);
+                setMemberContextForAssetAdd(null);
+                return;
+            }
+
+            let nodeDataPayload: ExtendedAssetNodeData = {
+                id: result.assetId,
+                userId: effectiveUser.uid,
+                nomeAtivo: formData.nomeAtivo,
+                tipo: formData.tipo || 'fisico', // Default to fisico if not specified, though form is for fisico
+                transactions: [newTransaction],
+                observacoes: formData.observacoes, // General asset notes from the form if it's the first transaction
+                assignedToMemberId: processedAssignedToMemberId,
+                releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
+                isAutoLoaded: false,
+                onOpenDetails: () => {},
+                onOpenReleaseDialog: () => {},
+            };
+
+            if (nodeDataPayload.tipo === 'digital') {
+                nodeDataPayload.quantidadeTotalDigital = formData.quantidadeDigital || 0;
+            } else { // Physical asset specific details
+                nodeDataPayload.tipoImovelBemFisico = formData.tipoImovelBemFisico;
+                nodeDataPayload.enderecoLocalizacaoFisico = formData.enderecoLocalizacaoFisico;
+            }
+            nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
+            nodeDataPayload.onOpenReleaseDialog = (ad) => handleOpenReleaseDialog(ad);
+
+            const assetNodesLinkedToSource = edges.filter(e => e.source === actualSourceNodeId && nodes.find(n => n.id === e.target && n.type === 'assetNode')).length;
+            const angleStep = actualSourceNodeId === UNION_NODE_ID ? Math.PI / 6 : Math.PI / 4;
+            const radius = actualSourceNodeId === UNION_NODE_ID ? 280 + Math.floor(assetNodesLinkedToSource / 8) * 90 : 180 + Math.floor(assetNodesLinkedToSource / 6) * 80;
+            const sourceNodeX = sourceNodeInstance.position?.x ?? 400;
+            const sourceNodeY = sourceNodeInstance.position?.y ?? 100;
+
+            let angleStart;
+            if (actualSourceNodeId === UNION_NODE_ID) {
+                angleStart = (Math.PI * 1.75) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ;
+            } else {
+                angleStart = (Math.PI * 0.15) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ;
+            }
+            const angle = angleStart + (assetNodesLinkedToSource * angleStep) ;
+
+            const newAssetNodeReactFlow: Node<ExtendedAssetNodeData> = {
+                id: result.assetId, type: 'assetNode', data: nodeDataPayload,
+                position: { x: sourceNodeX + radius * Math.cos(angle), y: sourceNodeY + radius * Math.sin(angle) },
+                draggable: true, nodeOrigin,
+            };
+
+            setNodes((prevNodes) => prevNodes.concat(newAssetNodeReactFlow));
+            setEdges((prevEdges) => prevEdges.concat({
+                id: `e-${actualSourceNodeId}-${result.assetId!}`, source: actualSourceNodeId, target: result.assetId!,
+                type: 'smoothstep', markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
+                style: { stroke: 'hsl(var(--primary))', strokeWidth: 1.5 },
+            }));
+            toast({ title: 'Success!', description: `Asset ${formData.nomeAtivo} added successfully.` });
         }
-
-        let nodeDataPayload: ExtendedAssetNodeData = {
-            id: result.assetId,
-            userId: effectiveUser.uid,
-            nomeAtivo: formData.nomeAtivo,
-            tipo: 'fisico',
-            tipoImovelBemFisico: formData.tipoImovelBemFisico,
-            enderecoLocalizacaoFisico: formData.enderecoLocalizacaoFisico,
-            transactions: [newTransaction],
-            observacoes: formData.observacoes, 
-            assignedToMemberId: processedAssignedToMemberId,
-            releaseCondition: formData.setReleaseCondition && formData.releaseTargetAge && memberHasBirthDate(processedAssignedToMemberId) ? { type: 'age', targetAge: formData.releaseTargetAge } : undefined,
-            isAutoLoaded: false,
-            onOpenDetails: () => {},
-            onOpenReleaseDialog: () => {},
-        };
-        nodeDataPayload.onOpenDetails = () => handleOpenAssetDetailsModal(nodeDataPayload);
-        nodeDataPayload.onOpenReleaseDialog = (ad) => handleOpenReleaseDialog(ad);
-
-        const assetNodesLinkedToSource = edges.filter(e => e.source === actualSourceNodeId && nodes.find(n => n.id === e.target && n.type === 'assetNode')).length;
-        const angleStep = actualSourceNodeId === UNION_NODE_ID ? Math.PI / 6 : Math.PI / 4;
-        const radius = actualSourceNodeId === UNION_NODE_ID ? 280 + Math.floor(assetNodesLinkedToSource / 8) * 90 : 180 + Math.floor(assetNodesLinkedToSource / 6) * 80;
-        const sourceNodeX = sourceNodeInstance.position?.x ?? 400;
-        const sourceNodeY = sourceNodeInstance.position?.y ?? 100;
-
-        let angleStart;
-        if (actualSourceNodeId === UNION_NODE_ID) {
-            angleStart = (Math.PI * 1.75) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ;
-        } else {
-            angleStart = (Math.PI * 0.15) - ((Math.max(0, assetNodesLinkedToSource -1)) * angleStep / 2) ;
-        }
-        const angle = angleStart + (assetNodesLinkedToSource * angleStep) ;
-
-        const newAssetNodeReactFlow: Node<ExtendedAssetNodeData> = {
-            id: result.assetId, type: 'assetNode', data: nodeDataPayload,
-            position: { x: sourceNodeX + radius * Math.cos(angle), y: sourceNodeY + radius * Math.sin(angle) },
-            draggable: true, nodeOrigin,
-        };
-
-        setNodes((prevNodes) => prevNodes.concat(newAssetNodeReactFlow));
-        setEdges((prevEdges) => prevEdges.concat({
-            id: `e-${actualSourceNodeId}-${result.assetId!}`, source: actualSourceNodeId, target: result.assetId!,
-            type: 'smoothstep', markerEnd: { type: MarkerType.ArrowClosed, color: 'hsl(var(--primary))' },
-            style: { stroke: 'hsl(var(--primary))', strokeWidth: 1.5 },
-        }));
-        toast({ title: 'Success!', description: 'Physical asset added successfully.' });
     } else {
-        toast({ title: 'Error!', description: result.error || 'Could not add physical asset.', variant: 'destructive' });
+        toast({ title: 'Error!', description: result.error || 'Could not add asset.', variant: 'destructive' });
     }
     
     setIsAssetModalOpen(false);
@@ -437,7 +521,7 @@ export default function AssetManagementDashboard() {
       return;
     }
     setIsSubmittingMember(true);
-    const result = await addMember(data, UNION_NODE_ID); // Pass UNION_NODE_ID as the unionId
+    const result = await addMember(data, UNION_NODE_ID);
     if (result.success && result.memberId) {
       toast({ title: 'Success!', description: 'Child added successfully.' });
 
@@ -445,7 +529,7 @@ export default function AssetManagementDashboard() {
         id: result.memberId,
         unionId: UNION_NODE_ID,
         nome: data.nome,
-        tipoRelacao: data.tipoRelacao,
+        tipoRelacao: data.tipoRelacao, // Should be 'filho_a'
         dataNascimento: data.dataNascimento,
         walletAddress: data.walletAddress,
       };
@@ -795,33 +879,59 @@ export default function AssetManagementDashboard() {
       <Dialog open={isCertificateModalOpen} onOpenChange={setIsCertificateModalOpen}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">Marriage Certificate Summary</DialogTitle>
+            <DialogTitle className="text-2xl text-primary">Marriage Certificate</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Summary of defined contract agreements.
+              Review current agreements or generate a new certificate.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                variant="outline"
+                className="flex-1 text-foreground/90 border-border hover:bg-muted/80"
+                onClick={() => {
+                  setIsCertificateModalOpen(false);
+                  handleOpenContractSettings();
+                }}
+              >
+                <Settings className="mr-2 h-5 w-5" />
+                Make Final Changes to Agreements
+              </Button>
+              <Button
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                onClick={handleGenerateNewCertificate}
+              >
+                <FileText className="mr-2 h-5 w-5" />
+                Generate New Certificate
+              </Button>
+            </div>
+            <Separator />
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Current Agreements:</h3>
-              {contractClauses.length > 0 ? (
+              <h3 className="text-lg font-semibold text-foreground mb-2">History of Generated Certificates:</h3>
+              {generatedCertificates.length > 0 ? (
                 <ScrollArea className="h-60 border rounded-md p-3 bg-muted/30">
-                  <ul className="space-y-2">
-                    {contractClauses.map((clause) => (
-                      <li key={clause.id} className="p-2 bg-background/50 rounded-md text-sm text-foreground border border-border/30">
-                        {clause.text}
+                  <ul className="space-y-3">
+                    {generatedCertificates.map((cert) => (
+                      <li key={cert.id} className="p-3 bg-background/50 rounded-md text-sm text-foreground border border-border/30">
+                        <p className="font-semibold">Certificate - {cert.unionName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Generated on: {format(cert.dateGenerated, "MM/dd/yyyy 'at' HH:mm", { locale: enUS })}
+                        </p>
+                        <details className="mt-1 text-xs">
+                          <summary className="cursor-pointer text-primary/80 hover:text-primary">View Clauses ({cert.clausesSnapshot.length})</summary>
+                          <ul className="list-disc pl-5 mt-1 space-y-1">
+                            {cert.clausesSnapshot.map(clause => (
+                              <li key={clause.id}>{clause.text}</li>
+                            ))}
+                          </ul>
+                        </details>
                       </li>
                     ))}
                   </ul>
                 </ScrollArea>
               ) : (
-                <p className="text-sm text-muted-foreground">No contract agreements defined yet.</p>
+                <p className="text-sm text-muted-foreground">No certificates generated yet.</p>
               )}
-            </div>
-            <Separator />
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">History of Generated Certificates:</h3>
-              <p className="text-sm text-muted-foreground">Certificate generation history will be displayed here.</p>
-              {/* Placeholder for future list of generated certificates */}
             </div>
           </div>
           <DialogFooter>
@@ -900,15 +1010,17 @@ export default function AssetManagementDashboard() {
 
 declare module 'reactflow' {
   interface NodeData {
-    id?: string; 
+    id?: string;
     label?: string;
     onSettingsClick?: () => void;
     onOpenAssetModal?: () => void;
     onAddMember?: () => void;
+    // For MemberNode
     name?: string;
     relationshipType?: string;
     onAddAssetClick?: (memberId: string) => void;
-    walletAddress?: string; 
+    walletAddress?: string;
+    // For AssetNode
     userId?: string;
     nomeAtivo?: string;
     tipo?: 'digital' | 'fisico';
@@ -918,9 +1030,10 @@ declare module 'reactflow' {
     transactions?: AssetTransaction[];
     assignedToMemberId?: string;
     releaseCondition?: { type: 'age'; targetAge: number };
-    observacoes?: string;
+    observacoes?: string; // General asset notes
     isAutoLoaded?: boolean;
     onOpenDetails?: () => void;
     onOpenReleaseDialog?: (assetData: ExtendedAssetNodeData) => void;
   }
 }
+
