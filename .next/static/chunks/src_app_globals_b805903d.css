@@ -2156,6 +2156,11 @@ h1, h2, h3, h4, h5, h6 {
   --tw-shadow: var(--tw-shadow-colored);
 }
 
+.shadow-accent\/30 {
+  --tw-shadow-color: hsl(var(--accent) / .3);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
 .outline-none {
   outline: 2px solid #0000;
   outline-offset: 2px;

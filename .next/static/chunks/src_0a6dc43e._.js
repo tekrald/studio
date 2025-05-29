@@ -4398,7 +4398,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$auth$2d$provider$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/auth-provider.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/dialog.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-client] (ecmascript) <export default as Loader2>"); // Added UserIcon
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-client] (ecmascript) <export default as Loader2>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$settings$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Settings$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/settings.js [app-client] (ecmascript) <export default as Settings>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/file-text.js [app-client] (ecmascript) <export default as FileText>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$briefcase$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Briefcase$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/briefcase.js [app-client] (ecmascript) <export default as Briefcase>");
@@ -4416,7 +4416,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$nodes$2f$UnionNode$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/nodes/UnionNode.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$nodes$2f$AssetNode$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/nodes/AssetNode.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$nodes$2f$MemberNode$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/nodes/MemberNode.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$nodes$2f$PartnerNode$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/nodes/PartnerNode.tsx [app-client] (ecmascript)"); // New PartnerNode import
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$nodes$2f$PartnerNode$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/nodes/PartnerNode.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$contract$2f$ContractSettingsDialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/contract/ContractSettingsDialog.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/button.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/card.tsx [app-client] (ecmascript)");
@@ -4458,13 +4458,13 @@ const nodeOrigin = [
     0.5
 ];
 // Layout constants
-const UNION_NODE_X_POS = 600; // Adjusted for potentially wider layout
+const UNION_NODE_X_POS = 600;
 const UNION_NODE_Y_POS = 100;
-const NODE_WIDTH = 224; // Approx width of AssetNode/MemberNode (w-56)
+const NODE_WIDTH = 224;
 const HORIZONTAL_SPACING = 40;
-const PARTNER_ROW_Y_OFFSET = 180; // Vertical distance from Union to Partner row
-const CHILDREN_ROW_Y_OFFSET = 180; // Vertical distance from Partner row (or Union if no partners) to Children row
-const ASSET_ROW_Y_OFFSET = 180; // Vertical distance from Parent (Union, Partner, or Child) to its Asset row
+const PARTNER_ROW_Y_OFFSET = 180;
+const CHILDREN_ROW_Y_OFFSET = 180;
+const ASSET_ROW_Y_OFFSET = 180;
 const initialNodes = [];
 const initialEdges = [];
 const nodeTypes = {
@@ -4569,7 +4569,7 @@ function AssetManagementDashboard() {
     };
     const handleOpenAssetModalForUnion = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "AssetManagementDashboard.useCallback[handleOpenAssetModalForUnion]": ()=>{
-            setMemberContextForAssetAdd(null); // No specific member context for union assets
+            setMemberContextForAssetAdd(null);
             setIsAssetModalOpen(true);
         }
     }["AssetManagementDashboard.useCallback[handleOpenAssetModalForUnion]"], []);
@@ -4613,7 +4613,7 @@ function AssetManagementDashboard() {
             setIsSubmittingRelease(true);
             await new Promise({
                 "AssetManagementDashboard.useCallback[handleSaveAssetReleaseCondition]": (resolve)=>setTimeout(resolve, 500)
-            }["AssetManagementDashboard.useCallback[handleSaveAssetReleaseCondition]"]);
+            }["AssetManagementDashboard.useCallback[handleSaveAssetReleaseCondition]"]); // Simulate network delay
             setNodes({
                 "AssetManagementDashboard.useCallback[handleSaveAssetReleaseCondition]": (prevNodes)=>prevNodes.map({
                         "AssetManagementDashboard.useCallback[handleSaveAssetReleaseCondition]": (node)=>{
@@ -4691,13 +4691,21 @@ function AssetManagementDashboard() {
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "AssetManagementDashboard.useEffect": ()=>{
-            const currentUnionNode = nodes.find({
-                "AssetManagementDashboard.useEffect.currentUnionNode": (node)=>node.id === UNION_NODE_ID
-            }["AssetManagementDashboard.useEffect.currentUnionNode"]);
-            let unionNodeCreatedThisRun = false;
-            if (!currentUnionNode && !authLoading && effectiveUser?.displayName) {
+            let currentNodes = [
+                ...nodes
+            ];
+            let currentEdges = [
+                ...edges
+            ];
+            let nodesChanged = false;
+            let edgesChanged = false;
+            // 1. Ensure Union Node
+            const existingUnionNode = currentNodes.find({
+                "AssetManagementDashboard.useEffect.existingUnionNode": (node)=>node.id === UNION_NODE_ID
+            }["AssetManagementDashboard.useEffect.existingUnionNode"]);
+            if (!existingUnionNode && !authLoading && effectiveUser?.displayName) {
                 const unionNodeData = {
-                    label: effectiveUser.displayName || 'My Union',
+                    label: effectiveUser.displayName,
                     onSettingsClick: handleOpenContractSettings,
                     onOpenAssetModal: handleOpenAssetModalForUnion,
                     onAddMember: handleOpenAddMemberModal
@@ -4713,40 +4721,40 @@ function AssetManagementDashboard() {
                     draggable: true,
                     nodeOrigin
                 };
-                setNodes([
+                currentNodes = [
                     unionNodeReactFlow
-                ]);
-                setEdges([]);
-                unionNodeCreatedThisRun = true;
-            } else if (currentUnionNode && effectiveUser?.displayName && currentUnionNode.data.label !== effectiveUser.displayName) {
-                setNodes({
-                    "AssetManagementDashboard.useEffect": (nds)=>nds.map({
-                            "AssetManagementDashboard.useEffect": (node)=>node.id === UNION_NODE_ID ? {
-                                    ...node,
-                                    data: {
-                                        ...node.data,
-                                        label: effectiveUser.displayName
-                                    }
-                                } : node
-                        }["AssetManagementDashboard.useEffect"])
+                ]; // Reset nodes if union node is created
+                currentEdges = []; // Reset edges as well
+                nodesChanged = true;
+                edgesChanged = true;
+            } else if (existingUnionNode && effectiveUser?.displayName && existingUnionNode.data.label !== effectiveUser.displayName) {
+                currentNodes = currentNodes.map({
+                    "AssetManagementDashboard.useEffect": (node)=>node.id === UNION_NODE_ID ? {
+                            ...node,
+                            data: {
+                                ...node.data,
+                                label: effectiveUser.displayName
+                            }
+                        } : node
                 }["AssetManagementDashboard.useEffect"]);
+                nodesChanged = true;
             }
-            // Add Partner Nodes
-            if ((currentUnionNode || unionNodeCreatedThisRun) && user?.partners && user.partners.length > 0) {
+            const unionNodeForLayout = currentNodes.find({
+                "AssetManagementDashboard.useEffect.unionNodeForLayout": (n)=>n.id === UNION_NODE_ID
+            }["AssetManagementDashboard.useEffect.unionNodeForLayout"]);
+            // 2. Ensure Partner Nodes (if union node exists)
+            if (unionNodeForLayout && user?.partners && user.partners.length > 0) {
                 const partnerNodesToAdd = [];
                 const partnerEdgesToAdd = [];
-                const existingPartnerNodeIds = new Set(nodes.filter({
-                    "AssetManagementDashboard.useEffect": (n)=>n.type === 'partnerNode'
-                }["AssetManagementDashboard.useEffect"]).map({
-                    "AssetManagementDashboard.useEffect": (n)=>n.id
-                }["AssetManagementDashboard.useEffect"]));
                 const totalWidthForPartners = user.partners.length * NODE_WIDTH + Math.max(0, user.partners.length - 1) * HORIZONTAL_SPACING;
-                let currentPartnerX = UNION_NODE_X_POS - totalWidthForPartners / 2 + NODE_WIDTH / 2;
-                const partnerYPos = UNION_NODE_Y_POS + PARTNER_ROW_Y_OFFSET;
+                let currentPartnerX = (unionNodeForLayout.position?.x ?? UNION_NODE_X_POS) - totalWidthForPartners / 2 + NODE_WIDTH / 2;
+                const partnerYPos = (unionNodeForLayout.position?.y ?? UNION_NODE_Y_POS) + PARTNER_ROW_Y_OFFSET;
                 user.partners.forEach({
                     "AssetManagementDashboard.useEffect": (partner, index)=>{
                         const partnerId = `partner-${index}-${partner.name.replace(/\s+/g, '-').toLowerCase()}`;
-                        if (!existingPartnerNodeIds.has(partnerId)) {
+                        if (!currentNodes.some({
+                            "AssetManagementDashboard.useEffect": (n)=>n.id === partnerId
+                        }["AssetManagementDashboard.useEffect"])) {
                             partnerNodesToAdd.push({
                                 id: partnerId,
                                 type: 'partnerNode',
@@ -4780,40 +4788,26 @@ function AssetManagementDashboard() {
                     }
                 }["AssetManagementDashboard.useEffect"]);
                 if (partnerNodesToAdd.length > 0) {
-                    setNodes({
-                        "AssetManagementDashboard.useEffect": (prevNodes)=>{
-                            const currentIds = new Set(prevNodes.map({
-                                "AssetManagementDashboard.useEffect": (n)=>n.id
-                            }["AssetManagementDashboard.useEffect"]));
-                            const uniqueNewNodes = partnerNodesToAdd.filter({
-                                "AssetManagementDashboard.useEffect.uniqueNewNodes": (newNode)=>!currentIds.has(newNode.id)
-                            }["AssetManagementDashboard.useEffect.uniqueNewNodes"]);
-                            return [
-                                ...prevNodes,
-                                ...uniqueNewNodes
-                            ];
-                        }
-                    }["AssetManagementDashboard.useEffect"]);
+                    currentNodes = [
+                        ...currentNodes,
+                        ...partnerNodesToAdd
+                    ];
+                    nodesChanged = true;
                 }
                 if (partnerEdgesToAdd.length > 0) {
-                    setEdges({
-                        "AssetManagementDashboard.useEffect": (prevEdges)=>{
-                            const currentEdgeIds = new Set(prevEdges.map({
-                                "AssetManagementDashboard.useEffect": (e)=>e.id
-                            }["AssetManagementDashboard.useEffect"]));
-                            const uniqueNewEdges = partnerEdgesToAdd.filter({
-                                "AssetManagementDashboard.useEffect.uniqueNewEdges": (newEdge)=>!currentEdgeIds.has(newEdge.id)
-                            }["AssetManagementDashboard.useEffect.uniqueNewEdges"]);
-                            return [
-                                ...prevEdges,
-                                ...uniqueNewEdges
-                            ];
-                        }
-                    }["AssetManagementDashboard.useEffect"]);
+                    currentEdges = [
+                        ...currentEdges,
+                        ...partnerEdgesToAdd
+                    ];
+                    edgesChanged = true;
                 }
             }
-            if (user?.isWalletConnected && (currentUnionNode || unionNodeCreatedThisRun) && !authLoading) {
-                const mockDigitalAssetsConfig = [
+            // 3. Ensure Mock Wallet Assets (if wallet connected and union node exists)
+            if (user?.isWalletConnected && unionNodeForLayout && !authLoading) {
+                const mockNodesToAddThisSegment = [];
+                const mockEdgesToAddThisSegment = [];
+                // Define mock assets (BTC, ETH for Union)
+                const unionMockAssetsConfig = [
                     {
                         nomeAtivo: 'Bitcoin',
                         tipo: 'digital',
@@ -4827,120 +4821,114 @@ function AssetManagementDashboard() {
                         isAutoLoaded: true
                     }
                 ];
-                const nodesToAddThisRun = [];
-                const edgesToAddThisRun = [];
-                const unionNodeInstance = nodes.find({
-                    "AssetManagementDashboard.useEffect.unionNodeInstance": (n)=>n.id === UNION_NODE_ID
-                }["AssetManagementDashboard.useEffect.unionNodeInstance"]);
-                if (unionNodeInstance) {
-                    const unionNodeX = unionNodeInstance.position?.x ?? UNION_NODE_X_POS;
-                    const unionNodeY = unionNodeInstance.position?.y ?? UNION_NODE_Y_POS;
-                    const partnerNodesExist = nodes.some({
-                        "AssetManagementDashboard.useEffect.partnerNodesExist": (n)=>n.type === 'partnerNode'
-                    }["AssetManagementDashboard.useEffect.partnerNodesExist"]);
-                    const childrenNodesExist = nodes.some({
-                        "AssetManagementDashboard.useEffect.childrenNodesExist": (n)=>n.type === 'memberNode' && edges.some({
-                                "AssetManagementDashboard.useEffect.childrenNodesExist": (e)=>e.source === UNION_NODE_ID && e.target === n.id
-                            }["AssetManagementDashboard.useEffect.childrenNodesExist"])
-                    }["AssetManagementDashboard.useEffect.childrenNodesExist"]);
-                    let unionDigitalAssetsYPos = unionNodeY + ASSET_ROW_Y_OFFSET;
-                    if (partnerNodesExist) {
-                        unionDigitalAssetsYPos = UNION_NODE_Y_POS + PARTNER_ROW_Y_OFFSET + CHILDREN_ROW_Y_OFFSET; // Assets below partners
-                        if (childrenNodesExist) {
-                            unionDigitalAssetsYPos += ASSET_ROW_Y_OFFSET; // And below children if they are also below partners
-                        }
-                    } else if (childrenNodesExist) {
-                        unionDigitalAssetsYPos = UNION_NODE_Y_POS + CHILDREN_ROW_Y_OFFSET + ASSET_ROW_Y_OFFSET; // Assets below children (no partners)
+                const unionNodeX = unionNodeForLayout.position?.x ?? UNION_NODE_X_POS;
+                const unionNodeY = unionNodeForLayout.position?.y ?? UNION_NODE_Y_POS;
+                const partnerNodesInCurrent = currentNodes.filter({
+                    "AssetManagementDashboard.useEffect.partnerNodesInCurrent": (n)=>n.type === 'partnerNode'
+                }["AssetManagementDashboard.useEffect.partnerNodesInCurrent"]);
+                const childrenNodesInCurrent = currentNodes.filter({
+                    "AssetManagementDashboard.useEffect.childrenNodesInCurrent": (n)=>n.type === 'memberNode' && currentEdges.some({
+                            "AssetManagementDashboard.useEffect.childrenNodesInCurrent": (e)=>e.source === UNION_NODE_ID && e.target === n.id
+                        }["AssetManagementDashboard.useEffect.childrenNodesInCurrent"])
+                }["AssetManagementDashboard.useEffect.childrenNodesInCurrent"]);
+                let unionDigitalAssetsYPos = unionNodeY + ASSET_ROW_Y_OFFSET;
+                if (partnerNodesInCurrent.length > 0) {
+                    unionDigitalAssetsYPos = unionNodeY + PARTNER_ROW_Y_OFFSET + ASSET_ROW_Y_OFFSET;
+                    if (childrenNodesInCurrent.length > 0) {
+                        unionDigitalAssetsYPos += CHILDREN_ROW_Y_OFFSET;
                     }
-                    const mockAssetsToConsider = mockDigitalAssetsConfig.filter({
-                        "AssetManagementDashboard.useEffect.mockAssetsToConsider": (mockAsset)=>{
-                            const assetId = `mock-asset-${mockAsset.nomeAtivo.toLowerCase().replace(/\s+/g, '-')}-union`;
-                            return !nodes.some({
-                                "AssetManagementDashboard.useEffect.mockAssetsToConsider": (n)=>n.id === assetId
-                            }["AssetManagementDashboard.useEffect.mockAssetsToConsider"]);
-                        }
-                    }["AssetManagementDashboard.useEffect.mockAssetsToConsider"]);
-                    const totalWidthForMockAssets = mockAssetsToConsider.length * NODE_WIDTH + Math.max(0, mockAssetsToConsider.length - 1) * HORIZONTAL_SPACING;
-                    let currentMockX = unionNodeX - totalWidthForMockAssets / 2 + NODE_WIDTH / 2;
-                    mockAssetsToConsider.forEach({
-                        "AssetManagementDashboard.useEffect": (mockAsset)=>{
-                            const assetId = `mock-asset-${mockAsset.nomeAtivo.toLowerCase().replace(/\s+/g, '-')}-union`;
-                            if (!nodes.some({
-                                "AssetManagementDashboard.useEffect": (n)=>n.id === assetId
-                            }["AssetManagementDashboard.useEffect"]) && !nodesToAddThisRun.some({
-                                "AssetManagementDashboard.useEffect": (n)=>n.id === assetId
-                            }["AssetManagementDashboard.useEffect"])) {
-                                const assetDataForNode = {
-                                    id: assetId,
-                                    userId: effectiveUser.uid,
-                                    nomeAtivo: mockAsset.nomeAtivo,
-                                    tipo: 'digital',
-                                    quantidadeTotalDigital: mockAsset.quantidadeTotalDigital,
-                                    transactions: [
-                                        {
-                                            id: `tx-${assetId}-${Date.now()}`,
-                                            dataAquisicao: new Date(),
-                                            quantidadeDigital: mockAsset.quantidadeTotalDigital,
-                                            quemComprou: 'Connected Wallet'
-                                        }
-                                    ],
-                                    isAutoLoaded: mockAsset.isAutoLoaded,
-                                    observacoes: `Asset ${mockAsset.nomeAtivo} automatically loaded.`,
-                                    onOpenDetails: {
-                                        "AssetManagementDashboard.useEffect": ()=>{}
-                                    }["AssetManagementDashboard.useEffect"],
-                                    onOpenReleaseDialog: {
-                                        "AssetManagementDashboard.useEffect": ()=>{}
-                                    }["AssetManagementDashboard.useEffect"]
-                                };
-                                assetDataForNode.onOpenDetails = ({
-                                    "AssetManagementDashboard.useEffect": ()=>handleOpenAssetDetailsModal(assetDataForNode)
-                                })["AssetManagementDashboard.useEffect"];
-                                assetDataForNode.onOpenReleaseDialog = ({
-                                    "AssetManagementDashboard.useEffect": (ad)=>handleOpenReleaseDialog(ad)
-                                })["AssetManagementDashboard.useEffect"];
-                                nodesToAddThisRun.push({
-                                    id: assetId,
-                                    type: 'assetNode',
-                                    position: {
-                                        x: currentMockX,
-                                        y: unionDigitalAssetsYPos
-                                    },
-                                    draggable: true,
-                                    nodeOrigin,
-                                    data: assetDataForNode
-                                });
-                                edgesToAddThisRun.push({
-                                    id: `e-${UNION_NODE_ID}-${assetId}`,
-                                    source: UNION_NODE_ID,
-                                    target: assetId,
-                                    type: 'smoothstep',
-                                    markerEnd: {
-                                        type: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MarkerType"].ArrowClosed,
-                                        color: 'hsl(var(--primary))'
-                                    },
-                                    style: {
-                                        stroke: 'hsl(var(--primary))',
-                                        strokeWidth: 1.5
-                                    }
-                                });
-                                currentMockX += NODE_WIDTH + HORIZONTAL_SPACING;
-                            }
-                        }
-                    }["AssetManagementDashboard.useEffect"]);
+                } else if (childrenNodesInCurrent.length > 0) {
+                    unionDigitalAssetsYPos = unionNodeY + CHILDREN_ROW_Y_OFFSET + ASSET_ROW_Y_OFFSET;
                 }
-                const firstChildNode = allMembers.find({
-                    "AssetManagementDashboard.useEffect.firstChildNode": (m)=>m.tipoRelacao === 'filho_a'
-                }["AssetManagementDashboard.useEffect.firstChildNode"]);
-                if (firstChildNode?.id) {
-                    const childId = firstChildNode.id;
+                const unionAssetsToConsider = unionMockAssetsConfig.filter({
+                    "AssetManagementDashboard.useEffect.unionAssetsToConsider": (mockAsset)=>{
+                        const assetId = `mock-asset-${mockAsset.nomeAtivo.toLowerCase().replace(/\s+/g, '-')}-union`;
+                        return !currentNodes.some({
+                            "AssetManagementDashboard.useEffect.unionAssetsToConsider": (n)=>n.id === assetId
+                        }["AssetManagementDashboard.useEffect.unionAssetsToConsider"]);
+                    }
+                }["AssetManagementDashboard.useEffect.unionAssetsToConsider"]);
+                const totalWidthForUnionMockAssets = unionAssetsToConsider.length * NODE_WIDTH + Math.max(0, unionAssetsToConsider.length - 1) * HORIZONTAL_SPACING;
+                let currentUnionMockX = unionNodeX - totalWidthForUnionMockAssets / 2 + NODE_WIDTH / 2;
+                unionAssetsToConsider.forEach({
+                    "AssetManagementDashboard.useEffect": (mockAsset)=>{
+                        const assetId = `mock-asset-${mockAsset.nomeAtivo.toLowerCase().replace(/\s+/g, '-')}-union`;
+                        // Check against currentNodes, not the global `nodes` to avoid race conditions within this effect
+                        if (!currentNodes.some({
+                            "AssetManagementDashboard.useEffect": (n)=>n.id === assetId
+                        }["AssetManagementDashboard.useEffect"])) {
+                            let assetDataForNode = {
+                                id: assetId,
+                                userId: effectiveUser.uid,
+                                nomeAtivo: mockAsset.nomeAtivo,
+                                tipo: 'digital',
+                                quantidadeTotalDigital: mockAsset.quantidadeTotalDigital,
+                                transactions: [
+                                    {
+                                        id: `tx-${assetId}-${Date.now()}`,
+                                        dataAquisicao: new Date(),
+                                        quantidadeDigital: mockAsset.quantidadeTotalDigital,
+                                        quemComprou: 'Connected Wallet'
+                                    }
+                                ],
+                                isAutoLoaded: true,
+                                observacoes: `Asset ${mockAsset.nomeAtivo} automatically loaded.`,
+                                onOpenDetails: {
+                                    "AssetManagementDashboard.useEffect": ()=>{}
+                                }["AssetManagementDashboard.useEffect"],
+                                onOpenReleaseDialog: {
+                                    "AssetManagementDashboard.useEffect": ()=>{}
+                                }["AssetManagementDashboard.useEffect"]
+                            };
+                            assetDataForNode.onOpenDetails = ({
+                                "AssetManagementDashboard.useEffect": ()=>handleOpenAssetDetailsModal(assetDataForNode)
+                            })["AssetManagementDashboard.useEffect"];
+                            assetDataForNode.onOpenReleaseDialog = ({
+                                "AssetManagementDashboard.useEffect": (ad)=>handleOpenReleaseDialog(ad)
+                            })["AssetManagementDashboard.useEffect"];
+                            mockNodesToAddThisSegment.push({
+                                id: assetId,
+                                type: 'assetNode',
+                                position: {
+                                    x: currentUnionMockX,
+                                    y: unionDigitalAssetsYPos
+                                },
+                                draggable: true,
+                                nodeOrigin,
+                                data: assetDataForNode
+                            });
+                            mockEdgesToAddThisSegment.push({
+                                id: `e-${UNION_NODE_ID}-${assetId}`,
+                                source: UNION_NODE_ID,
+                                target: assetId,
+                                type: 'smoothstep',
+                                markerEnd: {
+                                    type: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MarkerType"].ArrowClosed,
+                                    color: 'hsl(var(--primary))'
+                                },
+                                style: {
+                                    stroke: 'hsl(var(--primary))',
+                                    strokeWidth: 1.5
+                                }
+                            });
+                            currentUnionMockX += NODE_WIDTH + HORIZONTAL_SPACING;
+                        }
+                    }
+                }["AssetManagementDashboard.useEffect"]);
+                // Add USDC for the first child if present
+                const firstChildFromAllMembers = allMembers.find({
+                    "AssetManagementDashboard.useEffect.firstChildFromAllMembers": (m)=>m.tipoRelacao === 'filho_a'
+                }["AssetManagementDashboard.useEffect.firstChildFromAllMembers"]);
+                if (firstChildFromAllMembers?.id) {
+                    const childId = firstChildFromAllMembers.id;
                     const usdcAssetId = `mock-usdc-child-${childId}`;
-                    if (!nodes.some({
-                        "AssetManagementDashboard.useEffect": (n)=>n.id === usdcAssetId
-                    }["AssetManagementDashboard.useEffect"]) && !nodesToAddThisRun.some({
+                    const childNodeInstance = currentNodes.find({
+                        "AssetManagementDashboard.useEffect.childNodeInstance": (n)=>n.id === childId && n.type === 'memberNode'
+                    }["AssetManagementDashboard.useEffect.childNodeInstance"]);
+                    if (childNodeInstance && !currentNodes.some({
                         "AssetManagementDashboard.useEffect": (n)=>n.id === usdcAssetId
                     }["AssetManagementDashboard.useEffect"])) {
-                        const usdcAssetData = {
+                        let usdcAssetData = {
                             id: usdcAssetId,
                             userId: effectiveUser.uid,
                             nomeAtivo: 'USDC',
@@ -4974,74 +4962,57 @@ function AssetManagementDashboard() {
                         usdcAssetData.onOpenReleaseDialog = ({
                             "AssetManagementDashboard.useEffect": (ad)=>handleOpenReleaseDialog(ad)
                         })["AssetManagementDashboard.useEffect"];
-                        const childNodeInstance = nodes.find({
-                            "AssetManagementDashboard.useEffect.childNodeInstance": (n)=>n.id === childId
-                        }["AssetManagementDashboard.useEffect.childNodeInstance"]);
-                        if (childNodeInstance) {
-                            const childNodeX = childNodeInstance.position?.x ?? 0;
-                            const childNodeY = childNodeInstance.position?.y ?? 0;
-                            const childAssetsYPos = childNodeY + ASSET_ROW_Y_OFFSET;
-                            const childAssetXPos = childNodeX;
-                            nodesToAddThisRun.push({
-                                id: usdcAssetId,
-                                type: 'assetNode',
-                                position: {
-                                    x: childAssetXPos,
-                                    y: childAssetsYPos
-                                },
-                                draggable: true,
-                                nodeOrigin,
-                                data: usdcAssetData
-                            });
-                            edgesToAddThisRun.push({
-                                id: `e-${childId}-${usdcAssetId}`,
-                                source: childId,
-                                target: usdcAssetId,
-                                type: 'smoothstep',
-                                markerEnd: {
-                                    type: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MarkerType"].ArrowClosed,
-                                    color: 'hsl(var(--primary))'
-                                },
-                                style: {
-                                    stroke: 'hsl(var(--primary))',
-                                    strokeWidth: 1.5
-                                }
-                            });
-                        }
+                        const childNodeX = childNodeInstance.position?.x ?? 0;
+                        const childNodeY = childNodeInstance.position?.y ?? 0;
+                        const childAssetsYPos = childNodeY + ASSET_ROW_Y_OFFSET;
+                        const childAssetXPos = childNodeX; // Center under child
+                        mockNodesToAddThisSegment.push({
+                            id: usdcAssetId,
+                            type: 'assetNode',
+                            position: {
+                                x: childAssetXPos,
+                                y: childAssetsYPos
+                            },
+                            draggable: true,
+                            nodeOrigin,
+                            data: usdcAssetData
+                        });
+                        mockEdgesToAddThisSegment.push({
+                            id: `e-${childId}-${usdcAssetId}`,
+                            source: childId,
+                            target: usdcAssetId,
+                            type: 'smoothstep',
+                            markerEnd: {
+                                type: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["MarkerType"].ArrowClosed,
+                                color: 'hsl(var(--primary))'
+                            },
+                            style: {
+                                stroke: 'hsl(var(--primary))',
+                                strokeWidth: 1.5
+                            }
+                        });
                     }
                 }
-                if (nodesToAddThisRun.length > 0) {
-                    setNodes({
-                        "AssetManagementDashboard.useEffect": (prevNodes)=>{
-                            const currentIds = new Set(prevNodes.map({
-                                "AssetManagementDashboard.useEffect": (n)=>n.id
-                            }["AssetManagementDashboard.useEffect"]));
-                            const uniqueNewNodes = nodesToAddThisRun.filter({
-                                "AssetManagementDashboard.useEffect.uniqueNewNodes": (newNode)=>!currentIds.has(newNode.id)
-                            }["AssetManagementDashboard.useEffect.uniqueNewNodes"]);
-                            return [
-                                ...prevNodes,
-                                ...uniqueNewNodes
-                            ];
-                        }
-                    }["AssetManagementDashboard.useEffect"]);
+                if (mockNodesToAddThisSegment.length > 0) {
+                    currentNodes = [
+                        ...currentNodes,
+                        ...mockNodesToAddThisSegment
+                    ];
+                    nodesChanged = true;
                 }
-                if (edgesToAddThisRun.length > 0) {
-                    setEdges({
-                        "AssetManagementDashboard.useEffect": (prevEdges)=>{
-                            const currentEdgeIds = new Set(prevEdges.map({
-                                "AssetManagementDashboard.useEffect": (e)=>e.id
-                            }["AssetManagementDashboard.useEffect"]));
-                            const uniqueNewEdges = edgesToAddThisRun.filter({
-                                "AssetManagementDashboard.useEffect.uniqueNewEdges": (newEdge)=>!currentEdgeIds.has(newEdge.id)
-                            }["AssetManagementDashboard.useEffect.uniqueNewEdges"]);
-                            return [
-                                ...prevEdges,
-                                ...uniqueNewEdges
-                            ];
-                        }
-                    }["AssetManagementDashboard.useEffect"]);
+                if (mockEdgesToAddThisSegment.length > 0) {
+                    currentEdges = [
+                        ...currentEdges,
+                        ...mockEdgesToAddThisSegment
+                    ];
+                    edgesChanged = true;
                 }
+            }
+            if (nodesChanged) {
+                setNodes(currentNodes);
+            }
+            if (edgesChanged) {
+                setEdges(currentEdges);
             }
         // eslint-disable-next-line react-hooks/exhaustive-deps
         }
@@ -5051,9 +5022,9 @@ function AssetManagementDashboard() {
         user?.uid,
         user?.partners,
         effectiveUser.displayName,
-        allMembers.length,
-        setNodes,
-        setEdges,
+        allMembers,
+        // setNodes and setEdges are stable, adding them can cause infinite loops if not careful.
+        // Callbacks should be memoized.
         handleOpenContractSettings,
         handleOpenAssetModalForUnion,
         handleOpenAddMemberModal,
@@ -5071,11 +5042,12 @@ function AssetManagementDashboard() {
         }
         setIsSubmittingAsset(true);
         const result = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$actions$2f$assetActions$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["addAsset"])(formData, effectiveUser.uid);
-        const targetEntityId = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" || !formData.assignedToMemberId ? UNION_NODE_ID : formData.assignedToMemberId);
+        const targetEntityIdForTx = memberContextForAssetAdd || (formData.assignedToMemberId === "UNASSIGNED" || !formData.assignedToMemberId ? UNION_NODE_ID : formData.assignedToMemberId);
         if (result.success && result.assetId && result.transactionId) {
             const newTransaction = {
                 id: result.transactionId,
                 dataAquisicao: formData.dataAquisicao,
+                valorPagoEpoca: formData.valorPagoEpocaDigital,
                 quemComprou: formData.quemComprou === "UNSPECIFIED_BUYER" || !formData.quemComprou ? "Main Union (Ipê Acta)" : formData.quemComprou,
                 contribuicaoParceiro1: formData.contribuicaoParceiro1,
                 contribuicaoParceiro2: formData.contribuicaoParceiro2,
@@ -5087,9 +5059,14 @@ function AssetManagementDashboard() {
             const actualSourceNodeId = processedAssignedToMemberId || UNION_NODE_ID;
             const sourceNodeInstance = nodes.find((n)=>n.id === actualSourceNodeId);
             if (!sourceNodeInstance) {
-                console.error("Source node not found for physical asset:", actualSourceNodeId);
+                console.error("Source node not found for asset:", actualSourceNodeId);
                 setIsSubmittingAsset(false);
                 setMemberContextForAssetAdd(null);
+                toast({
+                    title: 'Error!',
+                    description: 'Parent node not found.',
+                    variant: 'destructive'
+                });
                 return;
             }
             let nodeDataPayload = {
@@ -5118,8 +5095,9 @@ function AssetManagementDashboard() {
             const sourceNodeY = sourceNodeInstance.position?.y ?? UNION_NODE_Y_POS;
             let xPos;
             let yPos;
-            const assetsLinkedToSource = nodes.filter((n)=>n.type === 'assetNode' && edges.some((e)=>e.source === actualSourceNodeId && e.target === n.id && n.data.tipo === 'fisico'));
-            const assetNodesLinkedToSourceCount = assetsLinkedToSource.length;
+            // Filter physical assets linked to the source for positioning
+            const assetsLinkedToSource = nodes.filter((n)=>n.type === 'assetNode' && edges.some((e)=>e.source === actualSourceNodeId && e.target === n.id) && n.data.tipo === 'fisico');
+            const physicalAssetNodesLinkedToSourceCount = assetsLinkedToSource.length;
             if (actualSourceNodeId === UNION_NODE_ID) {
                 const partnerNodesExist = nodes.some((n)=>n.type === 'partnerNode');
                 const childrenNodesExist = nodes.some((n)=>n.type === 'memberNode' && edges.some((e)=>e.source === UNION_NODE_ID && e.target === n.id));
@@ -5135,9 +5113,9 @@ function AssetManagementDashboard() {
             } else {
                 yPos = sourceNodeY + ASSET_ROW_Y_OFFSET;
             }
-            const totalWidthForRow = (assetNodesLinkedToSourceCount + 1) * NODE_WIDTH + assetNodesLinkedToSourceCount * HORIZONTAL_SPACING;
+            const totalWidthForRow = (physicalAssetNodesLinkedToSourceCount + 1) * NODE_WIDTH + physicalAssetNodesLinkedToSourceCount * HORIZONTAL_SPACING;
             const startX = sourceNodeX - totalWidthForRow / 2 + NODE_WIDTH / 2;
-            xPos = startX + assetNodesLinkedToSourceCount * (NODE_WIDTH + HORIZONTAL_SPACING);
+            xPos = startX + physicalAssetNodesLinkedToSourceCount * (NODE_WIDTH + HORIZONTAL_SPACING);
             const newAssetNodeReactFlow = {
                 id: result.assetId,
                 type: 'assetNode',
@@ -5294,12 +5272,12 @@ function AssetManagementDashboard() {
                 className: "h-12 w-12 animate-spin text-primary"
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 667,
+                lineNumber: 671,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-            lineNumber: 666,
+            lineNumber: 670,
             columnNumber: 7
         }, this);
     }
@@ -5307,7 +5285,13 @@ function AssetManagementDashboard() {
         if (!memberId || memberId === "Main Union (Ipê Acta)" || memberId === "Connected Wallet") return 'Main Union (Ipê Acta)';
         const member = allMembers.find((m)=>m.id === memberId);
         if (member) return member.nome;
-        const partner = user?.partners?.find((p)=>`partner-${p.name.replace(/\s+/g, '-').toLowerCase()}` === memberId || `partner-0-${p.name.replace(/\s+/g, '-').toLowerCase()}` === memberId || `partner-1-${p.name.replace(/\s+/g, '-').toLowerCase()}` === memberId); // Check common partner ID patterns
+        const partner = user?.partners?.find((p)=>{
+            const partnerIdBase = p.name.replace(/\s+/g, '-').toLowerCase();
+            return [
+                `partner-0-${partnerIdBase}`,
+                `partner-1-${partnerIdBase}`
+            ].includes(memberId);
+        });
         if (partner) return partner.name;
         return 'Unknown Member';
     };
@@ -5318,11 +5302,10 @@ function AssetManagementDashboard() {
         }) + "\n\n";
         report += `Union: ${effectiveUser.displayName || 'N/A'}\n`;
         report += "--------------------------------------\n\n";
-        const partnerNodes = nodes.filter((node)=>node.type === 'partnerNode');
-        if (partnerNodes.length > 0) {
+        const partnerNodesData = nodes.filter((node)=>node.type === 'partnerNode').map((n)=>n.data);
+        if (partnerNodesData.length > 0) {
             report += "Partners in Union:\n";
-            partnerNodes.forEach((pNode)=>{
-                const partner = pNode.data;
+            partnerNodesData.forEach((partner)=>{
                 report += `- ${partner.name}\n`;
             });
             report += "\n";
@@ -5411,7 +5394,7 @@ function AssetManagementDashboard() {
                                     children: "Add New Physical Asset"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 768,
+                                    lineNumber: 774,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -5419,13 +5402,13 @@ function AssetManagementDashboard() {
                                     children: "Fill in the details of your physical asset."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 769,
+                                    lineNumber: 775,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 767,
+                            lineNumber: 773,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$assets$2f$AssetForm$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AssetForm"], {
@@ -5436,22 +5419,21 @@ function AssetManagementDashboard() {
                                 setMemberContextForAssetAdd(null);
                             },
                             availableMembers: availableMembersForAssetForm,
-                            targetMemberId: memberContextForAssetAdd,
-                            user: user
+                            targetMemberId: memberContextForAssetAdd
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 771,
+                            lineNumber: 777,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                    lineNumber: 766,
+                    lineNumber: 772,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 760,
+                lineNumber: 766,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -5467,7 +5449,7 @@ function AssetManagementDashboard() {
                                     children: "Add New Child"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 788,
+                                    lineNumber: 793,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -5475,13 +5457,13 @@ function AssetManagementDashboard() {
                                     children: "Enter the details of the new child in your union."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 789,
+                                    lineNumber: 794,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 787,
+                            lineNumber: 792,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$members$2f$AddMemberForm$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AddMemberForm"], {
@@ -5490,18 +5472,18 @@ function AssetManagementDashboard() {
                             onClose: ()=>setIsAddMemberModalOpen(false)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 791,
+                            lineNumber: 796,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                    lineNumber: 786,
+                    lineNumber: 791,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 785,
+                lineNumber: 790,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -5520,7 +5502,7 @@ function AssetManagementDashboard() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 798,
+                                    lineNumber: 803,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -5528,13 +5510,13 @@ function AssetManagementDashboard() {
                                     children: "Information about the asset and acquisition history."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 799,
+                                    lineNumber: 804,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 797,
+                            lineNumber: 802,
                             columnNumber: 11
                         }, this),
                         selectedAssetForDetails && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5547,7 +5529,7 @@ function AssetManagementDashboard() {
                                             children: "Asset Name"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 806,
+                                            lineNumber: 811,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5555,13 +5537,13 @@ function AssetManagementDashboard() {
                                             children: selectedAssetForDetails.nomeAtivo
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 807,
+                                            lineNumber: 812,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 805,
+                                    lineNumber: 810,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5571,7 +5553,7 @@ function AssetManagementDashboard() {
                                             children: "Main Type"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 810,
+                                            lineNumber: 815,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5579,13 +5561,13 @@ function AssetManagementDashboard() {
                                             children: selectedAssetForDetails.tipo
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 811,
+                                            lineNumber: 816,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 809,
+                                    lineNumber: 814,
                                     columnNumber: 15
                                 }, this),
                                 selectedAssetForDetails.tipo === 'digital' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5595,7 +5577,7 @@ function AssetManagementDashboard() {
                                             children: "Total Quantity"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 816,
+                                            lineNumber: 821,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5606,13 +5588,13 @@ function AssetManagementDashboard() {
                                             }) || 'N/A'
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 817,
+                                            lineNumber: 822,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 815,
+                                    lineNumber: 820,
                                     columnNumber: 17
                                 }, this),
                                 selectedAssetForDetails.tipo === 'fisico' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -5624,7 +5606,7 @@ function AssetManagementDashboard() {
                                                     children: "Type of Physical Good"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                    lineNumber: 823,
+                                                    lineNumber: 828,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5632,13 +5614,13 @@ function AssetManagementDashboard() {
                                                     children: selectedAssetForDetails.tipoImovelBemFisico || 'Not specified'
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                    lineNumber: 824,
+                                                    lineNumber: 829,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 822,
+                                            lineNumber: 827,
                                             columnNumber: 19
                                         }, this),
                                         selectedAssetForDetails.enderecoLocalizacaoFisico && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5648,7 +5630,7 @@ function AssetManagementDashboard() {
                                                     children: "Address/Location"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                    lineNumber: 828,
+                                                    lineNumber: 833,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5656,13 +5638,13 @@ function AssetManagementDashboard() {
                                                     children: selectedAssetForDetails.enderecoLocalizacaoFisico
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                    lineNumber: 829,
+                                                    lineNumber: 834,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 827,
+                                            lineNumber: 832,
                                             columnNumber: 21
                                         }, this)
                                     ]
@@ -5674,7 +5656,7 @@ function AssetManagementDashboard() {
                                             children: "Assigned to"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 837,
+                                            lineNumber: 842,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5682,13 +5664,13 @@ function AssetManagementDashboard() {
                                             children: getMemberNameById(selectedAssetForDetails.assignedToMemberId)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 838,
+                                            lineNumber: 843,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 836,
+                                    lineNumber: 841,
                                     columnNumber: 17
                                 }, this),
                                 selectedAssetForDetails.releaseCondition?.type === 'age' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5698,7 +5680,7 @@ function AssetManagementDashboard() {
                                             children: "Release Condition"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 843,
+                                            lineNumber: 848,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5710,13 +5692,13 @@ function AssetManagementDashboard() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 844,
+                                            lineNumber: 849,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 842,
+                                    lineNumber: 847,
                                     columnNumber: 17
                                 }, this),
                                 selectedAssetForDetails.observacoes && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5726,7 +5708,7 @@ function AssetManagementDashboard() {
                                             children: "General Asset Notes"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 849,
+                                            lineNumber: 854,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5734,13 +5716,13 @@ function AssetManagementDashboard() {
                                             children: selectedAssetForDetails.observacoes
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 850,
+                                            lineNumber: 855,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 848,
+                                    lineNumber: 853,
                                     columnNumber: 17
                                 }, this),
                                 selectedAssetForDetails.isAutoLoaded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5750,20 +5732,20 @@ function AssetManagementDashboard() {
                                             size: 14
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 855,
+                                            lineNumber: 860,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: "Wallet Information"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 856,
+                                            lineNumber: 861,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 854,
+                                    lineNumber: 859,
                                     columnNumber: 18
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5774,7 +5756,7 @@ function AssetManagementDashboard() {
                                             children: "Acquisition/Transaction History"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 861,
+                                            lineNumber: 866,
                                             columnNumber: 17
                                         }, this),
                                         selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollArea"], {
@@ -5794,7 +5776,7 @@ function AssetManagementDashboard() {
                                                                                 children: "Acquisition Date"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 869,
+                                                                                lineNumber: 874,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5804,13 +5786,13 @@ function AssetManagementDashboard() {
                                                                                 })
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 870,
+                                                                                lineNumber: 875,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 868,
+                                                                        lineNumber: 873,
                                                                         columnNumber: 29
                                                                     }, this),
                                                                     tx.quantidadeDigital !== undefined && selectedAssetForDetails.tipo === 'digital' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5820,7 +5802,7 @@ function AssetManagementDashboard() {
                                                                                 children: "Quantity Acquired"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 874,
+                                                                                lineNumber: 879,
                                                                                 columnNumber: 33
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5831,13 +5813,13 @@ function AssetManagementDashboard() {
                                                                                 })
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 875,
+                                                                                lineNumber: 880,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 873,
+                                                                        lineNumber: 878,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     tx.valorPagoEpoca !== undefined && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5847,7 +5829,7 @@ function AssetManagementDashboard() {
                                                                                 children: "Value Paid at the Time"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 880,
+                                                                                lineNumber: 885,
                                                                                 columnNumber: 33
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5858,13 +5840,13 @@ function AssetManagementDashboard() {
                                                                                 }) : tx.valorPagoEpoca
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 881,
+                                                                                lineNumber: 886,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 879,
+                                                                        lineNumber: 884,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     tx.quemComprou && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5874,7 +5856,7 @@ function AssetManagementDashboard() {
                                                                                 children: "Acquired by"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 886,
+                                                                                lineNumber: 891,
                                                                                 columnNumber: 33
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5882,13 +5864,13 @@ function AssetManagementDashboard() {
                                                                                 children: tx.quemComprou === "Main Union (Ipê Acta)" ? "Main Union (Ipê Acta)" : tx.quemComprou === "Connected Wallet" ? "Connected Wallet (Simulated)" : getMemberNameById(tx.quemComprou)
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 887,
+                                                                                lineNumber: 892,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 885,
+                                                                        lineNumber: 890,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     tx.quemComprou === 'Ambos' && effectiveUser?.partners && effectiveUser.partners.length >= 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -5904,7 +5886,7 @@ function AssetManagementDashboard() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                        lineNumber: 894,
+                                                                                        lineNumber: 899,
                                                                                         columnNumber: 37
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5915,13 +5897,13 @@ function AssetManagementDashboard() {
                                                                                         })
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                        lineNumber: 895,
+                                                                                        lineNumber: 900,
                                                                                         columnNumber: 37
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 893,
+                                                                                lineNumber: 898,
                                                                                 columnNumber: 35
                                                                             }, this),
                                                                             tx.contribuicaoParceiro2 !== undefined && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5935,7 +5917,7 @@ function AssetManagementDashboard() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                        lineNumber: 900,
+                                                                                        lineNumber: 905,
                                                                                         columnNumber: 37
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5946,13 +5928,13 @@ function AssetManagementDashboard() {
                                                                                         })
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                        lineNumber: 901,
+                                                                                        lineNumber: 906,
                                                                                         columnNumber: 37
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 899,
+                                                                                lineNumber: 904,
                                                                                 columnNumber: 35
                                                                             }, this)
                                                                         ]
@@ -5960,7 +5942,7 @@ function AssetManagementDashboard() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                lineNumber: 867,
+                                                                lineNumber: 872,
                                                                 columnNumber: 27
                                                             }, this),
                                                             tx.observacoes && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5971,7 +5953,7 @@ function AssetManagementDashboard() {
                                                                         children: "Transaction Notes"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 909,
+                                                                        lineNumber: 914,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5979,36 +5961,36 @@ function AssetManagementDashboard() {
                                                                         children: tx.observacoes
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 910,
+                                                                        lineNumber: 915,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                lineNumber: 908,
+                                                                lineNumber: 913,
                                                                 columnNumber: 29
                                                             }, this)
                                                         ]
                                                     }, tx.id || index, true, {
                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                        lineNumber: 866,
+                                                        lineNumber: 871,
                                                         columnNumber: 25
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                lineNumber: 864,
+                                                lineNumber: 869,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 863,
+                                            lineNumber: 868,
                                             columnNumber: 19
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                             className: "text-muted-foreground",
                                             children: "No transactions recorded for this asset."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 918,
+                                            lineNumber: 923,
                                             columnNumber: 19
                                         }, this),
                                         selectedAssetForDetails.tipo === 'digital' && selectedAssetForDetails.transactions && selectedAssetForDetails.transactions.length > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -6016,13 +5998,13 @@ function AssetManagementDashboard() {
                                             children: 'Note: The "Total Quantity" of the asset reflects the sum of all transactions. General notes and assignment refer to the asset as a whole. Refer to the history for details of each acquisition.'
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 921,
+                                            lineNumber: 926,
                                             columnNumber: 20
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 860,
+                                    lineNumber: 865,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6034,29 +6016,29 @@ function AssetManagementDashboard() {
                                         children: "Close"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                        lineNumber: 928,
+                                        lineNumber: 933,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 927,
+                                    lineNumber: 932,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 804,
+                            lineNumber: 809,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                    lineNumber: 796,
+                    lineNumber: 801,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 795,
+                lineNumber: 800,
                 columnNumber: 8
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$assets$2f$AssetReleaseDialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AssetReleaseDialog"], {
@@ -6068,7 +6050,7 @@ function AssetManagementDashboard() {
                 isLoading: isSubmittingRelease
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 935,
+                lineNumber: 940,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$contract$2f$ContractSettingsDialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ContractSettingsDialog"], {
@@ -6082,7 +6064,7 @@ function AssetManagementDashboard() {
                 dialogDescription: "Add, view, edit, and manage the clauses of your agreements. Remember that Ipê Acta is a planning tool and does not replace legal advice."
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 944,
+                lineNumber: 949,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -6098,7 +6080,7 @@ function AssetManagementDashboard() {
                                     children: "Marriage Certificate"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 958,
+                                    lineNumber: 963,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -6106,13 +6088,13 @@ function AssetManagementDashboard() {
                                     children: "Review current agreements or generate a new certificate."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 959,
+                                    lineNumber: 964,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 957,
+                            lineNumber: 962,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6133,14 +6115,14 @@ function AssetManagementDashboard() {
                                                     className: "mr-2 h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                    lineNumber: 973,
+                                                    lineNumber: 978,
                                                     columnNumber: 17
                                                 }, this),
                                                 "Make Final Changes to Agreements"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 965,
+                                            lineNumber: 970,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -6151,25 +6133,25 @@ function AssetManagementDashboard() {
                                                     className: "mr-2 h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                    lineNumber: 980,
+                                                    lineNumber: 985,
                                                     columnNumber: 17
                                                 }, this),
                                                 "Generate New Certificate"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 976,
+                                            lineNumber: 981,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 964,
+                                    lineNumber: 969,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$separator$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Separator"], {}, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 984,
+                                    lineNumber: 989,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6179,7 +6161,7 @@ function AssetManagementDashboard() {
                                             children: "History of Generated Certificates:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 986,
+                                            lineNumber: 991,
                                             columnNumber: 15
                                         }, this),
                                         generatedCertificates.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollArea"], {
@@ -6197,7 +6179,7 @@ function AssetManagementDashboard() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                lineNumber: 992,
+                                                                lineNumber: 997,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6210,7 +6192,7 @@ function AssetManagementDashboard() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                lineNumber: 993,
+                                                                lineNumber: 998,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("details", {
@@ -6225,7 +6207,7 @@ function AssetManagementDashboard() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 997,
+                                                                        lineNumber: 1002,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -6234,53 +6216,53 @@ function AssetManagementDashboard() {
                                                                                 children: clause.text
                                                                             }, clause.id, false, {
                                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                                lineNumber: 1000,
+                                                                                lineNumber: 1005,
                                                                                 columnNumber: 31
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                        lineNumber: 998,
+                                                                        lineNumber: 1003,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                                lineNumber: 996,
+                                                                lineNumber: 1001,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, cert.id, true, {
                                                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                        lineNumber: 991,
+                                                        lineNumber: 996,
                                                         columnNumber: 23
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                                lineNumber: 989,
+                                                lineNumber: 994,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 988,
+                                            lineNumber: 993,
                                             columnNumber: 17
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                             className: "text-sm text-muted-foreground",
                                             children: "No certificates generated yet."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                            lineNumber: 1009,
+                                            lineNumber: 1014,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 985,
+                                    lineNumber: 990,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 963,
+                            lineNumber: 968,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -6292,28 +6274,28 @@ function AssetManagementDashboard() {
                                     children: "Close"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 1015,
+                                    lineNumber: 1020,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                lineNumber: 1014,
+                                lineNumber: 1019,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 1013,
+                            lineNumber: 1018,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                    lineNumber: 956,
+                    lineNumber: 961,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 955,
+                lineNumber: 960,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -6329,7 +6311,7 @@ function AssetManagementDashboard() {
                                     children: "Holding Report Summary"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 1024,
+                                    lineNumber: 1029,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -6337,13 +6319,13 @@ function AssetManagementDashboard() {
                                     children: "Textual summary of your holding structure."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 1025,
+                                    lineNumber: 1030,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 1023,
+                            lineNumber: 1028,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ScrollArea"], {
@@ -6353,12 +6335,12 @@ function AssetManagementDashboard() {
                                 children: generateHoldingReportText()
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                lineNumber: 1030,
+                                lineNumber: 1035,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 1029,
+                            lineNumber: 1034,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6366,7 +6348,7 @@ function AssetManagementDashboard() {
                             children: "PDF Generation can be implemented here."
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 1034,
+                            lineNumber: 1039,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -6378,28 +6360,28 @@ function AssetManagementDashboard() {
                                     children: "Close"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                    lineNumber: 1039,
+                                    lineNumber: 1044,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                lineNumber: 1038,
+                                lineNumber: 1043,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 1037,
+                            lineNumber: 1042,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                    lineNumber: 1022,
+                    lineNumber: 1027,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 1021,
+                lineNumber: 1026,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6432,7 +6414,7 @@ function AssetManagementDashboard() {
                             showInteractive: false
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 1061,
+                            lineNumber: 1066,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$background$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Background"], {
@@ -6440,18 +6422,18 @@ function AssetManagementDashboard() {
                             color: "hsl(var(--border))"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                            lineNumber: 1062,
+                            lineNumber: 1067,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                    lineNumber: 1047,
+                    lineNumber: 1052,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 1046,
+                lineNumber: 1051,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6466,14 +6448,14 @@ function AssetManagementDashboard() {
                                 className: "mr-2 h-5 w-5"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                lineNumber: 1071,
+                                lineNumber: 1076,
                                 columnNumber: 13
                             }, this),
                             "Generate Marriage Certificate"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                        lineNumber: 1066,
+                        lineNumber: 1071,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -6485,26 +6467,26 @@ function AssetManagementDashboard() {
                                 className: "mr-2 h-5 w-5"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                                lineNumber: 1079,
+                                lineNumber: 1084,
                                 columnNumber: 13
                             }, this),
                             "Holding Report"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                        lineNumber: 1074,
+                        lineNumber: 1079,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-                lineNumber: 1065,
+                lineNumber: 1070,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(main)/dashboard/page.tsx",
-        lineNumber: 759,
+        lineNumber: 765,
         columnNumber: 5
     }, this);
 }
