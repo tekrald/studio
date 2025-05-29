@@ -1083,6 +1083,10 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 28rem;
 }
 
+.max-w-sm {
+  max-width: 24rem;
+}
+
 .flex-1 {
   flex: 1;
 }
@@ -2480,6 +2484,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .hover\:bg-white\/20:hover {
   background-color: #fff3;
+}
+
+.hover\:bg-accent\/90:hover {
+  background-color: hsl(var(--accent) / .9);
 }
 
 .hover\:text-accent:hover {
