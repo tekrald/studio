@@ -78,6 +78,7 @@ export default function SignupPage() {
   const [partner1Name, setPartner1Name] = useState('');
   const [partner1Photo, setPartner1Photo] = useState<File | null>(null);
   const [partner1PhotoPreview, setPartner1PhotoPreview] = useState<string | null>(null);
+  
   const [partner2Name, setPartner2Name] = useState('');
   const [partner2Photo, setPartner2Photo] = useState<File | null>(null);
   const [partner2PhotoPreview, setPartner2PhotoPreview] = useState<string | null>(null);
@@ -101,9 +102,18 @@ export default function SignupPage() {
   const { signup } = useAuth();
 
   useEffect(() => {
-    // Clear additional partners if relationship structure changes from polygamous
-    if (relationshipStructure !== 'polygamous') {
-      setAdditionalPartners([]);
+    // Clear partner data if relationship structure changes
+    if (relationshipStructure === 'monogamous') {
+      setAdditionalPartners([]); // Clear additional partners
+    } else if (relationshipStructure === 'polygamous') {
+      setPartner2Name(''); // Clear Partner 2 details
+      setPartner2Photo(null);
+      setPartner2PhotoPreview(null);
+    } else { // If neither or empty, clear all optional partner data
+        setPartner2Name('');
+        setPartner2Photo(null);
+        setPartner2PhotoPreview(null);
+        setAdditionalPartners([]);
     }
   }, [relationshipStructure]);
 
@@ -142,7 +152,6 @@ export default function SignupPage() {
     setNewAdditionalPartnerName('');
     setNewAdditionalPartnerPhoto(null);
     setNewAdditionalPartnerPhotoPreview(null);
-    // Clear the file input visually if possible (hard to do reliably cross-browser)
     const fileInput = document.getElementById('newAdditionalPartnerPhoto') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
   };
@@ -276,7 +285,7 @@ export default function SignupPage() {
     if (partner1Name.trim()) {
         partnersToSubmit.push({ name: partner1Name.trim(), photo: partner1Photo });
     }
-    if ((relationshipStructure === 'monogamous' || relationshipStructure === 'polygamous') && partner2Name.trim()) {
+    if (relationshipStructure === 'monogamous' && partner2Name.trim()) {
         partnersToSubmit.push({ name: partner2Name.trim(), photo: partner2Photo });
     }
     if (relationshipStructure === 'polygamous' && additionalPartners.length > 0) {
@@ -538,36 +547,38 @@ export default function SignupPage() {
                   </div>
                 </div>
 
-                {/* Partner 2 Details */}
-                <div className="space-y-3 p-4 border rounded-md bg-muted/50">
-                    <Label htmlFor="partner2Name" className="text-foreground/90 text-left block">Partner 2 Name</Label>
-                    <Input
-                      id="partner2Name"
-                      type="text"
-                      placeholder="Enter Partner 2's Name"
-                      value={partner2Name}
-                      onChange={(e) => setPartner2Name(e.target.value)}
-                      disabled={isLoading}
-                      className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary w-full"
-                    />
-                    <div className="space-y-2 flex flex-col items-start text-left w-full mt-2">
-                      <Label htmlFor="partner2Photo" className="text-foreground/90">Partner 2 Photo (Optional)</Label>
-                      <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-start">
-                        {partner2PhotoPreview ? (
-                          <Image src={partner2PhotoPreview} alt="Partner 2 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="partner photo" />
-                        ) : (
-                          <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground border border-border" data-ai-hint="avatar placeholder">
-                            <Camera size={32} />
-                          </div>
-                        )}
-                        <Input id="partner2Photo" type="file" accept="image/*" onChange={(e) => handlePartnerPhotoChange(e, 2)} className="sr-only" disabled={isLoading} />
-                        <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('partner2Photo')?.click()} disabled={isLoading}>
-                          {partner2Photo ? "Change Photo" : "Choose Photo"}
-                        </Button>
+                {/* Partner 2 Details - Only if Monogamous */}
+                {relationshipStructure === 'monogamous' && (
+                  <div className="space-y-3 p-4 border rounded-md bg-muted/50">
+                      <Label htmlFor="partner2Name" className="text-foreground/90 text-left block">Partner 2 Name</Label>
+                      <Input
+                        id="partner2Name"
+                        type="text"
+                        placeholder="Enter Partner 2's Name"
+                        value={partner2Name}
+                        onChange={(e) => setPartner2Name(e.target.value)}
+                        disabled={isLoading}
+                        className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary w-full"
+                      />
+                      <div className="space-y-2 flex flex-col items-start text-left w-full mt-2">
+                        <Label htmlFor="partner2Photo" className="text-foreground/90">Partner 2 Photo (Optional)</Label>
+                        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-start">
+                          {partner2PhotoPreview ? (
+                            <Image src={partner2PhotoPreview} alt="Partner 2 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="partner photo" />
+                          ) : (
+                            <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground border border-border" data-ai-hint="avatar placeholder">
+                              <Camera size={32} />
+                            </div>
+                          )}
+                          <Input id="partner2Photo" type="file" accept="image/*" onChange={(e) => handlePartnerPhotoChange(e, 2)} className="sr-only" disabled={isLoading} />
+                          <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('partner2Photo')?.click()} disabled={isLoading}>
+                            {partner2Photo ? "Change Photo" : "Choose Photo"}
+                          </Button>
+                        </div>
+                        {partner2Photo && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-left" title={partner2Photo.name}>{partner2Photo.name}</p>}
                       </div>
-                      {partner2Photo && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-left" title={partner2Photo.name}>{partner2Photo.name}</p>}
                     </div>
-                  </div>
+                )}
 
                 {/* Additional Partners for Polygamous Unions */}
                 {relationshipStructure === 'polygamous' && (
@@ -757,5 +768,6 @@ export default function SignupPage() {
     </div>
   );
 }
+    
 
     
