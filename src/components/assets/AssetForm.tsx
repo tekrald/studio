@@ -11,24 +11,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, UserCheck, Clock, Building } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, ArrowLeft, ArrowRight, UserCheck, Clock, Building, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, isValid } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import type { AssetFormData, ExtendedAssetNodeData } from '@/types/asset';
+import type { AssetFormData } from '@/types/asset';
 import type { User } from '@/components/auth-provider';
-import Image from 'next/image';
-import { CardDescription } from '../ui/card';
+import { useAuth } from '@/components/auth-provider'; // Import useAuth
 
 // Schema exclusively for Physical Assets
 const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
   return z.object({
     nomeAtivo: z.string().min(1, 'Asset name is required.'),
     dataAquisicao: z.date({ required_error: "Acquisition date is required." }),
-    observacoes: z.string().optional(), // Optional general notes for the asset
+    observacoes: z.string().optional(), 
     
-    // Transaction/acquisition specific fields for the physical asset
-    quemComprou: z.string().optional(), // Who made THIS specific transaction
+    quemComprou: z.string().optional(), 
     contribuicaoParceiro1: z.preprocess(
       (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
       z.number().min(0, 'Contribution must be a positive value.').optional()
@@ -38,12 +36,10 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
       z.number().min(0, 'Contribution must be a positive value.').optional()
     ),
     
-    // Physical asset specific details
     tipoImovelBemFisico: z.string().min(1, "Type of physical good is required."),
     enderecoLocalizacaoFisico: z.string().optional(),
-    documentacaoFisicoFile: z.any().optional(), // Placeholder for file upload
+    documentacaoFisicoFile: z.any().optional(), 
 
-    // For overall asset assignment and release
     assignedToMemberId: z.string().optional().nullable(),
     setReleaseCondition: z.boolean().optional(),
     releaseTargetAge: z.preprocess(
@@ -58,6 +54,11 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
         path: ['releaseTargetAge']
       });
     }
+    if (data.quemComprou === 'Ambos' && (data.contribuicaoParceiro1 === undefined || data.contribuicaoParceiro1 === null) && (data.contribuicaoParceiro2 === undefined || data.contribuicaoParceiro2 === null)) {
+        // This is okay, contributions are optional even if 'Ambos' is selected
+    } else if (data.quemComprou === 'Ambos' && ((data.contribuicaoParceiro1 !== undefined && data.contribuicaoParceiro1 < 0) || (data.contribuicaoParceiro2 !== undefined && data.contribuicaoParceiro2 < 0))) {
+        // Handled by individual field validation now
+    }
   });
 };
 
@@ -66,8 +67,8 @@ interface AssetFormProps {
   isLoading: boolean;
   onClose: () => void;
   availableMembers: { id: string; name: string; birthDate?: Date | string }[];
-  targetMemberId?: string | null; // For pre-selecting member when adding asset from member node
-  user: User | null;
+  targetMemberId?: string | null;
+  // user prop is no longer needed directly here, will get from useAuth
 }
 
 const TOTAL_STEPS_PHYSICAL = 3; // 1. Basic Info, 2. Ownership, 3. Physical Details & Assignment
@@ -78,46 +79,33 @@ export function AssetForm({
   onClose,
   availableMembers = [],
   targetMemberId,
-  user,
 }: AssetFormProps) {
+  const { user } = useAuth(); // Get user from context
   const [currentStep, setCurrentStep] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
   
   const [partnerNames, setPartnerNames] = useState<string[]>([]);
   const [partnerLabels, setPartnerLabels] = useState<string[]>(["Partner 1", "Partner 2"]);
+  
+  const watchedNomeAtivo = useMemo(() => '', []); // Not used for physical asset selection directly
 
-  const form = useForm<AssetFormData>({
-    // Resolver will be set dynamically based on context
-    mode: "onChange", 
-  });
+  const formLocalAssignedToMemberIdWatch = useMemo(() => undefined, []); // Not directly used for schema context in physical
+  const formSetReleaseConditionWatch = useMemo(() => false, []); // Not directly used for schema context
 
-  const watchedNomeAtivo = form.watch('nomeAtivo');
-  const watchedDataAquisicao = form.watch('dataAquisicao');
-  const formWatchedQuemComprou = form.watch('quemComprou');
-  const formLocalAssignedToMemberIdWatch = form.watch('assignedToMemberId');
-  const formSetReleaseConditionWatch = form.watch('setReleaseCondition');
 
-  const actualSelectedMemberForAssignment = availableMembers.find(m => m.id === formLocalAssignedToMemberIdWatch);
+  const actualSelectedMemberForAssignment = availableMembers.find(m => m.id === form.watch('assignedToMemberId'));
   const memberHasBirthDateForSchema = !!actualSelectedMemberForAssignment?.birthDate;
 
   const currentAssetFormSchema = useMemo(() => createAssetFormSchema(memberHasBirthDateForSchema), [memberHasBirthDateForSchema]);
-
-  // Update resolver when schema changes
-  useEffect(() => {
-    form.reset(undefined, { keepValues: true }); // Keep existing values, but re-evaluate with new schema context
-    // This is a bit of a trick; ideally, RHF would re-evaluate resolver, but explicitly resetting can help.
-    // A more robust way might involve re-initializing useForm, but that's more complex.
-    // For now, this ensures the latest schema is somewhat acknowledged.
-    // The main place the schema is used is in `form.handleSubmit` and `form.trigger`.
-  }, [currentAssetFormSchema, form]);
   
-  // Initialize default values and set resolver initially
-  useEffect(() => {
-    form.reset({
+  const form = useForm<AssetFormData>({
+    resolver: zodResolver(currentAssetFormSchema),
+    mode: "onChange", 
+    defaultValues: {
       nomeAtivo: '',
       dataAquisicao: new Date(),
       observacoes: '',
-      quemComprou: '',
+      quemComprou: undefined, 
       contribuicaoParceiro1: undefined,
       contribuicaoParceiro2: undefined,
       tipoImovelBemFisico: '',
@@ -126,13 +114,34 @@ export function AssetForm({
       assignedToMemberId: targetMemberId || undefined,
       setReleaseCondition: false,
       releaseTargetAge: undefined,
-    });
-    // @ts-ignore
-    form.setValue('resolver', zodResolver(currentAssetFormSchema)); // Set resolver after reset
+    },
+  });
+  
+  useEffect(() => {
+    let defaultVals: AssetFormData = {
+      nomeAtivo: '',
+      dataAquisicao: new Date(),
+      observacoes: '',
+      quemComprou: undefined,
+      contribuicaoParceiro1: undefined,
+      contribuicaoParceiro2: undefined,
+      tipoImovelBemFisico: '',
+      enderecoLocalizacaoFisico: '',
+      documentacaoFisicoFile: undefined,
+      assignedToMemberId: undefined,
+      setReleaseCondition: false,
+      releaseTargetAge: undefined,
+    };
+
+    if (targetMemberId) {
+      defaultVals.assignedToMemberId = targetMemberId;
+    }
+    
+    form.reset(defaultVals);
     setCurrentStep(1);
     setFormError(null);
-  }, [targetMemberId, currentAssetFormSchema, form]);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetMemberId]); // form.reset is stable, not needed in deps
 
   useEffect(() => {
     if (user?.displayName) {
@@ -149,71 +158,52 @@ export function AssetForm({
   }, [user]);
   
   const handleFormSubmit = async (values: AssetFormData) => {
+    setFormError(null); // Clear previous errors
     const processedValues: AssetFormData = {
       ...values,
       quemComprou: values.quemComprou === "UNSPECIFIED_BUYER" ? undefined : values.quemComprou,
-      assignedToMemberId: values.assignedToMemberId === "UNASSIGNED" || values.assignedToMemberId === null ? undefined : values.assignedToMemberId,
+      assignedToMemberId: values.assignedToMemberId === "UNASSIGNED" || values.assignedToMemberId === null || values.assignedToMemberId === '' ? undefined : values.assignedToMemberId,
+      contribuicaoParceiro1: values.contribuicaoParceiro1 === null ? undefined : values.contribuicaoParceiro1,
+      contribuicaoParceiro2: values.contribuicaoParceiro2 === null ? undefined : values.contribuicaoParceiro2,
+      releaseTargetAge: values.releaseTargetAge === null ? undefined : values.releaseTargetAge,
     };
-    await onSubmit(processedValues);
-  };
-
-  const getFieldsForStep = (s: number): (keyof AssetFormData)[] => {
-    if (s === 1) return ['nomeAtivo', 'dataAquisicao', 'observacoes'];
-    if (s === 2) return ['quemComprou', 'contribuicaoParceiro1', 'contribuicaoParceiro2'];
-    if (s === 3) return [
-        'tipoImovelBemFisico', 'enderecoLocalizacaoFisico', 'documentacaoFisicoFile',
-        'assignedToMemberId', 'setReleaseCondition', 'releaseTargetAge'
-    ];
-    return [];
+    try {
+      await onSubmit(processedValues);
+    } catch (error: any) {
+      setFormError(error.message || "An unexpected error occurred.");
+    }
   };
   
-  const isFieldRelevantUpToStep = (fieldName: keyof AssetFormData, currentValidationStep: number): boolean => {
-      for (let i = 1; i <= currentValidationStep; i++) {
-          if (getFieldsForStep(i).includes(fieldName)) {
-              return true;
-          }
-      }
-      return false;
-  };
-
-  const validateStep = async (step: number): Promise<boolean> => {
+  const validateStep = async (stepToValidate: number): Promise<boolean> => {
     setFormError(null);
-    form.clearErrors(); 
-    let fieldsToValidate: FieldPath<AssetFormData>[] = [];
+    let fieldsToTrigger: FieldPath<AssetFormData>[] = [];
 
-    if (step === 1) {
-      fieldsToValidate = ['nomeAtivo', 'dataAquisicao']; 
-    } else if (step === 2) {
-      // Optional fields, no specific trigger needed for "Next" unless business logic changes
-      // `quemComprou` and contributions are optional.
-    } else if (step === 3) {
-      // For the final step, handleSubmit will do the full validation.
-      // However, if there are specific fields for this step that must be valid to "enable" submit, list them.
-      // For now, let's assume tipoImovelBemFisico is crucial for this step if user reaches it.
-      fieldsToValidate.push('tipoImovelBemFisico');
+    if (stepToValidate === 1) {
+      fieldsToTrigger = ['nomeAtivo', 'dataAquisicao'];
+    } else if (stepToValidate === 2) {
+      // Fields in step 2 are optional or have defaults, no specific trigger needed for "Next"
+      // Contributions are validated individually if values are entered.
     }
+    // Step 3 is the final step, form.handleSubmit will validate all.
 
-    if (fieldsToValidate.length > 0) {
-      const result = await form.trigger(fieldsToValidate);
+    if (fieldsToTrigger.length > 0) {
+      const result = await form.trigger(fieldsToTrigger);
       if (!result) {
-        let firstErrorMessage: string | null = null;
-        for (const field of fieldsToValidate) {
-            if (form.formState.errors[field]) {
+        // Find the first error message for the triggered fields
+        for (const field of fieldsToTrigger) {
+          if (form.formState.errors[field]) {
             // @ts-ignore
-            firstErrorMessage = (form.formState.errors[field] as any)?.message || "Please fill out required fields correctly.";
-            break;
-            }
+            setFormError(form.formState.errors[field]?.message || "Please fill out required fields.");
+            return false;
+          }
         }
-        if (firstErrorMessage) {
-            setFormError(firstErrorMessage);
-        } else if (Object.keys(form.formState.errors).length > 0) {
+        // If no specific message found for triggered fields but errors exist
+        if (Object.keys(form.formState.errors).length > 0) {
             const firstErrorKey = Object.keys(form.formState.errors)[0] as FieldPath<AssetFormData>;
             // @ts-ignore
-            firstErrorMessage = form.formState.errors[firstErrorKey]?.message || "Please correct the highlighted fields.";
-            setFormError(firstErrorMessage);
+            setFormError(form.formState.errors[firstErrorKey]?.message || "Please correct the highlighted fields.");
         } else {
-             // This case might happen if trigger fails but no specific error message is found for the triggered fields
-            setFormError(`Please ensure all fields for Step ${step} are valid.`);
+            setFormError("Please ensure all fields for this step are valid.");
         }
         return false;
       }
@@ -240,8 +230,8 @@ export function AssetForm({
     if (isSubmittingForm) return true;
 
     if (currentStep === 1) {
-      const nomeAtivoValue = form.getValues('nomeAtivo'); // Get current value for check
-      const dataAquisicaoValue = form.getValues('dataAquisicao');
+      const nomeAtivoValue = form.watch('nomeAtivo');
+      const dataAquisicaoValue = form.watch('dataAquisicao');
       const isNomeFilled = nomeAtivoValue && nomeAtivoValue.trim().length > 0;
       const isDataValid = !!dataAquisicaoValue && isValid(new Date(dataAquisicaoValue));
       return !(isNomeFilled && isDataValid);
@@ -249,11 +239,14 @@ export function AssetForm({
     if (currentStep === 2) { 
       return false; 
     }
-    // For Step 3 (last step for physical assets), the button changes to "Save Physical Asset", 
-    // RHF's formState.isValid (via handleSubmit) will handle it.
     return false; 
   };
   
+  const watchedQuemComprou = form.watch('quemComprou');
+  const watchedAssignedToMemberId = form.watch('assignedToMemberId');
+  const currentAssignedMember = availableMembers.find(m => m.id === watchedAssignedToMemberId);
+  const watchedSetReleaseCondition = form.watch('setReleaseCondition');
+
 
   return (
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -305,12 +298,12 @@ export function AssetForm({
                       selected={field.value && isValid(new Date(field.value)) ? new Date(field.value) : undefined}
                       onSelect={(date) => {
                         const currentVal = field.value && isValid(new Date(field.value)) ? new Date(field.value) : new Date();
-                        const newDate = date ? new Date(date) : currentVal; // Keep current if no new date
+                        const newDate = date ? new Date(date) : currentVal; 
                         
                         let currentHours = currentVal.getHours();
                         let currentMinutes = currentVal.getMinutes();
 
-                        if(date){ // Only set H/M if a new date was actually picked from calendar part
+                        if(date){ 
                             newDate.setHours(currentHours);
                             newDate.setMinutes(currentMinutes);
                         }
@@ -384,7 +377,7 @@ export function AssetForm({
                   </SelectTrigger>
                   <SelectContent className="bg-popover text-popover-foreground">
                     <SelectItem value="UNSPECIFIED_BUYER">Unspecified</SelectItem>
-                    <SelectItem value="União Principal (Ipê Acta)">Main Union (Ipê Acta)</SelectItem>
+                    <SelectItem value="Main Union (Ipê Acta)">Main Union (Ipê Acta)</SelectItem>
                     {partnerNames.length === 1 && (
                       <SelectItem value={partnerNames[0]}>{partnerNames[0]}</SelectItem>
                     )}
@@ -402,11 +395,11 @@ export function AssetForm({
             {form.formState.errors.quemComprou && <p className="text-sm text-destructive">{form.formState.errors.quemComprou.message}</p>}
           </div>
 
-          {formWatchedQuemComprou === 'Ambos' && (
+          {watchedQuemComprou === 'Ambos' && (
             <div className="space-y-4 mt-4 p-4 border rounded-md bg-muted/30">
               <h4 className="text-md font-semibold text-primary">Contribution Details (Optional)</h4>
               <div className="space-y-1.5">
-                <Label htmlFor="contribuicaoParceiro1" className="text-foreground/90">Amount Contributed by {partnerLabels[0]} ($)</Label>
+                <Label htmlFor="contribuicaoParceiro1" className="text-foreground/90">Amount Contributed by {partnerLabels[0]}</Label>
                  <Controller
                     name="contribuicaoParceiro1"
                     control={form.control}
@@ -415,7 +408,7 @@ export function AssetForm({
                         id="contribuicaoParceiro1"
                         type="number"
                         {...field}
-                        value={field.value === undefined ? '' : field.value}
+                        value={field.value === undefined || field.value === null ? '' : String(field.value)}
                         onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                         placeholder="0.00"
                         disabled={isSubmittingForm}
@@ -427,7 +420,7 @@ export function AssetForm({
                 {form.formState.errors.contribuicaoParceiro1 && <p className="text-sm text-destructive">{form.formState.errors.contribuicaoParceiro1.message}</p>}
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="contribuicaoParceiro2" className="text-foreground/90">Amount Contributed by {partnerLabels[1]} ($)</Label>
+                <Label htmlFor="contribuicaoParceiro2" className="text-foreground/90">Amount Contributed by {partnerLabels[1]}</Label>
                  <Controller
                     name="contribuicaoParceiro2"
                     control={form.control}
@@ -436,7 +429,7 @@ export function AssetForm({
                         id="contribuicaoParceiro2"
                         type="number"
                         {...field}
-                        value={field.value === undefined ? '' : field.value}
+                        value={field.value === undefined || field.value === null ? '' : String(field.value)}
                         onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                         placeholder="0.00"
                         disabled={isSubmittingForm}
@@ -514,7 +507,7 @@ export function AssetForm({
             </div>
           </div>
 
-          {(!targetMemberId || targetMemberId === "UNASSIGNED_TARGET") && ( // Show only if not adding to a specific member from member node
+          {(!targetMemberId || targetMemberId === "UNASSIGNED_TARGET") && ( 
             <div className="space-y-4 p-4 border rounded-md bg-card">
                 <h4 className="text-md font-semibold text-primary flex items-center"><UserCheck size={18} className="mr-2"/> Asset Designation and Release (Optional)</h4>
                 <div className="space-y-1.5">
@@ -525,7 +518,7 @@ export function AssetForm({
                     render={({ field }) => (
                     <Select
                         onValueChange={(value) => field.onChange(value === "UNASSIGNED" ? undefined : value)}
-                        value={field.value === null || field.value === undefined ? "UNASSIGNED" : field.value}
+                        value={field.value === null || field.value === undefined || field.value === '' ? "UNASSIGNED" : field.value}
                         disabled={isSubmittingForm || !!targetMemberId }
                     >
                         <SelectTrigger id="assignedToMemberId" className={cn("bg-input text-foreground", (!!targetMemberId) && "cursor-not-allowed bg-muted/50 text-muted-foreground")}>
@@ -543,7 +536,7 @@ export function AssetForm({
                 {form.formState.errors.assignedToMemberId && <p className="text-sm text-destructive">{form.formState.errors.assignedToMemberId.message}</p>}
                 </div>
 
-                {formLocalAssignedToMemberIdWatch && formLocalAssignedToMemberIdWatch !== "UNASSIGNED" && memberHasBirthDateForSchema && (
+                {watchedAssignedToMemberId && watchedAssignedToMemberId !== "UNASSIGNED" && currentAssignedMember?.birthDate && (
                 <div className="space-y-3 mt-3 p-3 border-t border-border">
                     <div className="flex items-center space-x-2">
                         <Controller
@@ -560,10 +553,10 @@ export function AssetForm({
                             )}
                         />
                         <Label htmlFor="setReleaseCondition" className="font-normal flex items-center text-foreground/90">
-                        <Clock size={16} className="mr-2 text-primary"/> Set Age-Based Release Condition for {actualSelectedMemberForAssignment?.name}?
+                        <Clock size={16} className="mr-2 text-primary"/> Set Age-Based Release Condition for {currentAssignedMember?.name}?
                         </Label>
                     </div>
-                    {formSetReleaseConditionWatch && (
+                    {watchedSetReleaseCondition && (
                     <div className="space-y-1.5 pl-6">
                         <Label htmlFor="releaseTargetAge" className="text-foreground/90">Release at (age)</Label>
                         <Controller
@@ -574,7 +567,7 @@ export function AssetForm({
                                 id="releaseTargetAge"
                                 type="number"
                                 {...field}
-                                value={field.value === undefined ? '' : field.value}
+                                value={field.value === undefined || field.value === null ? '' : String(field.value)}
                                 onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))}
                                 placeholder="Ex: 18"
                                 min="1"
@@ -588,9 +581,9 @@ export function AssetForm({
                     )}
                 </div>
                 )}
-                {formLocalAssignedToMemberIdWatch && formLocalAssignedToMemberIdWatch !== "UNASSIGNED" && !memberHasBirthDateForSchema && (
+                {watchedAssignedToMemberId && watchedAssignedToMemberId !== "UNASSIGNED" && !currentAssignedMember?.birthDate && (
                     <p className="text-xs text-muted-foreground mt-2 pl-1">
-                        To set an age-based release condition, the selected member ({actualSelectedMemberForAssignment?.name || 'Member'}) must have a birth date registered.
+                        To set an age-based release condition, the selected member ({currentAssignedMember?.name || 'Member'}) must have a birth date registered.
                     </p>
                 )}
             </div>
@@ -619,7 +612,12 @@ export function AssetForm({
              {!isSubmittingForm && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         ) : (
-          <Button type="submit" disabled={isSubmittingForm || !form.formState.isValid} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button 
+            type="button" // Changed from "submit"
+            onClick={() => form.handleSubmit(handleFormSubmit)()} // Explicitly call handleSubmit
+            disabled={isSubmittingForm || !form.formState.isValid} 
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
             {isSubmittingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
             Save Physical Asset
           </Button>
@@ -629,3 +627,4 @@ export function AssetForm({
   );
 }
 
+    
