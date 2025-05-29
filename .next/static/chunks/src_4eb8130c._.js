@@ -657,7 +657,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/utils.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/date-fns/format.mjs [app-client] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/isValid.mjs [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$locale$2f$en$2d$US$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/locale/en-US.mjs [app-client] (ecmascript)"); // Changed to enUS
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$locale$2f$en$2d$US$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/locale/en-US.mjs [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
@@ -676,184 +676,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-const BitcoinIconSvg = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-        width: "18",
-        height: "18",
-        viewBox: "0 0 24 24",
-        fill: "none",
-        xmlns: "http://www.w3.org/2000/svg",
-        className: "inline mr-2",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
-                cx: "12",
-                cy: "12",
-                r: "10",
-                fill: "#F7931A"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 23,
-                columnNumber: 149
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M10.05 16.64H12.32C14.66 16.64 16.31 15.32 16.31 12.91C16.31 10.5 14.66 9.17999 12.32 9.17999H10.05V7.35999H12.4C15.43 7.35999 17.5 8.95999 17.5 11.82C17.5 13.48 16.73 14.91 15.38 15.79V15.83C17.06 16.57 18 17.97 18 19.76C18 22.79 15.67 24.48 12.54 24.48H8V7.35999H10.05V16.64ZM10.05 11.6H12.22C13.6 11.6 14.51 12.31 14.51 13.59C14.51 14.87 13.6 15.58 12.22 15.58H10.05V11.6ZM10.05 17.68H12.4C13.98 17.68 15.03 18.46 15.03 19.79C15.03 21.12 13.98 21.9 12.4 21.9H10.05V17.68Z",
-                fill: "white",
-                transform: "scale(0.75) translate(2, -4)"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 23,
-                columnNumber: 196
-            }, this)
-        ]
-    }, void 0, true, {
-        fileName: "[project]/src/components/assets/AssetForm.tsx",
-        lineNumber: 23,
-        columnNumber: 30
-    }, this);
-_c = BitcoinIconSvg;
-const EthereumIconSvg = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-        width: "18",
-        height: "18",
-        viewBox: "0 0 24 24",
-        fill: "none",
-        xmlns: "http://www.w3.org/2000/svg",
-        className: "inline mr-2",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M12.023 2.68701L11.531 3.32701V11.56L12.023 11.829L12.516 11.56V3.32701L12.023 2.68701Z",
-                fill: "#627EEA"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 24,
-                columnNumber: 150
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M12.023 2.68701L6.78101 9.40401L12.023 11.829V2.68701Z",
-                fill: "#8AA1F2"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 24,
-                columnNumber: 264
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M12.023 2.68701L17.265 9.40401L12.023 11.829V2.68701Z",
-                fill: "#627EEA"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 24,
-                columnNumber: 345
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M12.023 12.76L11.555 12.981V16.844L12.023 17.13L12.492 16.844V12.981L12.023 12.76Z",
-                fill: "#627EEA"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 24,
-                columnNumber: 425
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M12.023 17.13V12.76L6.78101 10.352L12.023 17.13Z",
-                fill: "#8AA1F2"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 24,
-                columnNumber: 534
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M12.023 17.13V12.76L17.265 10.352L12.023 17.13Z",
-                fill: "#627EEA"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 24,
-                columnNumber: 609
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M12.023 11.829L17.265 9.40401L12.023 6.99701L6.78101 9.40401L12.023 11.829Z",
-                fill: "#45578E"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 24,
-                columnNumber: 683
-            }, this)
-        ]
-    }, void 0, true, {
-        fileName: "[project]/src/components/assets/AssetForm.tsx",
-        lineNumber: 24,
-        columnNumber: 31
-    }, this);
-_c1 = EthereumIconSvg;
-const SolanaIconSvg = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-        width: "18",
-        height: "18",
-        viewBox: "0 0 24 24",
-        fill: "none",
-        xmlns: "http://www.w3.org/2000/svg",
-        className: "inline mr-2",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("defs", {
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("linearGradient", {
-                    id: "solanaFormGradient",
-                    x1: "0%",
-                    y1: "0%",
-                    x2: "100%",
-                    y2: "100%",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
-                            offset: "0%",
-                            style: {
-                                stopColor: "#9945FF"
-                            }
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/assets/AssetForm.tsx",
-                            lineNumber: 25,
-                            columnNumber: 230
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("stop", {
-                            offset: "100%",
-                            style: {
-                                stopColor: "#14F195"
-                            }
-                        }, void 0, false, {
-                            fileName: "[project]/src/components/assets/AssetForm.tsx",
-                            lineNumber: 25,
-                            columnNumber: 279
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/src/components/assets/AssetForm.tsx",
-                    lineNumber: 25,
-                    columnNumber: 154
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 25,
-                columnNumber: 148
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
-                cx: "12",
-                cy: "12",
-                r: "10",
-                fill: "url(#solanaFormGradient)"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 25,
-                columnNumber: 354
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                d: "M8.06006 6.5L6.5 8.06006L10.44 12L6.5 15.94L8.06006 17.5L12 13.56L15.94 17.5L17.5 15.94L13.56 12L17.5 8.06006L15.94 6.5L12 10.44L8.06006 6.5Z",
-                fill: "black",
-                transform: "scale(0.8) translate(3,3)"
-            }, void 0, false, {
-                fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 25,
-                columnNumber: 418
-            }, this)
-        ]
-    }, void 0, true, {
-        fileName: "[project]/src/components/assets/AssetForm.tsx",
-        lineNumber: 25,
-        columnNumber: 29
-    }, this);
-_c2 = SolanaIconSvg;
+// Schema for Physical Assets only
 const createAssetFormSchema = (memberHasBirthDateContext)=>{
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["z"].object({
         nomeAtivo: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["z"].string().min(1, 'Asset name is required.'),
@@ -871,10 +694,10 @@ const createAssetFormSchema = (memberHasBirthDateContext)=>{
         setReleaseCondition: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["z"].boolean().optional(),
         releaseTargetAge: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["z"].preprocess((val)=>String(val) === '' || val === undefined ? undefined : parseInt(String(val), 10), __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["z"].number().min(1, "Age must be positive.").max(120, "Unrealistic age.").optional())
     }).superRefine((data, ctx)=>{
-        if (data.setReleaseCondition && memberHasBirthDateContext && (data.releaseTargetAge === undefined || data.releaseTargetAge === null)) {
+        if (data.setReleaseCondition && memberHasBirthDateContext && (data.releaseTargetAge === undefined || data.releaseTargetAge === null || isNaN(data.releaseTargetAge))) {
             ctx.addIssue({
                 code: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zod$2f$lib$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["z"].ZodIssueCode.custom,
-                message: 'Release age is required if condition is checked and member has birth date.',
+                message: 'Release age is required and must be a valid number if condition is checked and member has birth date.',
                 path: [
                     'releaseTargetAge'
                 ]
@@ -883,22 +706,23 @@ const createAssetFormSchema = (memberHasBirthDateContext)=>{
     });
 };
 const TOTAL_STEPS_PHYSICAL = 3;
-function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMembers = [], targetMemberId, user, existingAssetToUpdate = null }) {
+function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMembers = [], targetMemberId, user }) {
     _s();
     const [currentStep, setCurrentStep] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
     const [formError, setFormError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [partnerNames, setPartnerNames] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [partnerLabels, setPartnerLabels] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([
-        "Contributor 1",
-        "Contributor 2"
+        "Partner 1",
+        "Partner 2"
     ]);
-    const [isFetchingPrice, setIsFetchingPrice] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [priceFetchError, setPriceFetchError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [fetchedCurrency, setFetchedCurrency] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    const tempForm = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])(); // Temporary form instance to watch 'assignedToMemberId' for schema context
-    const currentAssignedToMemberIdForSchema = tempForm.watch('assignedToMemberId');
-    const selectedMemberForReleaseSchema = availableMembers.find((m)=>m.id === currentAssignedToMemberIdForSchema);
-    const memberHasBirthDateForSchema = !!selectedMemberForReleaseSchema?.birthDate;
+    const watchedNomeAtivo = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])().watch('nomeAtivo');
+    const watchedDataAquisicao = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])().watch('dataAquisicao');
+    const formWatchedQuemComprou = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])().watch('quemComprou');
+    const formLocalAssignedToMemberIdWatch = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])().watch('assignedToMemberId');
+    const formSetReleaseConditionWatch = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"])().watch('setReleaseCondition');
+    const actualSelectedMember = availableMembers.find((m)=>m.id === formLocalAssignedToMemberIdWatch);
+    const memberHasBirthDate = !!actualSelectedMember?.birthDate;
+    const memberHasBirthDateForSchema = !!availableMembers.find((m)=>m.id === formLocalAssignedToMemberIdWatch)?.birthDate;
     const currentAssetFormSchema = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "AssetForm.useMemo[currentAssetFormSchema]": ()=>createAssetFormSchema(memberHasBirthDateForSchema)
     }["AssetForm.useMemo[currentAssetFormSchema]"], [
@@ -922,47 +746,28 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
         },
         mode: "onChange"
     });
-    const watchedNomeAtivo = form.watch('nomeAtivo');
-    const quemComprouWatch = form.watch('quemComprou');
-    const localAssignedToMemberIdWatch = form.watch('assignedToMemberId');
-    const setReleaseConditionWatch = form.watch('setReleaseCondition');
-    const watchedDataAquisicao = form.watch('dataAquisicao');
-    const actualSelectedMember = availableMembers.find((m)=>m.id === localAssignedToMemberIdWatch);
-    const memberHasBirthDate = !!actualSelectedMember?.birthDate;
+    const formWatchedTipoImovelBemFisico = form.watch('tipoImovelBemFisico');
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "AssetForm.useEffect": ()=>{
-            const defaultVals = {
-                nomeAtivo: existingAssetToUpdate?.nomeAtivo || '',
+            form.reset({
+                nomeAtivo: '',
                 dataAquisicao: new Date(),
                 observacoes: '',
                 quemComprou: '',
                 contribuicaoParceiro1: undefined,
                 contribuicaoParceiro2: undefined,
-                tipoImovelBemFisico: existingAssetToUpdate?.tipoImovelBemFisico || '',
-                enderecoLocalizacaoFisico: existingAssetToUpdate?.enderecoLocalizacaoFisico || '',
-                assignedToMemberId: targetMemberId || existingAssetToUpdate?.assignedToMemberId || undefined,
-                setReleaseCondition: !!existingAssetToUpdate?.releaseCondition,
-                releaseTargetAge: existingAssetToUpdate?.releaseCondition?.targetAge
-            };
-            if (existingAssetToUpdate) {
-                // If updating, set specific fields from the existing asset's first transaction (if any) or asset itself
-                const firstTransaction = existingAssetToUpdate.transactions?.[0];
-                defaultVals.dataAquisicao = firstTransaction?.dataAquisicao ? new Date(firstTransaction.dataAquisicao) : new Date();
-                defaultVals.observacoes = firstTransaction?.observacoes || existingAssetToUpdate.observacoes || '';
-                defaultVals.quemComprou = firstTransaction?.quemComprou || '';
-                defaultVals.contribuicaoParceiro1 = firstTransaction?.contribuicaoParceiro1;
-                defaultVals.contribuicaoParceiro2 = firstTransaction?.contribuicaoParceiro2;
-            } else {
-                // For new physical assets, ensure nomeAtivo is clear
-                defaultVals.nomeAtivo = '';
-            }
-            form.reset(defaultVals);
+                tipoImovelBemFisico: '',
+                enderecoLocalizacaoFisico: '',
+                documentacaoFisicoFile: undefined,
+                assignedToMemberId: targetMemberId || undefined,
+                setReleaseCondition: false,
+                releaseTargetAge: undefined
+            });
             setCurrentStep(1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
         }
     }["AssetForm.useEffect"], [
         targetMemberId,
-        existingAssetToUpdate,
         form.reset
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -999,70 +804,87 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
         const processedValues = {
             ...values,
             quemComprou: values.quemComprou === "UNSPECIFIED_BUYER" ? "" : values.quemComprou,
-            assignedToMemberId: values.assignedToMemberId === "UNASSIGNED" || values.assignedToMemberId === null || values.assignedToMemberId === undefined ? undefined : values.assignedToMemberId
+            assignedToMemberId: values.assignedToMemberId === "UNASSIGNED" || values.assignedToMemberId === null ? undefined : values.assignedToMemberId
         };
         await onSubmit(processedValues);
     };
+    const getFieldsForStep = (s)=>{
+        if (s === 1) return [
+            'nomeAtivo',
+            'dataAquisicao'
+        ];
+        if (s === 2) return [
+            'quemComprou',
+            'contribuicaoParceiro1',
+            'contribuicaoParceiro2'
+        ];
+        if (s === 3) return [
+            'tipoImovelBemFisico',
+            'enderecoLocalizacaoFisico',
+            'documentacaoFisicoFile',
+            'assignedToMemberId',
+            'setReleaseCondition',
+            'releaseTargetAge'
+        ];
+        return [];
+    };
+    const isFieldRelevantUpToStep = (fieldName, currentValidationStep)=>{
+        for(let i = 1; i <= currentValidationStep; i++){
+            if (getFieldsForStep(i).includes(fieldName)) {
+                return true;
+            }
+        }
+        return false;
+    };
     const validateStep = async (step)=>{
         setFormError(null);
+        form.clearErrors();
         let fieldsToValidate = [];
         let currentValues = form.getValues();
         if (step === 1) {
             fieldsToValidate = [
                 'nomeAtivo',
-                'dataAquisicao'
+                'dataAquisicao',
+                'observacoes'
             ];
-            if (!existingAssetToUpdate && !currentValues.nomeAtivo) {
-                setFormError("Asset name is required.");
-                return false;
-            }
-            if (!currentValues.dataAquisicao) {
-                setFormError("Acquisition date is required.");
-                return false;
-            }
         } else if (step === 2) {
             fieldsToValidate = [
                 'quemComprou'
             ];
-        // Contributions are optional
         } else if (step === 3) {
             fieldsToValidate.push('tipoImovelBemFisico');
-            if (!targetMemberId) {
-                fieldsToValidate.push('assignedToMemberId');
-            }
-            if (currentValues.setReleaseCondition && memberHasBirthDate) {
-                fieldsToValidate.push('releaseTargetAge');
-            }
         }
         if (fieldsToValidate.length > 0) {
-            const result = await form.trigger(fieldsToValidate);
+            const result = await form.trigger(fieldsToValidate.filter((f)=>f !== 'observacoes' || currentValues.observacoes)); // Only validate observacoes if it has content
             if (!result) {
-                const errors = form.formState.errors;
                 let firstErrorMessage = null;
                 for (const field of fieldsToValidate){
-                    if (errors[field]) {
-                        firstErrorMessage = errors[field]?.message || "Please fill out required fields correctly.";
+                    if (form.formState.errors[field]) {
+                        // @ts-ignore
+                        firstErrorMessage = form.formState.errors[field]?.message || "Please fill out required fields correctly.";
                         break;
                     }
                 }
                 if (firstErrorMessage) {
                     setFormError(firstErrorMessage);
-                    return false;
+                } else {
+                    setFormError("Please correct the highlighted fields.");
                 }
+                return false;
             }
         }
-        // Perform full schema validation for the current step's context
         const validationResult = currentAssetFormSchema.safeParse(currentValues);
         if (!validationResult.success) {
-            // Check if any of the schema errors are relevant to the current step's fields
-            const stepErrors = validationResult.error.issues.filter((issue)=>{
-                if (step === 1 && (issue.path.includes('nomeAtivo') || issue.path.includes('dataAquisicao'))) return true;
-                if (step === 2 && (issue.path.includes('quemComprou') || currentValues.quemComprou === 'Ambos' && (issue.path.includes('contribuicaoParceiro1') || issue.path.includes('contribuicaoParceiro2')))) return true;
-                if (step === 3 && (issue.path.includes('tipoImovelBemFisico') || !targetMemberId && issue.path.includes('assignedToMemberId') || currentValues.setReleaseCondition && memberHasBirthDate && issue.path.includes('releaseTargetAge'))) return true;
-                return false;
-            });
-            if (stepErrors.length > 0) {
-                setFormError(stepErrors[0].message);
+            const relevantError = validationResult.error.issues.find((issue)=>isFieldRelevantUpToStep(issue.path[0], step));
+            if (relevantError) {
+                setFormError(relevantError.message);
+                const fieldName = relevantError.path[0];
+                if (fieldName && !form.formState.errors[fieldName]) {
+                    form.setError(fieldName, {
+                        type: 'custom',
+                        message: relevantError.message
+                    });
+                }
                 return false;
             }
         }
@@ -1082,16 +904,14 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
         }
     };
     const isNextButtonDisabled = ()=>{
-        if (isSubmittingForm || isFetchingPrice) return true;
-        // For step 1 (Asset Name and Date for Physical)
+        if (isSubmittingForm) return true;
         if (currentStep === 1) {
             return !watchedNomeAtivo || !watchedDataAquisicao;
         }
-        // For step 2 (Ownership), quemComprou can be "UNSPECIFIED_BUYER" (empty string form value), so no specific field is strictly required to enable next
-        // For step 3 (Physical details), tipoImovelBemFisico is required
-        if (currentStep === TOTAL_STEPS_PHYSICAL - 1 && !form.getValues('tipoImovelBemFisico')) {
-            return true;
+        if (currentStep === 2) {
+            return false; // Step 2 fields (quemComprou, contributions) are optional or have defaults
         }
+        // For Step 3 (last step), the button changes to "Save Physical Asset", RHF validity handles it.
         return false;
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1101,8 +921,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                 className: "text-sm text-center text-muted-foreground",
                 children: [
-                    existingAssetToUpdate ? `Add Transaction to: ${existingAssetToUpdate.nomeAtivo}` : "Add New Physical Asset",
-                    " (Step ",
+                    "Add New Physical Asset (Step ",
                     currentStep,
                     " of ",
                     TOTAL_STEPS_PHYSICAL,
@@ -1110,7 +929,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 283,
+                lineNumber: 262,
                 columnNumber: 7
             }, this),
             currentStep === 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -1124,19 +943,19 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: "Physical Asset Name"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 291,
+                                lineNumber: 269,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
                                 id: "nomeAtivoFisicoInput",
                                 ...form.register('nomeAtivo'),
                                 placeholder: "Ex: Beach House, SUV Car, Artwork",
-                                disabled: isSubmittingForm || !!existingAssetToUpdate,
-                                autoFocus: !existingAssetToUpdate,
-                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("bg-input text-foreground placeholder:text-muted-foreground", !!existingAssetToUpdate && "cursor-not-allowed bg-muted/50 text-muted-foreground")
+                                disabled: isSubmittingForm,
+                                autoFocus: true,
+                                className: "bg-input text-foreground placeholder:text-muted-foreground"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 292,
+                                lineNumber: 270,
                                 columnNumber: 13
                             }, this),
                             form.formState.errors.nomeAtivo && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1144,13 +963,13 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: form.formState.errors.nomeAtivo.message
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 300,
+                                lineNumber: 278,
                                 columnNumber: 49
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 290,
+                        lineNumber: 268,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1162,7 +981,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: "Acquisition/Transaction Date"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 303,
+                                lineNumber: 281,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Controller"], {
@@ -1181,7 +1000,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                             className: "mr-2 h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                            lineNumber: 315,
+                                                            lineNumber: 293,
                                                             columnNumber: 23
                                                         }, void 0),
                                                         field.value && (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["isValid"])(new Date(field.value)) ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(new Date(field.value), "PPP 'at' HH:mm", {
@@ -1190,18 +1009,18 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                             children: "Choose date and time"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                            lineNumber: 316,
+                                                            lineNumber: 294,
                                                             columnNumber: 140
                                                         }, void 0)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                    lineNumber: 310,
+                                                    lineNumber: 288,
                                                     columnNumber: 21
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 309,
+                                                lineNumber: 287,
                                                 columnNumber: 19
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$popover$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PopoverContent"], {
@@ -1226,7 +1045,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                         disabled: (date)=>date > new Date() || date < new Date("1900-01-01") || isSubmittingForm
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 320,
+                                                        lineNumber: 298,
                                                         columnNumber: 21
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1238,7 +1057,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                                 children: "Time of Acquisition/Transaction"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                                lineNumber: 339,
+                                                                lineNumber: 317,
                                                                 columnNumber: 23
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1258,30 +1077,30 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                                 disabled: isSubmittingForm
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                                lineNumber: 340,
+                                                                lineNumber: 318,
                                                                 columnNumber: 24
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 338,
+                                                        lineNumber: 316,
                                                         columnNumber: 21
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 319,
+                                                lineNumber: 297,
                                                 columnNumber: 19
                                             }, void 0)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 308,
+                                        lineNumber: 286,
                                         columnNumber: 17
                                     }, void 0)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 304,
+                                lineNumber: 282,
                                 columnNumber: 13
                             }, this),
                             form.formState.errors.dataAquisicao && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1289,13 +1108,13 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: form.formState.errors.dataAquisicao.message
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 361,
+                                lineNumber: 339,
                                 columnNumber: 53
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 302,
+                        lineNumber: 280,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1307,7 +1126,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: "Transaction Notes (Optional)"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 364,
+                                lineNumber: 342,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1318,7 +1137,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 className: "bg-input text-foreground placeholder:text-muted-foreground"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 365,
+                                lineNumber: 343,
                                 columnNumber: 13
                             }, this),
                             form.formState.errors.observacoes && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1326,13 +1145,13 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: form.formState.errors.observacoes.message
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 366,
+                                lineNumber: 344,
                                 columnNumber: 51
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 363,
+                        lineNumber: 341,
                         columnNumber: 12
                     }, this)
                 ]
@@ -1348,7 +1167,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: "Who Acquired/Contributed in this Transaction? (Optional)"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 375,
+                                lineNumber: 352,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Controller"], {
@@ -1366,12 +1185,12 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                     placeholder: "Select who acquired"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                    lineNumber: 386,
+                                                    lineNumber: 363,
                                                     columnNumber: 21
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 385,
+                                                lineNumber: 362,
                                                 columnNumber: 19
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -1382,15 +1201,15 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                         children: "Unspecified"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 389,
+                                                        lineNumber: 366,
                                                         columnNumber: 21
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
-                                                        value: "Main Entity",
+                                                        value: "Main Union (Ipê Acta)",
                                                         children: "Main Union (Ipê Acta)"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 390,
+                                                        lineNumber: 367,
                                                         columnNumber: 21
                                                     }, void 0),
                                                     partnerNames.length === 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1398,7 +1217,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                         children: partnerNames[0]
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 392,
+                                                        lineNumber: 369,
                                                         columnNumber: 23
                                                     }, void 0),
                                                     partnerNames.length > 1 && partnerNames.map((name)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1406,7 +1225,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                             children: name
                                                         }, name, false, {
                                                             fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                            lineNumber: 395,
+                                                            lineNumber: 372,
                                                             columnNumber: 23
                                                         }, void 0)),
                                                     partnerNames.length > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1418,24 +1237,24 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 397,
+                                                        lineNumber: 374,
                                                         columnNumber: 49
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 388,
+                                                lineNumber: 365,
                                                 columnNumber: 19
                                             }, void 0)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 380,
+                                        lineNumber: 357,
                                         columnNumber: 17
                                     }, void 0)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 376,
+                                lineNumber: 353,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1443,7 +1262,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: "If partner names do not appear, check the union display name in Profile."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 402,
+                                lineNumber: 379,
                                 columnNumber: 13
                             }, this),
                             form.formState.errors.quemComprou && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1451,16 +1270,16 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: form.formState.errors.quemComprou.message
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 405,
+                                lineNumber: 382,
                                 columnNumber: 51
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 374,
+                        lineNumber: 351,
                         columnNumber: 11
                     }, this),
-                    quemComprouWatch === 'Ambos' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    formWatchedQuemComprou === 'Ambos' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "space-y-4 mt-4 p-4 border rounded-md bg-muted/50",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -1468,7 +1287,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: "Contribution Details (Optional)"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 410,
+                                lineNumber: 387,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1484,7 +1303,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 412,
+                                        lineNumber: 389,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1497,7 +1316,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         className: "bg-input text-foreground placeholder:text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 413,
+                                        lineNumber: 390,
                                         columnNumber: 17
                                     }, this),
                                     form.formState.errors.contribuicaoParceiro1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1505,13 +1324,13 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: form.formState.errors.contribuicaoParceiro1.message
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 422,
+                                        lineNumber: 399,
                                         columnNumber: 65
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 411,
+                                lineNumber: 388,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1527,7 +1346,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 425,
+                                        lineNumber: 402,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1540,7 +1359,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         className: "bg-input text-foreground placeholder:text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 426,
+                                        lineNumber: 403,
                                         columnNumber: 17
                                     }, this),
                                     form.formState.errors.contribuicaoParceiro2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1548,19 +1367,19 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: form.formState.errors.contribuicaoParceiro2.message
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 435,
+                                        lineNumber: 412,
                                         columnNumber: 65
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 424,
+                                lineNumber: 401,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 409,
+                        lineNumber: 386,
                         columnNumber: 13
                     }, this)
                 ]
@@ -1575,7 +1394,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 children: "Physical Asset Details"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 446,
+                                lineNumber: 422,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1587,18 +1406,18 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: "Type of Physical Good"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 448,
+                                        lineNumber: 424,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
                                         id: "tipoImovelBemFisico",
                                         ...form.register('tipoImovelBemFisico'),
                                         placeholder: "Ex: Residential Property, Vehicle, Artwork",
-                                        disabled: isSubmittingForm || !!existingAssetToUpdate,
-                                        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("bg-input text-foreground placeholder:text-muted-foreground", !!existingAssetToUpdate && "cursor-not-allowed bg-muted/50 text-muted-foreground")
+                                        disabled: isSubmittingForm,
+                                        className: "bg-input text-foreground placeholder:text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 449,
+                                        lineNumber: 425,
                                         columnNumber: 15
                                     }, this),
                                     form.formState.errors.tipoImovelBemFisico && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1606,13 +1425,13 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: form.formState.errors.tipoImovelBemFisico.message
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 456,
+                                        lineNumber: 432,
                                         columnNumber: 61
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 447,
+                                lineNumber: 423,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1624,18 +1443,18 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: "Address/Location (Optional)"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 459,
+                                        lineNumber: 435,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
                                         id: "enderecoLocalizacaoFisico",
                                         ...form.register('enderecoLocalizacaoFisico'),
                                         placeholder: "Ex: 123 Example St, City - State",
-                                        disabled: isSubmittingForm || !!existingAssetToUpdate,
-                                        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("bg-input text-foreground placeholder:text-muted-foreground", !!existingAssetToUpdate && "cursor-not-allowed bg-muted/50 text-muted-foreground")
+                                        disabled: isSubmittingForm,
+                                        className: "bg-input text-foreground placeholder:text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 460,
+                                        lineNumber: 436,
                                         columnNumber: 15
                                     }, this),
                                     form.formState.errors.enderecoLocalizacaoFisico && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1643,13 +1462,13 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: form.formState.errors.enderecoLocalizacaoFisico.message
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 467,
+                                        lineNumber: 443,
                                         columnNumber: 67
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 458,
+                                lineNumber: 434,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1661,18 +1480,18 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: "Documentation (Optional)"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 470,
+                                        lineNumber: 446,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
                                         id: "documentacaoFisicoFile",
                                         type: "file",
                                         ...form.register('documentacaoFisicoFile'),
-                                        disabled: isSubmittingForm || !!existingAssetToUpdate,
-                                        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/20 file:text-primary-foreground hover:file:bg-primary/30 text-foreground/90", !!existingAssetToUpdate && "cursor-not-allowed bg-muted/50 text-muted-foreground")
+                                        disabled: isSubmittingForm,
+                                        className: "file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/20 file:text-primary-foreground hover:file:bg-primary/30 text-foreground/90"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 471,
+                                        lineNumber: 447,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1680,7 +1499,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: "Max 5MB. Types: JPG, PNG, PDF."
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 477,
+                                        lineNumber: 453,
                                         columnNumber: 15
                                     }, this),
                                     form.formState.errors.documentacaoFisicoFile && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1688,22 +1507,22 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: String(form.formState.errors.documentacaoFisicoFile.message)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 478,
+                                        lineNumber: 454,
                                         columnNumber: 64
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 469,
+                                lineNumber: 445,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 445,
+                        lineNumber: 421,
                         columnNumber: 11
                     }, this),
-                    (!targetMemberId || existingAssetToUpdate && !existingAssetToUpdate.assignedToMemberId) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    !targetMemberId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "space-y-4 p-4 border rounded-md bg-card",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -1714,14 +1533,14 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         className: "mr-2"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 484,
+                                        lineNumber: 460,
                                         columnNumber: 86
                                     }, this),
                                     " Asset Designation and Release (Optional)"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 484,
+                                lineNumber: 460,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1733,7 +1552,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: "Assign Asset to Member"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 486,
+                                        lineNumber: 462,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Controller"], {
@@ -1742,21 +1561,21 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         render: ({ field })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
                                                 onValueChange: (value)=>field.onChange(value === "UNASSIGNED" ? undefined : value),
                                                 value: field.value === null || field.value === undefined ? "UNASSIGNED" : field.value,
-                                                disabled: isSubmittingForm || !!targetMemberId || !!existingAssetToUpdate && !!existingAssetToUpdate.assignedToMemberId,
+                                                disabled: isSubmittingForm || !!targetMemberId,
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectTrigger"], {
                                                         id: "assignedToMemberId",
-                                                        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("bg-input text-foreground", (!!targetMemberId || !!existingAssetToUpdate && !!existingAssetToUpdate.assignedToMemberId) && "cursor-not-allowed bg-muted/50 text-muted-foreground"),
+                                                        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("bg-input text-foreground", !!targetMemberId && "cursor-not-allowed bg-muted/50 text-muted-foreground"),
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectValue"], {
                                                             placeholder: "Select a member"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                            lineNumber: 497,
+                                                            lineNumber: 473,
                                                             columnNumber: 25
                                                         }, void 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 496,
+                                                        lineNumber: 472,
                                                         columnNumber: 25
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -1767,7 +1586,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                                 children: "Do Not Assign / Keep with Main Union"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                                lineNumber: 500,
+                                                                lineNumber: 476,
                                                                 columnNumber: 25
                                                             }, void 0),
                                                             availableMembers.map((member)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1775,24 +1594,24 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                                     children: member.name
                                                                 }, member.id, false, {
                                                                     fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                                    lineNumber: 502,
+                                                                    lineNumber: 478,
                                                                     columnNumber: 29
                                                                 }, void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 499,
+                                                        lineNumber: 475,
                                                         columnNumber: 25
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 491,
+                                                lineNumber: 467,
                                                 columnNumber: 21
                                             }, void 0)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 487,
+                                        lineNumber: 463,
                                         columnNumber: 17
                                     }, this),
                                     form.formState.errors.assignedToMemberId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1800,16 +1619,16 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                         children: form.formState.errors.assignedToMemberId.message
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 508,
+                                        lineNumber: 484,
                                         columnNumber: 62
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 485,
+                                lineNumber: 461,
                                 columnNumber: 17
                             }, this),
-                            localAssignedToMemberIdWatch && localAssignedToMemberIdWatch !== "UNASSIGNED" && memberHasBirthDate && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            formLocalAssignedToMemberIdWatch && formLocalAssignedToMemberIdWatch !== "UNASSIGNED" && memberHasBirthDate && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "space-y-3 mt-3 p-3 border-t border-border",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1822,28 +1641,28 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                         id: "setReleaseCondition",
                                                         checked: Boolean(field.value),
                                                         onCheckedChange: field.onChange,
-                                                        disabled: isSubmittingForm || !!existingAssetToUpdate,
-                                                        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground", !!existingAssetToUpdate && "cursor-not-allowed bg-muted/50 text-muted-foreground")
+                                                        disabled: isSubmittingForm,
+                                                        className: "border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 518,
+                                                        lineNumber: 494,
                                                         columnNumber: 33
                                                     }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 514,
+                                                lineNumber: 490,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
                                                 htmlFor: "setReleaseCondition",
-                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("font-normal flex items-center text-foreground/90", !!existingAssetToUpdate && "text-muted-foreground"),
+                                                className: "font-normal flex items-center text-foreground/90",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$clock$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Clock$3e$__["Clock"], {
                                                         size: 16,
-                                                        className: "mr-2 text-blue-400"
+                                                        className: "mr-2 text-primary"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                        lineNumber: 528,
+                                                        lineNumber: 504,
                                                         columnNumber: 25
                                                     }, this),
                                                     " Set Age-Based Release Condition for ",
@@ -1852,25 +1671,25 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 527,
+                                                lineNumber: 503,
                                                 columnNumber: 25
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 513,
+                                        lineNumber: 489,
                                         columnNumber: 21
                                     }, this),
-                                    setReleaseConditionWatch && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    formSetReleaseConditionWatch && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "space-y-1.5 pl-6",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
                                                 htmlFor: "releaseTargetAge",
-                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("text-foreground/90", !!existingAssetToUpdate && "text-muted-foreground"),
+                                                className: "text-foreground/90",
                                                 children: "Release at (age)"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 533,
+                                                lineNumber: 509,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1879,11 +1698,11 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                 ...form.register('releaseTargetAge'),
                                                 placeholder: "Ex: 18",
                                                 min: "1",
-                                                disabled: isSubmittingForm || !!existingAssetToUpdate,
-                                                className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("bg-input text-foreground placeholder:text-muted-foreground", !!existingAssetToUpdate && "cursor-not-allowed bg-muted/50 text-muted-foreground")
+                                                disabled: isSubmittingForm,
+                                                className: "bg-input text-foreground placeholder:text-muted-foreground"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 534,
+                                                lineNumber: 510,
                                                 columnNumber: 25
                                             }, this),
                                             form.formState.errors.releaseTargetAge && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1891,22 +1710,22 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                                 children: form.formState.errors.releaseTargetAge.message
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                                lineNumber: 543,
+                                                lineNumber: 519,
                                                 columnNumber: 68
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                        lineNumber: 532,
+                                        lineNumber: 508,
                                         columnNumber: 21
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 512,
+                                lineNumber: 488,
                                 columnNumber: 17
                             }, this),
-                            localAssignedToMemberIdWatch && localAssignedToMemberIdWatch !== "UNASSIGNED" && !memberHasBirthDate && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            formLocalAssignedToMemberIdWatch && formLocalAssignedToMemberIdWatch !== "UNASSIGNED" && !memberHasBirthDate && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-xs text-muted-foreground mt-2 pl-1",
                                 children: [
                                     "To set an age-based release condition, the selected member (",
@@ -1915,13 +1734,13 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 549,
+                                lineNumber: 525,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 483,
+                        lineNumber: 459,
                         columnNumber: 13
                     }, this)
                 ]
@@ -1931,7 +1750,7 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                 children: formError
             }, void 0, false, {
                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 558,
+                lineNumber: 534,
                 columnNumber: 21
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1941,32 +1760,32 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                         type: "button",
                         variant: "outline",
                         onClick: handlePreviousStep,
-                        disabled: isSubmittingForm || isFetchingPrice,
+                        disabled: isSubmittingForm,
                         className: "text-foreground/90 border-border hover:bg-muted/80",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$left$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowLeft$3e$__["ArrowLeft"], {
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 564,
+                                lineNumber: 540,
                                 columnNumber: 13
                             }, this),
                             " Back"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 563,
+                        lineNumber: 539,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         type: "button",
                         variant: "outline",
                         onClick: onClose,
-                        disabled: isSubmittingForm || isFetchingPrice,
+                        disabled: isSubmittingForm,
                         className: "text-foreground/90 border-border hover:bg-muted/80",
                         children: "Cancel"
                     }, void 0, false, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 567,
+                        lineNumber: 543,
                         columnNumber: 11
                     }, this),
                     currentStep < TOTAL_STEPS_PHYSICAL ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1975,76 +1794,77 @@ function AssetForm({ onSubmit, isLoading: isSubmittingForm, onClose, availableMe
                         disabled: isNextButtonDisabled(),
                         className: "bg-primary hover:bg-primary/90 text-primary-foreground",
                         children: [
-                            (isSubmittingForm || isFetchingPrice) && currentStep === 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
+                            isSubmittingForm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
                                 className: "mr-2 h-4 w-4 animate-spin"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 574,
-                                columnNumber: 76
-                            }, this) : null,
-                            (isSubmittingForm || isFetchingPrice) && currentStep === 1 ? "Fetching..." : "Next",
-                            !((isSubmittingForm || isFetchingPrice) && currentStep === 1) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
+                                lineNumber: 550,
+                                columnNumber: 35
+                            }, this),
+                            isSubmittingForm ? "Processing..." : "Next",
+                            !isSubmittingForm && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
                                 className: "ml-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 576,
-                                columnNumber: 80
+                                lineNumber: 552,
+                                columnNumber: 36
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 573,
+                        lineNumber: 549,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         type: "submit",
-                        disabled: isSubmittingForm || isFetchingPrice,
+                        disabled: isSubmittingForm || !form.formState.isValid,
                         className: "bg-primary hover:bg-primary/90 text-primary-foreground",
                         children: [
                             isSubmittingForm ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
                                 className: "mr-2 h-4 w-4 animate-spin"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 580,
+                                lineNumber: 556,
                                 columnNumber: 33
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$save$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Save$3e$__["Save"], {
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                                lineNumber: 580,
+                                lineNumber: 556,
                                 columnNumber: 85
                             }, this),
-                            existingAssetToUpdate ? "Add Transaction" : "Save Physical Asset"
+                            "Save Physical Asset"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/assets/AssetForm.tsx",
-                        lineNumber: 579,
+                        lineNumber: 555,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/assets/AssetForm.tsx",
-                lineNumber: 561,
+                lineNumber: 537,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/assets/AssetForm.tsx",
-        lineNumber: 282,
+        lineNumber: 261,
         columnNumber: 5
     }, this);
 }
-_s(AssetForm, "YC+uoAPxgBFW+RytPSCEuadkxZE=", false, function() {
+_s(AssetForm, "rF/KYZDU6+JwmPspRNLtUKbJgsg=", false, function() {
     return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hook$2d$form$2f$dist$2f$index$2e$esm$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useForm"]
     ];
 });
-_c3 = AssetForm;
-var _c, _c1, _c2, _c3;
-__turbopack_context__.k.register(_c, "BitcoinIconSvg");
-__turbopack_context__.k.register(_c1, "EthereumIconSvg");
-__turbopack_context__.k.register(_c2, "SolanaIconSvg");
-__turbopack_context__.k.register(_c3, "AssetForm");
+_c = AssetForm;
+var _c;
+__turbopack_context__.k.register(_c, "AssetForm");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
