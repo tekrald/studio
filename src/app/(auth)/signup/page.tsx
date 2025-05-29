@@ -28,7 +28,6 @@ const initialReligionOptions = [
     { value: "hinduism", label: "Hinduism" },
     { value: "islam", label: "Islam" },
     { value: "judaism", label: "Judaism" },
-    // { value: "none", label: "Prefiro não dizer" }, // Removed
     { value: "other", label: "Other" },
     { value: "spiritualism", label: "Spiritualism" },
 ];
@@ -52,7 +51,7 @@ export default function SignupPage() {
   // Step 1: Union Structure
   const [relationshipStructure, setRelationshipStructure] = useState<'monogamous' | 'polygamous' | ''>('');
   // Step 2: Union Belief
-  const [religion, setReligion] = useState('');
+  const [religion, setReligion] = useState<string | undefined>(undefined);
   
   // Step 3: Union Name
   const [unionName, setUnionName] = useState('');
@@ -287,7 +286,6 @@ export default function SignupPage() {
                             <Label htmlFor="rel-polygamous" className="font-normal text-foreground/90">Polygamous</Label>
                         </div>
                     </RadioGroup>
-                    {!relationshipStructure && <p className="text-xs text-destructive text-left">This field is required.</p>}
                 </div>
               </div>
             )}
@@ -296,7 +294,7 @@ export default function SignupPage() {
                  <div className="space-y-4 flex flex-col"> {/* Container for Step 2 */}
                     <div> {/* Wrapper for Label and Select */}
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
-                        <Select value={religion} onValueChange={setReligion} disabled={isLoading}>
+                        <Select value={religion} onValueChange={(value) => setReligion(value === '' ? undefined : value)} disabled={isLoading}>
                             <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary w-full min-w-[200px] sm:min-w-[250px]">
                                 <SelectValue placeholder="Select an option" />
                             </SelectTrigger>
@@ -583,5 +581,7 @@ export default function SignupPage() {
   );
 }
 
+
+    
 
     
