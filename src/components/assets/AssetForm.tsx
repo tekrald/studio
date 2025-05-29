@@ -16,8 +16,7 @@ import { cn } from '@/lib/utils';
 import { format, isValid } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import type { AssetFormData } from '@/types/asset';
-import type { User } from '@/components/auth-provider';
-import { useAuth } from '@/components/auth-provider'; // Import useAuth
+import { useAuth, getPartnerNames } from '@/components/auth-provider'; // Import useAuth and getPartnerNames
 
 // Schema exclusively for Physical Assets
 const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
@@ -28,11 +27,11 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
     
     quemComprou: z.string().optional(), 
     contribuicaoParceiro1: z.preprocess(
-      (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
+      (val) => String(val) === '' || val === undefined || val === null ? undefined : parseFloat(String(val).replace(',', '.')),
       z.number().min(0, 'Contribution must be a positive value.').optional()
     ),
     contribuicaoParceiro2: z.preprocess(
-      (val) => String(val) === '' || val === undefined ? undefined : parseFloat(String(val).replace(',', '.')),
+      (val) => String(val) === '' || val === undefined || val === null ? undefined : parseFloat(String(val).replace(',', '.')),
       z.number().min(0, 'Contribution must be a positive value.').optional()
     ),
     
@@ -43,7 +42,7 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
     assignedToMemberId: z.string().optional().nullable(),
     setReleaseCondition: z.boolean().optional(),
     releaseTargetAge: z.preprocess(
-      (val) => String(val) === '' || val === undefined ? undefined : parseInt(String(val), 10),
+      (val) => String(val) === '' || val === undefined || val === null ? undefined : parseInt(String(val), 10),
       z.number().min(1, "Age must be positive.").max(120, "Unrealistic age.").optional()
     ),
   }).superRefine((data, ctx) => {
@@ -54,11 +53,6 @@ const createAssetFormSchema = (memberHasBirthDateContext?: boolean) => {
         path: ['releaseTargetAge']
       });
     }
-    if (data.quemComprou === 'Ambos' && (data.contribuicaoParceiro1 === undefined || data.contribuicaoParceiro1 === null) && (data.contribuicaoParceiro2 === undefined || data.contribuicaoParceiro2 === null)) {
-        // This is okay, contributions are optional even if 'Ambos' is selected
-    } else if (data.quemComprou === 'Ambos' && ((data.contribuicaoParceiro1 !== undefined && data.contribuicaoParceiro1 < 0) || (data.contribuicaoParceiro2 !== undefined && data.contribuicaoParceiro2 < 0))) {
-        // Handled by individual field validation now
-    }
   });
 };
 
@@ -68,7 +62,6 @@ interface AssetFormProps {
   onClose: () => void;
   availableMembers: { id: string; name: string; birthDate?: Date | string }[];
   targetMemberId?: string | null;
-  // user prop is no longer needed directly here, will get from useAuth
 }
 
 const TOTAL_STEPS_PHYSICAL = 3; // 1. Basic Info, 2. Ownership, 3. Physical Details & Assignment
@@ -84,18 +77,17 @@ export function AssetForm({
   const [currentStep, setCurrentStep] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
   
-  const [partnerNames, setPartnerNames] = useState<string[]>([]);
-  const [partnerLabels, setPartnerLabels] = useState<string[]>(["Partner 1", "Partner 2"]);
+  const [partnerLabels, setPartnerLabels] = useState<[string, string]>(["Partner 1", "Partner 2"]);
   
-  const watchedNomeAtivo = useMemo(() => '', []); // Not used for physical asset selection directly
+  useEffect(() => {
+    if (user?.partners) {
+      setPartnerLabels(getPartnerNames(user.partners));
+    }
+  }, [user]);
 
-  const formLocalAssignedToMemberIdWatch = useMemo(() => undefined, []); // Not directly used for schema context in physical
-  const formSetReleaseConditionWatch = useMemo(() => false, []); // Not directly used for schema context
-
-
-  const actualSelectedMemberForAssignment = availableMembers.find(m => m.id === form.watch('assignedToMemberId'));
-  const memberHasBirthDateForSchema = !!actualSelectedMemberForAssignment?.birthDate;
-
+  const watchedAssignedToMemberId = useMemo(() => targetMemberId, [targetMemberId]);
+  const currentAssignedMember = availableMembers.find(m => m.id === watchedAssignedToMemberId);
+  const memberHasBirthDateForSchema = !!currentAssignedMember?.birthDate;
   const currentAssetFormSchema = useMemo(() => createAssetFormSchema(memberHasBirthDateForSchema), [memberHasBirthDateForSchema]);
   
   const form = useForm<AssetFormData>({
@@ -128,37 +120,17 @@ export function AssetForm({
       tipoImovelBemFisico: '',
       enderecoLocalizacaoFisico: '',
       documentacaoFisicoFile: undefined,
-      assignedToMemberId: undefined,
+      assignedToMemberId: targetMemberId || undefined,
       setReleaseCondition: false,
       releaseTargetAge: undefined,
     };
-
-    if (targetMemberId) {
-      defaultVals.assignedToMemberId = targetMemberId;
-    }
-    
     form.reset(defaultVals);
     setCurrentStep(1);
     setFormError(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetMemberId]); // form.reset is stable, not needed in deps
+  }, [targetMemberId, form]); // form.reset is stable, but form itself should be in deps
 
-  useEffect(() => {
-    if (user?.displayName) {
-      const names = user.displayName.split('&').map(name => name.trim()).filter(name => name);
-      setPartnerNames(names);
-      if (names.length === 1) {
-        setPartnerLabels([names[0], "Other Contributor"]);
-      } else if (names.length > 1) {
-        setPartnerLabels([names[0], names[1]]);
-      } else {
-        setPartnerLabels(["Partner 1", "Partner 2"]);
-      }
-    }
-  }, [user]);
-  
   const handleFormSubmit = async (values: AssetFormData) => {
-    setFormError(null); // Clear previous errors
+    setFormError(null);
     const processedValues: AssetFormData = {
       ...values,
       quemComprou: values.quemComprou === "UNSPECIFIED_BUYER" ? undefined : values.quemComprou,
@@ -181,27 +153,27 @@ export function AssetForm({
     if (stepToValidate === 1) {
       fieldsToTrigger = ['nomeAtivo', 'dataAquisicao'];
     } else if (stepToValidate === 2) {
-      // Fields in step 2 are optional or have defaults, no specific trigger needed for "Next"
-      // Contributions are validated individually if values are entered.
+      // Fields are optional or have defaults.
+    } else if (stepToValidate === 3) {
+      fieldsToTrigger = ['tipoImovelBemFisico']; // Primary required field for this step.
+      if(form.getValues('setReleaseCondition') && memberHasBirthDateForSchema){
+        fieldsToTrigger.push('releaseTargetAge');
+      }
     }
-    // Step 3 is the final step, form.handleSubmit will validate all.
 
     if (fieldsToTrigger.length > 0) {
       const result = await form.trigger(fieldsToTrigger);
       if (!result) {
-        // Find the first error message for the triggered fields
+        const errors = form.formState.errors;
         for (const field of fieldsToTrigger) {
-          if (form.formState.errors[field]) {
-            // @ts-ignore
-            setFormError(form.formState.errors[field]?.message || "Please fill out required fields.");
+          if (errors[field]) {
+            setFormError((errors[field] as any)?.message || "Please fill out required fields correctly.");
             return false;
           }
         }
-        // If no specific message found for triggered fields but errors exist
-        if (Object.keys(form.formState.errors).length > 0) {
-            const firstErrorKey = Object.keys(form.formState.errors)[0] as FieldPath<AssetFormData>;
-            // @ts-ignore
-            setFormError(form.formState.errors[firstErrorKey]?.message || "Please correct the highlighted fields.");
+        if (Object.keys(errors).length > 0) {
+            const firstErrorKey = Object.keys(errors)[0] as FieldPath<AssetFormData>;
+            setFormError((errors[firstErrorKey] as any)?.message || "Please correct the highlighted fields.");
         } else {
             setFormError("Please ensure all fields for this step are valid.");
         }
@@ -226,25 +198,30 @@ export function AssetForm({
     }
   };
   
+  const watchedNomeAtivo = form.watch('nomeAtivo');
+  const watchedDataAquisicao = form.watch('dataAquisicao');
+  const watchedTipoImovel = form.watch('tipoImovelBemFisico');
+
   const isNextButtonDisabled = () => {
     if (isSubmittingForm) return true;
 
     if (currentStep === 1) {
-      const nomeAtivoValue = form.watch('nomeAtivo');
-      const dataAquisicaoValue = form.watch('dataAquisicao');
-      const isNomeFilled = nomeAtivoValue && nomeAtivoValue.trim().length > 0;
-      const isDataValid = !!dataAquisicaoValue && isValid(new Date(dataAquisicaoValue));
+      const isNomeFilled = watchedNomeAtivo && watchedNomeAtivo.trim().length > 0;
+      const isDataValid = !!watchedDataAquisicao && isValid(new Date(watchedDataAquisicao));
       return !(isNomeFilled && isDataValid);
     }
     if (currentStep === 2) { 
       return false; 
     }
+    if (currentStep === 3) { // This is the final step, button is "Save"
+        return !form.formState.isValid; // Button is "Save", rely on overall form validity
+    }
     return false; 
   };
   
   const watchedQuemComprou = form.watch('quemComprou');
-  const watchedAssignedToMemberId = form.watch('assignedToMemberId');
-  const currentAssignedMember = availableMembers.find(m => m.id === watchedAssignedToMemberId);
+  const localWatchedAssignedToMemberId = form.watch('assignedToMemberId');
+  const localCurrentAssignedMember = availableMembers.find(m => m.id === localWatchedAssignedToMemberId);
   const watchedSetReleaseCondition = form.watch('setReleaseCondition');
 
 
@@ -378,19 +355,16 @@ export function AssetForm({
                   <SelectContent className="bg-popover text-popover-foreground">
                     <SelectItem value="UNSPECIFIED_BUYER">Unspecified</SelectItem>
                     <SelectItem value="Main Union (Ipê Acta)">Main Union (Ipê Acta)</SelectItem>
-                    {partnerNames.length === 1 && (
-                      <SelectItem value={partnerNames[0]}>{partnerNames[0]}</SelectItem>
-                    )}
-                    {partnerNames.length > 1 && partnerNames.map(name => (
-                      <SelectItem key={name} value={name}>{name}</SelectItem>
+                    {user?.partners?.map((partner, index) => (
+                       partner.name && <SelectItem key={`partner-${index}-${partner.name}`} value={partner.name}>{partner.name}</SelectItem>
                     ))}
-                    {partnerNames.length > 1 && <SelectItem value="Ambos">Both ({partnerNames.join(' & ')})</SelectItem>}
+                    {(user?.partners && user.partners.length > 1 && user.partners.every(p => p.name)) && <SelectItem value="Ambos">Both ({getPartnerNames(user.partners).join(' & ')})</SelectItem>}
                   </SelectContent>
                 </Select>
               )}
             />
             <p className="text-xs text-muted-foreground">
-              If partner names do not appear, check the union name in Profile.
+              Partner names are based on signup. If not shown, check profile.
             </p>
             {form.formState.errors.quemComprou && <p className="text-sm text-destructive">{form.formState.errors.quemComprou.message}</p>}
           </div>
@@ -536,7 +510,7 @@ export function AssetForm({
                 {form.formState.errors.assignedToMemberId && <p className="text-sm text-destructive">{form.formState.errors.assignedToMemberId.message}</p>}
                 </div>
 
-                {watchedAssignedToMemberId && watchedAssignedToMemberId !== "UNASSIGNED" && currentAssignedMember?.birthDate && (
+                {localWatchedAssignedToMemberId && localWatchedAssignedToMemberId !== "UNASSIGNED" && localCurrentAssignedMember?.birthDate && (
                 <div className="space-y-3 mt-3 p-3 border-t border-border">
                     <div className="flex items-center space-x-2">
                         <Controller
@@ -553,7 +527,7 @@ export function AssetForm({
                             )}
                         />
                         <Label htmlFor="setReleaseCondition" className="font-normal flex items-center text-foreground/90">
-                        <Clock size={16} className="mr-2 text-primary"/> Set Age-Based Release Condition for {currentAssignedMember?.name}?
+                        <Clock size={16} className="mr-2 text-primary"/> Set Age-Based Release Condition for {localCurrentAssignedMember?.name}?
                         </Label>
                     </div>
                     {watchedSetReleaseCondition && (
@@ -581,9 +555,9 @@ export function AssetForm({
                     )}
                 </div>
                 )}
-                {watchedAssignedToMemberId && watchedAssignedToMemberId !== "UNASSIGNED" && !currentAssignedMember?.birthDate && (
+                {localWatchedAssignedToMemberId && localWatchedAssignedToMemberId !== "UNASSIGNED" && !localCurrentAssignedMember?.birthDate && (
                     <p className="text-xs text-muted-foreground mt-2 pl-1">
-                        To set an age-based release condition, the selected member ({currentAssignedMember?.name || 'Member'}) must have a birth date registered.
+                        To set an age-based release condition, the selected member ({localCurrentAssignedMember?.name || 'Member'}) must have a birth date registered.
                     </p>
                 )}
             </div>
@@ -613,9 +587,9 @@ export function AssetForm({
           </Button>
         ) : (
           <Button 
-            type="button" // Changed from "submit"
-            onClick={() => form.handleSubmit(handleFormSubmit)()} // Explicitly call handleSubmit
-            disabled={isSubmittingForm || !form.formState.isValid} 
+            type="button" 
+            onClick={() => form.handleSubmit(handleFormSubmit)()} 
+            disabled={isSubmittingForm || !watchedTipoImovel.trim() || (watchedSetReleaseCondition && memberHasBirthDateForSchema && (form.getValues('releaseTargetAge') === undefined || form.getValues('releaseTargetAge')! <=0) ) } 
             className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {isSubmittingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
@@ -626,5 +600,3 @@ export function AssetForm({
     </form>
   );
 }
-
-    

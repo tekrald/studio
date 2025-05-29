@@ -2,30 +2,36 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import type { ContractClause } from '@/components/contract/ContractSettingsDialog'; // Import ContractClause
+import type { ContractClause } from '@/components/contract/ContractSettingsDialog';
 
-// Interface para o usuário, agora incluindo os novos campos
+// Define Partner interface
+export interface Partner {
+  name: string;
+  photo?: File | null; // Store File object for now, actual upload is separate
+}
+
 interface User {
   email: string;
   uid: string;
-  displayName?: string; // Nome da União
+  displayName?: string; // Union Name
   relationshipStructure?: 'monogamous' | 'polygamous' | '';
-  religion?: string;
+  religion?: string | undefined;
+  partners?: Partner[]; // Array of partners
   isWalletConnected?: boolean;
   connectedWalletAddress?: string | null;
   holdingType?: 'physical' | '';
   cnpjHolding?: string;
-  contractClauses?: ContractClause[]; // Novo campo para cláusulas
+  contractClauses?: ContractClause[];
 }
 
-// Interface para dados de atualização de perfil, agora incluindo religião e cláusulas
 interface UpdateProfileData {
   displayName?: string;
   relationshipStructure?: 'monogamous' | 'polygamous' | '';
-  religion?: string; // Adicionado
+  religion?: string | undefined;
+  partners?: Partner[];
   holdingType?: 'physical' | '';
   cnpjHolding?: string;
-  contractClauses?: ContractClause[]; // Novo campo para cláusulas
+  contractClauses?: ContractClause[];
 }
 
 interface AuthContextType {
@@ -35,11 +41,11 @@ interface AuthContextType {
     email: string,
     displayName: string,
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
-    religionParam?: string,
+    religionParam?: string | undefined,
+    partnersParam?: Partner[],
     isWalletConnectedParam?: boolean,
     connectedWalletAddressParam?: string | null,
-    // holdingTypeParam?: 'digital' | 'physical' | '', // Removido, não mais do cadastro
-    contractClausesParam?: ContractClause[], // Novo parâmetro
+    contractClausesParam?: ContractClause[],
   ) => void;
   logout: () => void;
   loading: boolean;
@@ -50,12 +56,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Mantido true para lógica de carregamento inicial
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Lógica para carregar usuário do localStorage (MOCK)
     try {
       const storedUser = localStorage.getItem('ipeActaUser');
       if (storedUser) {
@@ -65,13 +70,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Failed to parse user from localStorage", error);
       localStorage.removeItem('ipeActaUser');
     }
-    setLoading(false); // Define loading como false após tentar carregar
+    setLoading(false);
   }, []);
 
   const handleAuthChange = useCallback((newUser: User | null) => {
     setUser(newUser);
     if (newUser) {
-      localStorage.setItem('ipeActaUser', JSON.stringify(newUser));
+      // Note: Storing File objects in localStorage won't work directly.
+      // For this mock, we'll store partner names, and photo names if File exists.
+      // A real implementation would upload photos and store URLs.
+      const storableUser = {
+        ...newUser,
+        partners: newUser.partners?.map(p => ({
+          name: p.name,
+          photoName: p.photo?.name // Storing only photo name for mock
+        }))
+      };
+      localStorage.setItem('ipeActaUser', JSON.stringify(storableUser));
     } else {
       localStorage.removeItem('ipeActaUser');
     }
@@ -80,11 +95,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = useCallback((email: string, displayName?: string) => {
     let existingUser: Partial<User> = {};
     try {
-      const storedUser = localStorage.getItem('ipeActaUser');
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser) as User;
+      const storedUserJson = localStorage.getItem('ipeActaUser');
+      if (storedUserJson) {
+        const parsedUser = JSON.parse(storedUserJson); // We won't try to revive File objects here
         if (parsedUser.email === email) {
-            existingUser = parsedUser;
+          existingUser = {
+            ...parsedUser,
+            partners: parsedUser.partners?.map((p: any) => ({ name: p.name, photo: null })) // Photo not revived
+          };
         }
       }
     } catch (error) {
@@ -95,12 +113,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       uid: `mock-uid-${email}-${Date.now()}`,
       displayName: displayName || existingUser.displayName || email.split('@')[0],
       relationshipStructure: existingUser.relationshipStructure || '',
-      religion: existingUser.religion || '',
+      religion: existingUser.religion || undefined,
+      partners: existingUser.partners || [{ name: 'Partner 1', photo: null }, { name: 'Partner 2', photo: null }],
       isWalletConnected: existingUser.isWalletConnected || false,
       connectedWalletAddress: existingUser.connectedWalletAddress || null,
       holdingType: existingUser.holdingType || '',
       cnpjHolding: existingUser.cnpjHolding || '',
-      contractClauses: existingUser.contractClauses || [], // Inicializa cláusulas
+      contractClauses: existingUser.contractClauses || [],
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
@@ -110,23 +129,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     email: string,
     displayName: string,
     relationshipStructureParam?: 'monogamous' | 'polygamous' | '',
-    religionParam?: string,
+    religionParam?: string | undefined,
+    partnersParam?: Partner[],
     isWalletConnectedParam?: boolean,
     connectedWalletAddressParam?: string | null,
-    // holdingTypeParam?: 'digital' | 'physical' | '', // Removido
-    contractClausesParam?: ContractClause[], // Novo parâmetro
+    contractClausesParam?: ContractClause[],
   ) => {
     const mockUser: User = {
       email,
       uid: `mock-uid-${email}-signup-${Date.now()}`,
       displayName,
       relationshipStructure: relationshipStructureParam || '',
-      religion: religionParam || '',
+      religion: religionParam || undefined,
+      partners: partnersParam || [{ name: 'Partner 1', photo: null }, { name: 'Partner 2', photo: null }],
       isWalletConnected: isWalletConnectedParam || false,
       connectedWalletAddress: connectedWalletAddressParam || null,
-      holdingType: '', // Padrão para novo cadastro
+      holdingType: '',
       cnpjHolding: '',
-      contractClauses: contractClausesParam || [], // Armazena cláusulas
+      contractClauses: contractClausesParam || [],
     };
     handleAuthChange(mockUser);
     router.push('/dashboard');
@@ -134,24 +154,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     handleAuthChange(null);
-    router.push('/'); // Redireciona para a landing page
+    router.push('/');
   }, [handleAuthChange, router]);
 
   const updateProfile = useCallback((data: UpdateProfileData) => {
     if (user) {
+      // When updating partners, we also need to handle photos correctly for localStorage
+      let storablePartners;
+      if (data.partners) {
+        storablePartners = data.partners.map(p => ({
+            name: p.name,
+            photoName: p.photo?.name, // Store only photo name for mock
+            photo: null // Don't store the File object itself
+        }));
+      }
+
+
       const updatedUser: User = {
         ...user,
         ...data,
+        partners: data.partners ? data.partners.map(p => ({name: p.name, photo: p.photo})) : user.partners, // Keep File object in memory for current session
       };
-      handleAuthChange(updatedUser);
+      // For localStorage, create a version without File objects in partners.photo
+      const userForStorage = {
+        ...updatedUser,
+        partners: updatedUser.partners?.map(p => ({ name: p.name, photoName: p.photo?.name }))
+      };
+
+      setUser(updatedUser); // Update in-memory state with File objects
+      localStorage.setItem('ipeActaUser', JSON.stringify(userForStorage)); // Update localStorage without File objects
+
     }
-  }, [user, handleAuthChange]);
+  }, [user]);
 
 
   useEffect(() => {
-    // Esta lógica de proteção de rota agora está desabilitada
-    // para permitir navegação livre e focar em outras partes.
-    // Se precisar reativar, descomente as linhas abaixo.
+    // This logic is currently disabled for easier navigation during development.
+    // Re-enable if needed for production-like auth flow.
     // if (loading) return;
     // const isAuthRoute = pathname === '/login' || pathname === '/signup';
     // const isPublicRoute = pathname === '/';
@@ -181,4 +220,11 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+// Helper function to get partner names, ensuring at least two placeholders if none exist
+export const getPartnerNames = (partners: Partner[] | undefined): [string, string] => {
+  const p1Name = partners?.[0]?.name || "Partner 1";
+  const p2Name = partners?.[1]?.name || "Partner 2";
+  return [p1Name, p2Name];
 };

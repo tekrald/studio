@@ -396,6 +396,7 @@ var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({
     "AuthProvider": (()=>AuthProvider),
+    "getPartnerNames": (()=>getPartnerNames),
     "useAuth": (()=>useAuth)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
@@ -408,11 +409,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navi
 const AuthContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createContext"])(undefined);
 const AuthProvider = ({ children })=>{
     const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
-    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true); // Mantido true para lógica de carregamento inicial
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["usePathname"])();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        // Lógica para carregar usuário do localStorage (MOCK)
         try {
             const storedUser = localStorage.getItem('ipeActaUser');
             if (storedUser) {
@@ -422,12 +422,22 @@ const AuthProvider = ({ children })=>{
             console.error("Failed to parse user from localStorage", error);
             localStorage.removeItem('ipeActaUser');
         }
-        setLoading(false); // Define loading como false após tentar carregar
+        setLoading(false);
     }, []);
     const handleAuthChange = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((newUser)=>{
         setUser(newUser);
         if (newUser) {
-            localStorage.setItem('ipeActaUser', JSON.stringify(newUser));
+            // Note: Storing File objects in localStorage won't work directly.
+            // For this mock, we'll store partner names, and photo names if File exists.
+            // A real implementation would upload photos and store URLs.
+            const storableUser = {
+                ...newUser,
+                partners: newUser.partners?.map((p)=>({
+                        name: p.name,
+                        photoName: p.photo?.name // Storing only photo name for mock
+                    }))
+            };
+            localStorage.setItem('ipeActaUser', JSON.stringify(storableUser));
         } else {
             localStorage.removeItem('ipeActaUser');
         }
@@ -435,11 +445,17 @@ const AuthProvider = ({ children })=>{
     const login = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((email, displayName)=>{
         let existingUser = {};
         try {
-            const storedUser = localStorage.getItem('ipeActaUser');
-            if (storedUser) {
-                const parsedUser = JSON.parse(storedUser);
+            const storedUserJson = localStorage.getItem('ipeActaUser');
+            if (storedUserJson) {
+                const parsedUser = JSON.parse(storedUserJson); // We won't try to revive File objects here
                 if (parsedUser.email === email) {
-                    existingUser = parsedUser;
+                    existingUser = {
+                        ...parsedUser,
+                        partners: parsedUser.partners?.map((p)=>({
+                                name: p.name,
+                                photo: null
+                            })) // Photo not revived
+                    };
                 }
             }
         } catch (error) {
@@ -450,7 +466,17 @@ const AuthProvider = ({ children })=>{
             uid: `mock-uid-${email}-${Date.now()}`,
             displayName: displayName || existingUser.displayName || email.split('@')[0],
             relationshipStructure: existingUser.relationshipStructure || '',
-            religion: existingUser.religion || '',
+            religion: existingUser.religion || undefined,
+            partners: existingUser.partners || [
+                {
+                    name: 'Partner 1',
+                    photo: null
+                },
+                {
+                    name: 'Partner 2',
+                    photo: null
+                }
+            ],
             isWalletConnected: existingUser.isWalletConnected || false,
             connectedWalletAddress: existingUser.connectedWalletAddress || null,
             holdingType: existingUser.holdingType || '',
@@ -463,14 +489,23 @@ const AuthProvider = ({ children })=>{
         handleAuthChange,
         router
     ]);
-    const signup = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((email, displayName, relationshipStructureParam, religionParam, isWalletConnectedParam, connectedWalletAddressParam, // holdingTypeParam?: 'digital' | 'physical' | '', // Removido
-    contractClausesParam)=>{
+    const signup = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((email, displayName, relationshipStructureParam, religionParam, partnersParam, isWalletConnectedParam, connectedWalletAddressParam, contractClausesParam)=>{
         const mockUser = {
             email,
             uid: `mock-uid-${email}-signup-${Date.now()}`,
             displayName,
             relationshipStructure: relationshipStructureParam || '',
-            religion: religionParam || '',
+            religion: religionParam || undefined,
+            partners: partnersParam || [
+                {
+                    name: 'Partner 1',
+                    photo: null
+                },
+                {
+                    name: 'Partner 2',
+                    photo: null
+                }
+            ],
             isWalletConnected: isWalletConnectedParam || false,
             connectedWalletAddress: connectedWalletAddressParam || null,
             holdingType: '',
@@ -485,27 +520,47 @@ const AuthProvider = ({ children })=>{
     ]);
     const logout = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(()=>{
         handleAuthChange(null);
-        router.push('/'); // Redireciona para a landing page
+        router.push('/');
     }, [
         handleAuthChange,
         router
     ]);
     const updateProfile = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((data)=>{
         if (user) {
+            // When updating partners, we also need to handle photos correctly for localStorage
+            let storablePartners;
+            if (data.partners) {
+                storablePartners = data.partners.map((p)=>({
+                        name: p.name,
+                        photoName: p.photo?.name,
+                        photo: null // Don't store the File object itself
+                    }));
+            }
             const updatedUser = {
                 ...user,
-                ...data
+                ...data,
+                partners: data.partners ? data.partners.map((p)=>({
+                        name: p.name,
+                        photo: p.photo
+                    })) : user.partners
             };
-            handleAuthChange(updatedUser);
+            // For localStorage, create a version without File objects in partners.photo
+            const userForStorage = {
+                ...updatedUser,
+                partners: updatedUser.partners?.map((p)=>({
+                        name: p.name,
+                        photoName: p.photo?.name
+                    }))
+            };
+            setUser(updatedUser); // Update in-memory state with File objects
+            localStorage.setItem('ipeActaUser', JSON.stringify(userForStorage)); // Update localStorage without File objects
         }
     }, [
-        user,
-        handleAuthChange
+        user
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-    // Esta lógica de proteção de rota agora está desabilitada
-    // para permitir navegação livre e focar em outras partes.
-    // Se precisar reativar, descomente as linhas abaixo.
+    // This logic is currently disabled for easier navigation during development.
+    // Re-enable if needed for production-like auth flow.
     // if (loading) return;
     // const isAuthRoute = pathname === '/login' || pathname === '/signup';
     // const isPublicRoute = pathname === '/';
@@ -536,7 +591,7 @@ const AuthProvider = ({ children })=>{
         children: children
     }, void 0, false, {
         fileName: "[project]/src/components/auth-provider.tsx",
-        lineNumber: 172,
+        lineNumber: 211,
         columnNumber: 5
     }, this);
 };
@@ -546,6 +601,14 @@ const useAuth = ()=>{
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
+};
+const getPartnerNames = (partners)=>{
+    const p1Name = partners?.[0]?.name || "Partner 1";
+    const p2Name = partners?.[1]?.name || "Partner 2";
+    return [
+        p1Name,
+        p2Name
+    ];
 };
 }}),
 

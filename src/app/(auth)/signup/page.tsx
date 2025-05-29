@@ -4,7 +4,7 @@ import React, { useState, type FormEvent, type ChangeEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/auth-provider';
+import { useAuth, type Partner } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye, Building, Landmark, HomeIcon } from 'lucide-react';
+import { Loader2, UserPlus, ArrowLeft, ArrowRight, Camera, Wallet, Users, BookOpen, FileText, Edit3, PlusCircle, Save, Trash2, Eye, HomeIcon } from 'lucide-react';
 import type { ContractClause } from '@/components/contract/ContractSettingsDialog';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -67,11 +67,13 @@ export default function SignupPage() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [connectedWalletAddress, setConnectedWalletAddress] = useState<string | null>(null);
   
-  // Step 6: Photos
-  const [photo1, setPhoto1] = useState<File | null>(null);
-  const [photo1Preview, setPhoto1Preview] = useState<string | null>(null);
-  const [photo2, setPhoto2] = useState<File | null>(null);
-  const [photo2Preview, setPhoto2Preview] = useState<string | null>(null);
+  // Step 6: Partner Details
+  const [partner1Name, setPartner1Name] = useState('');
+  const [partner1Photo, setPartner1Photo] = useState<File | null>(null);
+  const [partner1PhotoPreview, setPartner1PhotoPreview] = useState<string | null>(null);
+  const [partner2Name, setPartner2Name] = useState('');
+  const [partner2Photo, setPartner2Photo] = useState<File | null>(null);
+  const [partner2PhotoPreview, setPartner2PhotoPreview] = useState<string | null>(null);
   
   // Step 7: Initial Agreements
   const [contractClauses, setContractClauses] = useState<ContractClause[]>(defaultContractClauses);
@@ -85,17 +87,17 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const { signup } = useAuth();
 
-  const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>, photoNumber: 1 | 2) => {
+  const handlePartnerPhotoChange = (e: ChangeEvent<HTMLInputElement>, partnerNumber: 1 | 2) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (photoNumber === 1) {
-        setPhoto1(file);
-        setPhoto1Preview(URL.createObjectURL(file));
+      if (partnerNumber === 1) {
+        setPartner1Photo(file);
+        setPartner1PhotoPreview(URL.createObjectURL(file));
       } else {
-        setPhoto2(file);
-        setPhoto2Preview(URL.createObjectURL(file));
+        setPartner2Photo(file);
+        setPartner2PhotoPreview(URL.createObjectURL(file));
       }
-      setError(null);
+      setError(null); // Clear general error if a photo is selected
     }
   };
 
@@ -173,7 +175,19 @@ export default function SignupPage() {
       }
     } else if (currentStep === 5) { // Connect Wallet - optional
         // No mandatory validation here
-    } else if (currentStep === 6) { // Photos - Optional
+    } else if (currentStep === 6) { // Partner Details
+        if (relationshipStructure === 'monogamous') {
+            if (!partner1Name.trim() || !partner2Name.trim()) {
+                setError("Please enter names for both partners.");
+                return false;
+            }
+        }
+        // For polygamous, names are also important but handling dynamic inputs is deferred.
+        // For now, if polygamous, we assume partner1Name is the main partner initiating.
+        if (relationshipStructure === 'polygamous' && !partner1Name.trim()) {
+             setError("Please enter the name of the primary partner.");
+             return false;
+        }
     } else if (currentStep === 7) { // Initial Agreements - Optional (can be empty)
     } else if (currentStep === 8) { // Terms
       if (!acceptedContract) {
@@ -206,17 +220,29 @@ export default function SignupPage() {
     }
     setIsLoading(true);
     setError(null);
+
+    const partners: Partner[] = [];
+    if (partner1Name.trim()) {
+        partners.push({ name: partner1Name.trim(), photo: partner1Photo });
+    }
+    if (relationshipStructure === 'monogamous' && partner2Name.trim()) {
+        partners.push({ name: partner2Name.trim(), photo: partner2Photo });
+    }
+    // Add more partners if polygamous and UI supports it in future
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
       signup(
         email,
         unionName,
         relationshipStructure,
         religion,
+        partners, // Pass partner details
         isWalletConnected,
         connectedWalletAddress,
         contractClauses,
       );
+      // router.push('/dashboard'); // AuthProvider handles redirect
     } catch (err) {
       setError('Failed to create contract. Please try again.');
     } finally {
@@ -268,8 +294,8 @@ export default function SignupPage() {
           <form onSubmit={handleFinalSubmit} className="space-y-6 flex flex-col items-center">
             
             {currentStep === 1 && ( 
-              <div className="space-y-4 flex flex-col"> {/* Container for Step 1 */}
-                <div> {/* Wrapper for Label and RadioGroup */}
+              <div className="space-y-4 flex flex-col">
+                <div> 
                     <Label htmlFor="relationshipStructure" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><Users size={20} className="mr-2 text-primary" />Union Structure</Label>
                     <RadioGroup
                         value={relationshipStructure}
@@ -291,8 +317,8 @@ export default function SignupPage() {
             )}
 
             {currentStep === 2 && ( 
-                 <div className="space-y-4 flex flex-col"> {/* Container for Step 2 */}
-                    <div> {/* Wrapper for Label and Select */}
+                 <div className="space-y-4 flex flex-col">
+                    <div>
                         <Label htmlFor="religion" className="text-lg font-semibold flex items-center justify-start mb-2 text-foreground/90 w-full"><BookOpen size={20} className="mr-2 text-primary" />Union Belief</Label>
                         <Select value={religion} onValueChange={(value) => setReligion(value === '' ? undefined : value)} disabled={isLoading}>
                             <SelectTrigger id="religion" className="bg-input text-foreground border-border focus:ring-primary w-full min-w-[200px] sm:min-w-[250px]">
@@ -416,47 +442,87 @@ export default function SignupPage() {
               </div>
             )}
 
-            {currentStep === 6 && ( 
-              <div className="space-y-4 flex flex-col w-full max-w-lg">
-                <p className="text-sm text-muted-foreground w-full text-left">Add photos of the union (optional).</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start w-full">
-                  <div className="space-y-2 flex flex-col items-start text-left w-full">
-                    <Label htmlFor="photo1" className="text-foreground/90">Partner 1 Photo</Label>
+            {currentStep === 6 && (
+              <div className="space-y-6 flex flex-col w-full max-w-lg">
+                <Label className="text-lg font-semibold flex items-center justify-start text-foreground/90 w-full">
+                  <Users size={20} className="mr-2 text-primary" /> Partner Details
+                </Label>
+                <CardDescription className="text-muted-foreground w-full text-left">
+                  Enter the names and optionally photos of the partners in the union.
+                  {relationshipStructure === 'polygamous' && " For polygamous unions, enter the primary partners here. Additional partners/details can be managed later."}
+                </CardDescription>
+
+                {/* Partner 1 Details */}
+                <div className="space-y-3 p-4 border rounded-md bg-muted/50">
+                  <Label htmlFor="partner1Name" className="text-foreground/90 text-left block">Partner 1 Name</Label>
+                  <Input
+                    id="partner1Name"
+                    type="text"
+                    placeholder="Enter Partner 1's Name"
+                    value={partner1Name}
+                    onChange={(e) => setPartner1Name(e.target.value)}
+                    disabled={isLoading}
+                    className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary w-full"
+                  />
+                  <div className="space-y-2 flex flex-col items-start text-left w-full mt-2">
+                    <Label htmlFor="partner1Photo" className="text-foreground/90">Partner 1 Photo (Optional)</Label>
                     <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-start">
-                      {photo1Preview ? (
-                        <Image src={photo1Preview} alt="Partner 1 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
+                      {partner1PhotoPreview ? (
+                        <Image src={partner1PhotoPreview} alt="Partner 1 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="partner photo" />
                       ) : (
-                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
+                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground border border-border" data-ai-hint="avatar placeholder">
                           <Camera size={32} />
                         </div>
                       )}
-                      <Input id="photo1" type="file" accept="image/*" onChange={(e) => handlePhotoChange(e, 1)} className="sr-only" disabled={isLoading} />
-                      <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('photo1')?.click()} disabled={isLoading}>
-                        {photo1 ? "Change Photo" : "Choose Photo"}
+                      <Input id="partner1Photo" type="file" accept="image/*" onChange={(e) => handlePartnerPhotoChange(e, 1)} className="sr-only" disabled={isLoading} />
+                      <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('partner1Photo')?.click()} disabled={isLoading}>
+                        {partner1Photo ? "Change Photo" : "Choose Photo"}
                       </Button>
                     </div>
-                    {photo1 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-left" title={photo1.name}>{photo1.name}</p>}
-                  </div>
-                  <div className="space-y-2 flex flex-col items-start text-left w-full">
-                    <Label htmlFor="photo2" className="text-foreground/90">Partner 2 Photo</Label>
-                     <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-start">
-                      {photo2Preview ? (
-                        <Image src={photo2Preview} alt="Partner 2 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="union photo" />
-                      ) : (
-                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground" data-ai-hint="avatar placeholder">
-                          <Camera size={32} />
-                        </div>
-                      )}
-                      <Input id="photo2" type="file" accept="image/*" onChange={(e) => handlePhotoChange(e, 2)} className="sr-only" disabled={isLoading} />
-                       <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('photo2')?.click()} disabled={isLoading}>
-                        {photo2 ? "Change Photo" : "Choose Photo"}
-                      </Button>
-                    </div>
-                    {photo2 && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-left" title={photo2.name}>{photo2.name}</p>}
+                    {partner1Photo && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-left" title={partner1Photo.name}>{partner1Photo.name}</p>}
                   </div>
                 </div>
+
+                {/* Partner 2 Details - Shown for Monogamous, could be adapted for Polygamous primary partner 2 */}
+                {(relationshipStructure === 'monogamous' || relationshipStructure === 'polygamous') && (
+                  <div className="space-y-3 p-4 border rounded-md bg-muted/50">
+                    <Label htmlFor="partner2Name" className="text-foreground/90 text-left block">Partner 2 Name</Label>
+                    <Input
+                      id="partner2Name"
+                      type="text"
+                      placeholder="Enter Partner 2's Name"
+                      value={partner2Name}
+                      onChange={(e) => setPartner2Name(e.target.value)}
+                      disabled={isLoading || relationshipStructure === 'polygamous'} // Disable for polygamous for now, as UI is for 2
+                      className="bg-input text-foreground placeholder:text-muted-foreground border-border focus:ring-primary w-full"
+                    />
+                    <div className="space-y-2 flex flex-col items-start text-left w-full mt-2">
+                      <Label htmlFor="partner2Photo" className="text-foreground/90">Partner 2 Photo (Optional)</Label>
+                      <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-start">
+                        {partner2PhotoPreview ? (
+                          <Image src={partner2PhotoPreview} alt="Partner 2 Photo Preview" width={80} height={80} className="rounded-md object-cover aspect-square" data-ai-hint="partner photo" />
+                        ) : (
+                          <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center text-muted-foreground border border-border" data-ai-hint="avatar placeholder">
+                            <Camera size={32} />
+                          </div>
+                        )}
+                        <Input id="partner2Photo" type="file" accept="image/*" onChange={(e) => handlePartnerPhotoChange(e, 2)} className="sr-only" disabled={isLoading || relationshipStructure === 'polygamous'} />
+                        <Button type="button" variant="outline" className="text-foreground/90 border-border hover:bg-muted/80" onClick={() => document.getElementById('partner2Photo')?.click()} disabled={isLoading || relationshipStructure === 'polygamous'}>
+                          {partner2Photo ? "Change Photo" : "Choose Photo"}
+                        </Button>
+                      </div>
+                      {partner2Photo && <p className="text-xs text-muted-foreground truncate w-full max-w-[150px] sm:max-w-xs text-left" title={partner2Photo.name}>{partner2Photo.name}</p>}
+                    </div>
+                  </div>
+                )}
+                {relationshipStructure === 'polygamous' && (
+                    <p className="text-xs text-muted-foreground w-full text-left">
+                        For polygamous unions, functionality to add more partners and specific details will be available in the main application settings after initial contract creation.
+                    </p>
+                )}
               </div>
             )}
+
 
             {currentStep === 7 && ( 
               <div className="space-y-4 flex flex-col w-full max-w-lg">
@@ -580,8 +646,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
-
-    
-
-    
