@@ -726,10 +726,6 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
 }
 
-.inline {
-  display: inline;
-}
-
 .flex {
   display: flex;
 }
@@ -1971,11 +1967,6 @@ h1, h2, h3, h4, h5, h6 {
   color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
-.text-blue-400 {
-  --tw-text-opacity: 1;
-  color: rgb(96 165 250 / var(--tw-text-opacity, 1));
-}
-
 .text-card-foreground {
   color: hsl(var(--card-foreground));
 }
@@ -2141,6 +2132,11 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-accent\/30 {
+  --tw-shadow-color: hsl(var(--accent) / .3);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
 .shadow-accent\/40 {
   --tw-shadow-color: hsl(var(--accent) / .4);
   --tw-shadow: var(--tw-shadow-colored);
@@ -2148,16 +2144,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .shadow-primary\/30 {
   --tw-shadow-color: hsl(var(--primary) / .3);
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.shadow-primary\/40 {
-  --tw-shadow-color: hsl(var(--primary) / .4);
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.shadow-accent\/30 {
-  --tw-shadow-color: hsl(var(--accent) / .3);
   --tw-shadow: var(--tw-shadow-colored);
 }
 
@@ -2432,6 +2418,10 @@ h1, h2, h3, h4, h5, h6 {
   background-color: hsl(var(--accent) / .2);
 }
 
+.hover\:bg-accent\/90:hover {
+  background-color: hsl(var(--accent) / .9);
+}
+
 .hover\:bg-destructive\/10:hover {
   background-color: hsl(var(--destructive) / .1);
 }
@@ -2494,10 +2484,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .hover\:bg-white\/20:hover {
   background-color: #fff3;
-}
-
-.hover\:bg-accent\/90:hover {
-  background-color: hsl(var(--accent) / .9);
 }
 
 .hover\:text-accent:hover {
